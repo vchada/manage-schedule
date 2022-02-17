@@ -1,0 +1,11 @@
+<div class="example-section">
+  <div class="example-section__content">
+    <yc-year-calendar *ngIf="selectedDates" class="example-section__content__year-calendar" [loadingData]="loadingData"
+      (viewYearChanged)="yearChanged($event)" (eventDayClicked)="dayClicked($event);" [ycConfig]="ycConfig"
+      [selectedDate]="calendarDate" [selectedDates]="selectedDates">
+      <div class="hm-loader">
+        Loading...
+      </div>
+    </yc-year-calendar>
+  </div>
+</div>

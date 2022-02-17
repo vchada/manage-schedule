@@ -13,7 +13,8 @@ export const DAYS_OF_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
   styleUrls: ['./year-calendar.component.scss']
 })
 export class YearCalendarComponent implements OnInit, OnChanges {
-  @Input() selectedDate: Date = new Date();
+  @Input() selectedDates: any;
+
   @Input() loadingData: boolean;
   @Input() ycConfig: YCConfig = DEFAULT_CONFIG;
   @Input() daysOfWeek: any = [...DAYS_OF_WEEK];
@@ -23,13 +24,14 @@ export class YearCalendarComponent implements OnInit, OnChanges {
   year = new Date().getFullYear();
   yearData = [];
   maxValueInYear: number;
+  currentDate: Date = new Date();
   constructor(
     private ycService: YearCalendarService
   ) { }
 
   ngOnInit() {
     this.ycConfig.headerTemplate = this.ycConfig.headerTemplate || this.defaultHeaderTemplate;
-    this.render(this.selectedDate.getFullYear());
+    // this.render(this.currentDate.getFullYear());
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -53,10 +55,17 @@ export class YearCalendarComponent implements OnInit, OnChanges {
       }
     }
 
-    if (changes.selectedDate) {
-      if (changes.selectedDate.previousValue && changes.selectedDate.currentValue !== changes.selectedDate.previousValue) {
-        this.viewYearChanged.emit(this.year);
+    if (changes.selectedDates) {
+      // if (changes.selectedDates.previousValue && changes.selectedDates.currentValue !== changes.selectedDates.previousValue) {
+      //   this.render(new Date(changes.selectedDates.currentValue.date).getFullYear(), changes.selectedDates.currentValue.list);
+
+      // }
+
+      if (changes.selectedDates && changes.selectedDates.currentValue !== changes.selectedDates.previousValue) {
+        this.render(new Date(changes.selectedDates.currentValue.date).getFullYear(), changes.selectedDates.currentValue.list);
       }
+
+
     }
   }
 
@@ -65,13 +74,13 @@ export class YearCalendarComponent implements OnInit, OnChanges {
    * @desc Creates the months data and assigns to `yearData` which is rendered on the view
    * @param date - date of the year to render
    */
-  render(year: number = this.year) {
+  render(year: number = this.year, selectedDates?) {
     this.year = year;
     this.daysOfWeek = [...this.getDaysOfWeek()];
     this.yearData = new Array(12).fill(0).map((_, monthIndex) => {
       return {
         date: new Date(this.year, monthIndex + 1, 0),
-        weeks: this.createDaysOfMonth(monthIndex, this.year),
+        weeks: this.createDaysOfMonth(monthIndex, this.year, selectedDates),
         weekNumbers: this.ycService.getWeekNumbers(monthIndex, this.year, this.ycConfig)
       };
     });
@@ -91,7 +100,7 @@ export class YearCalendarComponent implements OnInit, OnChanges {
    * @param monthIndex - index of the month of which the days are to be calculated
    * @param year - the year which is displayed on the view
    */
-  createDaysOfMonth(monthIndex, year) {
+  createDaysOfMonth(monthIndex, year, selectedDates) {
     // getting the weeks of the month to calculate rows on month view
     const monthWeeksData = this.ycService.getMonthWeeks(monthIndex, year, this.ycConfig.weekStartsOn);
     const {
@@ -122,10 +131,12 @@ export class YearCalendarComponent implements OnInit, OnChanges {
         }
         const currDayString = currDate.toDateString();
         const isToday = currDayString === todayStr; // if the current date is actually today
+        let isSelected = this.selectedDates.list.find(date => new Date(date).toDateString() === currDayString)? true: false;
         const dayValue = this.assignDataCountToDate(currDayString).count;
         daysOfWeeks[weekIndex][indexDay] = {  // setting the day of the week in the structure
           day: currentDate,
-          isToday,
+          isToday: isToday,
+          isSelected: isSelected, 
           value: dayValue,
           date: currDate
         };
@@ -169,12 +180,14 @@ export class YearCalendarComponent implements OnInit, OnChanges {
   }
 
   nextYearClick() {
-    this.render(this.year + 1);
+    this.selectedDates.list = [];
+    this.render(this.year + 1, this.selectedDates.list);
     this.viewYearChanged.emit(this.year);
   }
 
   prevYearClick() {
-    this.render(this.year - 1);
+    this.selectedDates.list = [];
+    this.render(this.year - 1, this.selectedDates.list);
     this.viewYearChanged.emit(this.year);
   }
 
@@ -187,6 +200,13 @@ export class YearCalendarComponent implements OnInit, OnChanges {
       day,
       trigger
     });
+    let selectedIndex = this.selectedDates.list.findIndex(date => new Date(date).toDateString() === new Date(day.date).toDateString());
+    if (selectedIndex > -1) {
+      this.selectedDates.list = this.selectedDates.list.filter(date => new Date(date).toDateString() !== new Date(day.date).toDateString());
+    } else {
+      this.selectedDates.list.push(new Date(day.date));
+    }
+    this.render(this.year, this.selectedDates.list);
   }
 
 }

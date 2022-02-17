@@ -43,6 +43,7 @@ export interface YCDayItem {
   weeks: Array<Array<{  // setting the day of the week in the structure
     day?: number,
     isToday: boolean,
+    isSelected: boolean,
     value: number,
     date: Date
   }>>;
