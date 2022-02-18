@@ -1,5 +1,5 @@
-.m-t-55 {
-    margin-top: 55px !important;
+.m-t-70 {
+    margin-top: 70px !important;
 }
 
 .navbar {
@@ -8,4 +8,33 @@
 
 .m-y-20 {
     padding: 20px 0px;
+}
+
+.profile {
+    span {
+        font-size: 20px;
+        margin-right: 7px;
+    }
+}
+
+.box {
+    min-height: 50px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 15px;;
+
+    span.tube {
+        background: #012834;
+        padding: 5px 10px;
+        color: #fff;
+        border: 1px solid #012834;
+        border-radius: 4px;
+        margin-right: 10px;
+
+        a.close {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+    }
 }

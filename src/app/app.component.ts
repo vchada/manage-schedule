@@ -14,7 +14,8 @@ export class AppComponent {
   selectedYear = 2022;
 
   prefrenceList = [
-    'Holiday', 'All Monday'
+    'Holiday', 
+    'All Monday'
   ]
 
   selectedPrefrence = []
@@ -31,5 +32,9 @@ export class AppComponent {
   sendYearChanged(year) {
     this.selectedYear = (new Date(year)).getFullYear();
     this.selectedPrefrence = [];
+  }
+
+  remove(prefrence) {
+    this.selectedPrefrence = this.selectedPrefrence.filter(item => item !== prefrence);
   }
 }

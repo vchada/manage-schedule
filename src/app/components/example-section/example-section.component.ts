@@ -1,7 +1,7 @@
 import { Component, OnInit, EventEmitter, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, Output } from '@angular/core';
 import { WeekNumberPipe } from 'src/app/lib/pipes/week-number/week-number.pipe';
 import { YCConfig } from 'src/app/lib/year-calendar-interfaces';
-
+import { holidayList } from '../../holiday-list.constant';
 @Component({
   selector: 'ycd-example-section',
   templateUrl: './example-section.component.html',
@@ -70,39 +70,48 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
     }
 
     if(!changes.prefrence.firstChange && changes.prefrence.currentValue.includes('Holiday')) {
-      const holidays = [new Date('01/01/'+ this.year), new Date('02/01/'+ this.year), new Date('03/01/'+ this.year), new Date('04/02/'+ this.year)]
-      this.prefrences = [...this.prefrences, ...holidays];
-      this.selectPrefrences();
+      const list = [];
+      if(holidayList[this.year] && holidayList[this.year].length > 0) {
+        holidayList[this.year].forEach(date => {
+          list.push(new Date(date))
+        })
+      }
+
+
+      this.prefrences = [...this.prefrences, ...list];
+      
     }
 
     if(!changes.prefrence.firstChange && changes.prefrence.currentValue.includes('All Monday')) {
-      
-      const mondays = [
-        new Date('01/03/'+ this.year), 
-        new Date('01/10/'+ this.year), 
-        new Date('01/17/'+ this.year), 
-        new Date('01/24/'+ this.year), 
-        new Date('01/31/'+ this.year),
-
-        new Date('02/07/'+ this.year), 
-        new Date('02/14/'+ this.year), 
-        new Date('02/21/'+ this.year), 
-        new Date('02/28/'+ this.year),
-
-        new Date('03/07/'+ this.year), 
-        new Date('03/14/'+ this.year), 
-        new Date('03/21/'+ this.year), 
-        new Date('03/28/'+ this.year),
-
-        new Date('04/04/'+ this.year), 
-        new Date('04/11/'+ this.year), 
-        new Date('04/18/'+ this.year), 
-        new Date('04/25/'+ this.year)
-      
-      ]
+      let mondays = [];
+      for (let i = 1; i <= 12; i++) {
+        mondays = [...mondays, ...this.mondaysInMonth(i, this.year)];
+      }    
       this.prefrences = [...this.prefrences, ...mondays];
-      this.selectPrefrences();
+      
     }
+    this.selectPrefrences();
+
+  }
+
+  mondaysInMonth(m,y) {
+    let days = new Date(y,m,0).getDate();
+    let mondays: any =  new Date(m +'/01/'+ y).getDay();
+    if(mondays != 1){
+      mondays = 9 - mondays;
+    }
+    mondays = [mondays];
+    //console.log(mondays);
+    for (let i = mondays[0] + 7; i <= days; i += 7) {
+      mondays.push(i);
+    }
+
+    let mandaydates = [];
+    mondays.forEach(date => {
+      mandaydates.push(new Date(m + '/' + date + '/' + y))
+    })
+
+    return mandaydates;
   }
 
   yearChanged($event: any) {

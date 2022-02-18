@@ -2,16 +2,18 @@
   <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">
-        <img src="https://mdbootstrap.com/img/logo/mdb-transaprent-noshadows.png" height="25" alt="" loading="lazy" />
+        <img src="../assets/coschedule-logo.png" height="40" alt="" loading="lazy" />
       </a>
-      <form class="d-none d-md-flex input-group w-auto my-auto">
-        <input autocomplete="off" type="search" class="form-control rounded" placeholder='Search (ctrl + "/" to focus)'
-          style="min-width: 225px" />
-      </form>
+
+      <a class="navbar-brand profile" href="#">
+        <span>Millan, David</span>
+        <img src="../assets/userIcon.png" height="20" alt="" loading="lazy" />
+      </a>
+      
     </div>
   </nav>
 </header>
-<div class="container-fluid m-t-55">
+<div class="container-fluid m-t-70">
   <div class="row m-y-20">
     <div class="col-2">
 
@@ -39,8 +41,10 @@
 
     </div>
 
-    <div class="col-7">
-
+    <div class="col-7" >
+      <div class="box">
+        <span class="tube" *ngFor="let prefrence of selectedPrefrence"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="remove(prefrence)">&#10006;</a></span>
+      </div>
     </div>
   </div>
 

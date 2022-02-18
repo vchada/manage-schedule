@@ -180,15 +180,23 @@ export class YearCalendarComponent implements OnInit, OnChanges {
   }
 
   nextYearClick() {
-    this.selectedDates.list = [];
-    this.render(this.year + 1, this.selectedDates.list);
-    this.viewYearChanged.emit(this.year);
+    let maxyear = new Date().getFullYear() + 10;
+    if((this.year + 1) <= maxyear) {
+
+      this.selectedDates.list = [];
+      this.render(this.year + 1, this.selectedDates.list);
+      this.viewYearChanged.emit(this.year);
+    }
   }
 
   prevYearClick() {
-    this.selectedDates.list = [];
-    this.render(this.year - 1, this.selectedDates.list);
-    this.viewYearChanged.emit(this.year);
+    let minyear = new Date().getFullYear();
+    if((this.year - 1) >= minyear) {
+
+      this.selectedDates.list = [];
+      this.render(this.year - 1, this.selectedDates.list);
+      this.viewYearChanged.emit(this.year);
+    }
   }
 
   todayClick() {
