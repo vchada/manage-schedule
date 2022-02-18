@@ -34,6 +34,10 @@ export class AppComponent {
     this.selectedPrefrence = [];
   }
 
+  cancel() {
+    this.selectedPrefrence = [];
+  }
+
   remove(prefrence) {
     this.selectedPrefrence = this.selectedPrefrence.filter(item => item !== prefrence);
   }

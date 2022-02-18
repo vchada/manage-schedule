@@ -17,6 +17,25 @@
     }
 }
 
+.btn-container {
+    text-align: right;
+    padding: 14px 32px;
+    border-bottom: 2px solid #E8ECEF;
+    border-top: 2px solid #E8ECEF;
+
+    button {
+        margin: 5px 10px;
+    }
+
+    button.btn-dark {
+        background-color: #012834 !important;
+    }
+
+    button.btn-dark.generate {
+        background-color: #075a33 !important;
+    }
+}
+
 .box {
     min-height: 50px;
     border: 1px solid gray;
