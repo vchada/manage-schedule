@@ -2,6 +2,8 @@ import { Component, OnInit, EventEmitter, Input, OnChanges, SimpleChanges, Chang
 import { WeekNumberPipe } from 'src/app/lib/pipes/week-number/week-number.pipe';
 import { YCConfig } from 'src/app/lib/year-calendar-interfaces';
 import { holidayList } from '../../holiday-list.constant';
+import * as moment from 'moment';
+
 @Component({
   selector: 'ycd-example-section',
   templateUrl: './example-section.component.html',
@@ -12,6 +14,7 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
 
   @Input() year = '';
   @Input() prefrence = []
+  @Output() dateSelected = new EventEmitter();
 
   ycConfig: YCConfig = {
     heatmapColor: '#FF5500',
@@ -49,11 +52,15 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
       date: new Date('01/01/' + this.year),
       list: this.prefrences
     }
+    this.finalSelectedDates = this.selectedDates.list;
+    this.dateSelected.emit(this.finalSelectedDates);
   }
   
   @Input() loadingData = false;
   @Input() calendarDate = new Date();
   weekNumberPipe = new WeekNumberPipe();
+
+  finalSelectedDates = [];
   constructor() { }
 
   ngOnInit() {
@@ -61,6 +68,8 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
       date: new Date('01/01/' + this.year),
       list: this.prefrences
     }
+    this.finalSelectedDates = this.selectedDates.list;
+    this.dateSelected.emit(this.finalSelectedDates);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -120,7 +129,15 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
   }
 
   dayClicked($event: any) {
-    console.log(this.weekNumberPipe.transform($event.day.date, this.ycConfig, this.calendarDate.getFullYear()));
+    const findIndex = this.finalSelectedDates.find(item => moment(item).format('L') === moment($event.day.date).format('L'));
+    if(findIndex > -1) {
+      this.finalSelectedDates = this.finalSelectedDates.filter(item => {
+        return item !== $event.day.date ? true : false;
+      })
+    } else {
+      this.finalSelectedDates.push(new Date($event.day.date));
+    }
+    this.dateSelected.emit(this.finalSelectedDates);
   }
 
 }

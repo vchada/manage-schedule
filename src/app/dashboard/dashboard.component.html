@@ -1,0 +1,52 @@
+
+  <div class="row m-y-20">
+    <div class="col-2">
+
+      <mat-form-field appearance="fill">
+        <mat-label>Select Year</mat-label>
+        <mat-select (ngModelChange)="changeYear($event)" [(ngModel)]="selectedYear">
+          <mat-option *ngFor="let year of years" [value]="year">
+            {{year}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    <div class="col-3">
+
+      <mat-form-field appearance="fill">
+        <mat-label>Select Prefrence</mat-label>
+        <mat-select multiple (ngModelChange)="changePrefrence($event)" [(ngModel)]="selectedPrefrence">
+          <mat-option *ngFor="let prefrence of prefrenceList" [value]="prefrence">
+            {{prefrence}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    <div class="col-7" >
+      <div class="box">
+        <span class="tube" *ngFor="let prefrence of selectedPrefrence"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="remove(prefrence)">&#10006;</a></span>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card-container">
+        <ycd-example-section (sendYearChanged)="sendYearChanged($event)" [year]="selectedYear" [prefrence]="selectedPrefrence" (dateSelected)="dateSelected($event)" >
+        </ycd-example-section>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 btn-container">
+      <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
+      <button type="button" (click)="save()" class="btn btn-dark">Save</button>
+      <button type="button" (click)="generate()" class="btn btn-dark generate">Generate</button>
+    </div>
+  </div>

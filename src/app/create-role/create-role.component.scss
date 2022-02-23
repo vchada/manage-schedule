@@ -1,0 +1,53 @@
+
+.btn-container {
+    text-align: right;
+    padding: 14px 32px;
+    border-bottom: 2px solid #E8ECEF;
+    border-top: 2px solid #E8ECEF;
+
+    button {
+        margin: 5px 10px;
+    }
+
+    button.btn-dark {
+        background-color: #012834 !important;
+    }
+
+    button.btn-dark.generate {
+        background-color: #075a33 !important;
+    }
+}
+
+.box {
+    min-height: 50px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 15px;;
+
+    span.tube {
+        background: #012834;
+        padding: 5px 10px;
+        color: #fff;
+        border: 1px solid #012834;
+        border-radius: 4px;
+        margin-right: 10px;
+
+        a.close {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+    }
+}
+
+.m-0 {
+    margin: 0;
+}
+
+.m-y-20 {
+    padding: 20px 0px;
+}
+
+.full-width {
+    width: 100%;
+}

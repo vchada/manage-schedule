@@ -9,12 +9,17 @@ import { YearCalendarModule } from './lib/year-calendar.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from "@angular/material/icon";
 import { MatSelectModule } from '@angular/material/select'; 
-import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { CreateRoleComponent } from './create-role/create-role.component';
+import { DashboardComponent } from './dashboard/dashboard.component'
 
 @NgModule({
   declarations: [
     AppComponent,
-    ExampleSectionComponent
+    ExampleSectionComponent,
+    CreateRoleComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +30,8 @@ import { MatFormFieldModule } from '@angular/material/form-field'
     MatFormFieldModule,
     BrowserAnimationsModule,
     FormsModule,
-    MatIconModule
+    MatIconModule,
+    MatInputModule
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -1,0 +1,77 @@
+<div class="row m-y-20">
+    <div class="col-2">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Select Year</mat-label>
+            <mat-select (ngModelChange)="changeYear($event)" [(ngModel)]="selectedYear">
+                <mat-option *ngFor="let year of years" [value]="year">
+                    {{year}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+    </div>
+
+    <div class="col-3">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Select Prefrence</mat-label>
+            <mat-select multiple (ngModelChange)="changePrefrence($event)" [(ngModel)]="selectedPrefrence">
+                <mat-option *ngFor="let prefrence of prefrenceList" [value]="prefrence">
+                    {{prefrence}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+    </div>
+
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card-container">
+            <ycd-example-section (sendYearChanged)="sendYearChanged($event)" [year]="selectedYear"
+                [prefrence]="selectedPrefrence">
+            </ycd-example-section>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 btn-container">
+        <button type="button" (click)="cancel()" class="btn btn-secondary">Clear</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup"
+            class="btn btn-dark">Save</button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="confirmationPopup" tabindex="-1" aria-labelledby="confirmationPopup" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title m-0" id="confirmationPopupTitle">Create Role</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form [formGroup]="form">
+            <div class="modal-body">
+
+                <mat-form-field class="full-width" appearance="fill">
+                    <mat-label>Role Name</mat-label>
+                    <input matInput placeholder="" formControlName="name">
+                    <mat-error *ngIf="form.get('name').hasError('required')">
+                        Role Name is required.
+                    </mat-error>
+                </mat-form-field>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-dark">Save changes</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
