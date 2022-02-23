@@ -15,7 +15,7 @@
     <div class="col-3">
 
         <mat-form-field appearance="fill">
-            <mat-label>Select Prefrence</mat-label>
+            <mat-label>Select Existing Rule</mat-label>
             <mat-select multiple (ngModelChange)="changePrefrence($event)" [(ngModel)]="selectedPrefrence">
                 <mat-option *ngFor="let prefrence of prefrenceList" [value]="prefrence">
                     {{prefrence}}
@@ -51,7 +51,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title m-0" id="confirmationPopupTitle">Create Role</h2>
+                <h2 class="modal-title m-0" id="confirmationPopupTitle">Create Rule</h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
@@ -59,10 +59,10 @@
             <div class="modal-body">
 
                 <mat-form-field class="full-width" appearance="fill">
-                    <mat-label>Role Name</mat-label>
+                    <mat-label>Rule Name</mat-label>
                     <input matInput placeholder="" formControlName="name">
                     <mat-error *ngIf="form.get('name').hasError('required')">
-                        Role Name is required.
+                        Rule Name is required.
                     </mat-error>
                 </mat-form-field>
 

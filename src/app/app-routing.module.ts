@@ -6,7 +6,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 
 const routes: Routes = [
   {path: '', component: DashboardComponent, pathMatch: 'full'},
-  {path: 'create-role', component: CreateRoleComponent},
+  {path: 'create-rule', component: CreateRoleComponent},
   { path: '**', redirectTo: '' }
 ];
 
