@@ -13,6 +13,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CreateRoleComponent } from './create-role/create-role.component';
 import { DashboardComponent } from './dashboard/dashboard.component'
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,9 @@ import { DashboardComponent } from './dashboard/dashboard.component'
     BrowserAnimationsModule,
     FormsModule,
     MatIconModule,
-    MatInputModule
+    MatInputModule,
+    MatCheckboxModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent],

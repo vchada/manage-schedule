@@ -12,18 +12,80 @@
 
     </div>
 
+
+    <div class="col-2" >
+
+            
+        <mat-checkbox class="example-margin" (ngModelChange)="changeFlexibledate($event)" [(ngModel)]="flexibleDates">Flexible Date(s)</mat-checkbox>
+
+    </div> 
+
     <div class="col-2">
 
         <mat-form-field appearance="fill">
             <mat-label>Select Month</mat-label>
-            <mat-select (ngModelChange)="changeMonth($event)" [(ngModel)]="selectedMonth">
-                <mat-option *ngFor="let month of monthList" [value]="month">
-                    {{month}}
+            <mat-select [disabled]="flexibleDates" (ngModelChange)="changeMonth($event)" [(ngModel)]="selectedMonth">
+                <mat-option *ngFor="let month of monthList" [value]="month.value">
+                    {{month.display}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
 
     </div>
+
+<!-- </div>
+
+<div class="row m-y-20" *ngIf="dateList && dateList.length > 0"> -->
+
+    <!-- <div class="col-2" >
+
+        <mat-form-field appearance="fill">
+            <mat-label>Select Day of Month</mat-label>
+            <mat-select [disabled]="selectedWeek || selectedDay || !(dateList && dateList.length > 0)" (ngModelChange)="changeDate($event)" [(ngModel)]="selectedDate">
+                <mat-option *ngFor="let date of dateList" [value]="date">
+                    {{date}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+    </div> -->
+
+    <!-- <div class="col-1">
+        OR
+    </div> -->
+
+    <div class="col-2" >
+
+        <mat-form-field appearance="fill">
+            <mat-label>Select Week of Month</mat-label>
+            <mat-select [disabled]="selectedDate || !(dateList && dateList.length > 0)  || flexibleDates" (ngModelChange)="changeWeek($event)" [(ngModel)]="selectedWeek">
+                <mat-option *ngFor="let week of weekList" [value]="week">
+                    {{week}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+    </div>
+
+
+    <div class="col-2">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Select Day of Week</mat-label>
+            <mat-select [disabled]="selectedDate || !(dateList && dateList.length > 0) || flexibleDates" (ngModelChange)="changeDay($event)" [(ngModel)]="selectedDay">
+                <mat-option *ngFor="let day of dayList" [value]="day.value">
+                    {{day.display}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+    </div>
+
+    <div class="col-2">
+        <button type="button" (click)="reset()" class="btn btn-secondary">Reset</button>
+        <button type="button" (click)="apply()" [disabled]="!selectedMonth || !selectedWeek || !selectedDay" class="btn btn-dark ms-2">Preview</button>
+    </div>
+
 
 </div>
 
@@ -32,7 +94,7 @@
     <div class="col-12">
         <div class="card-container">
             <ycd-example-section (sendYearChanged)="sendYearChanged($event)" [year]="selectedYear"
-                [prefrence]="selectedPrefrence">
+                [prefrence]="selectedPrefrence" [customDateSelection]="flexibleDates" (dateSelected)="dateSelected($event)">
             </ycd-example-section>
         </div>
     </div>
@@ -41,8 +103,10 @@
 <div class="row">
     <div class="col-12 btn-container">
         <button type="button" (click)="cancel()" class="btn btn-secondary">Clear</button>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup"
-            class="btn btn-dark">Save</button>
+        <button type="button" *ngIf="flexibleDates" [disabled]="!(selectedDateList && selectedDateList.length > 0)" data-bs-toggle="modal" data-bs-target="#confirmationPopup"
+            class="btn btn-dark">Save Rule</button>
+        <button type="button" *ngIf="!flexibleDates" [disabled]="!(selectedMonth && selectedWeek && selectedDay)" data-bs-toggle="modal" data-bs-target="#confirmationPopup"
+                class="btn btn-dark">Save Rule</button>
     </div>
 </div>
 
@@ -69,7 +133,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-dark">Save changes</button>
+                <button type="button" [disabled]="!form.valid" (click)="submitRule()" class="btn btn-dark">Submit Rule</button>
             </div>
             </form>
         </div>
