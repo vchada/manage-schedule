@@ -14,7 +14,7 @@ export const DAYS_OF_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 })
 export class YearCalendarComponent implements OnInit, OnChanges {
   @Input() selectedDates: any;
-
+  @Input() customDateSelection: boolean= true;
   @Input() loadingData: boolean;
   @Input() ycConfig: YCConfig = DEFAULT_CONFIG;
   @Input() daysOfWeek: any = [...DAYS_OF_WEEK];
@@ -204,17 +204,19 @@ export class YearCalendarComponent implements OnInit, OnChanges {
   }
 
   eventDayCick(day, trigger: CdkOverlayOrigin) {
-    this.eventDayClicked.emit({
-      day,
-      trigger
-    });
-    let selectedIndex = this.selectedDates.list.findIndex(date => new Date(date).toDateString() === new Date(day.date).toDateString());
-    if (selectedIndex > -1) {
-      this.selectedDates.list = this.selectedDates.list.filter(date => new Date(date).toDateString() !== new Date(day.date).toDateString());
-    } else {
-      this.selectedDates.list.push(new Date(day.date));
+    if(this.customDateSelection) {
+      this.eventDayClicked.emit({
+        day,
+        trigger
+      });
+      let selectedIndex = this.selectedDates.list.findIndex(date => new Date(date).toDateString() === new Date(day.date).toDateString());
+      if (selectedIndex > -1) {
+        this.selectedDates.list = this.selectedDates.list.filter(date => new Date(date).toDateString() !== new Date(day.date).toDateString());
+      } else {
+        this.selectedDates.list.push(new Date(day.date));
+      }
+      this.render(this.year, this.selectedDates.list);
     }
-    this.render(this.year, this.selectedDates.list);
   }
 
 }

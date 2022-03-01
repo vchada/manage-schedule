@@ -1,7 +1,6 @@
 import { Component, OnInit, EventEmitter, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, Output } from '@angular/core';
 import { WeekNumberPipe } from 'src/app/lib/pipes/week-number/week-number.pipe';
 import { YCConfig } from 'src/app/lib/year-calendar-interfaces';
-import { holidayList } from '../../holiday-list.constant';
 import * as moment from 'moment';
 
 @Component({
@@ -13,7 +12,8 @@ import * as moment from 'moment';
 export class ExampleSectionComponent implements OnInit, OnChanges {
 
   @Input() year = '';
-  @Input() prefrence = []
+  @Input() prefrence = [];
+  @Input() customDateSelection = true;
   @Output() dateSelected = new EventEmitter();
 
   ycConfig: YCConfig = {
@@ -43,7 +43,7 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
 
   selectedDates: any;
 
-  prefrences: any = [new Date()];
+  prefrences: any = [];
 
   @Output() sendYearChanged = new EventEmitter();
 
@@ -74,31 +74,18 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
 
-    if(!changes.prefrence.firstChange && changes.prefrence.currentValue) {
+    if(changes.prefrence && !changes.prefrence.firstChange && changes.prefrence.currentValue) {
       this.prefrences = [];
     }
-
-    if(!changes.prefrence.firstChange && changes.prefrence.currentValue.includes('Holiday')) {
-      const list = [];
-      if(holidayList[this.year] && holidayList[this.year].length > 0) {
-        holidayList[this.year].forEach(date => {
-          list.push(new Date(date))
-        })
-      }
-
-
-      this.prefrences = [...this.prefrences, ...list];
-      
+    
+    if(changes.prefrence && !changes.prefrence.firstChange && changes.prefrence.currentValue && changes.prefrence.currentValue.length > 0) {
+      changes.prefrence.currentValue.forEach(item => {
+        if(moment(item).isValid()) {
+          this.prefrences.push(moment(item))
+        }
+      })
     }
 
-    if(!changes.prefrence.firstChange && changes.prefrence.currentValue.includes('All Monday')) {
-      let mondays = [];
-      for (let i = 1; i <= 12; i++) {
-        mondays = [...mondays, ...this.mondaysInMonth(i, this.year)];
-      }    
-      this.prefrences = [...this.prefrences, ...mondays];
-      
-    }
     this.selectPrefrences();
 
   }
