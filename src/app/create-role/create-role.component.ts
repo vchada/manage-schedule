@@ -17,6 +17,8 @@ export class CreateRoleComponent implements OnInit {
 
   }
 
+  selectedPrefrence = []
+
   ngOnInit(): void {
   }
     
@@ -32,33 +34,39 @@ export class CreateRoleComponent implements OnInit {
 
   selectedYear = 2022;
 
-  prefrenceList = [
-    'Holiday', 
-    'All Monday'
+  monthList = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
   ]
 
-  selectedPrefrence = []
+  selectedMonth = '';
 
   changeYear(year) {
     this.selectedYear = year;
-    this.selectedPrefrence = [];
+    this.selectedMonth = '';
   }
 
-  changePrefrence(prefrence) {
-    this.selectedPrefrence = prefrence;
+  changeMonth(Month) {
+    this.selectedMonth = Month;
   }
 
   sendYearChanged(year) {
     this.selectedYear = (new Date(year)).getFullYear();
-    this.selectedPrefrence = [];
   }
 
   cancel() {
-    this.selectedPrefrence = [];
+    this.selectedMonth = '';
   }
 
-  remove(prefrence) {
-    this.selectedPrefrence = this.selectedPrefrence.filter(item => item !== prefrence);
-  }
 
 }
