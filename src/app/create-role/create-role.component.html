@@ -3,7 +3,7 @@
 
         <mat-form-field appearance="fill">
             <mat-label>Select Year</mat-label>
-            <mat-select (ngModelChange)="changeYear($event)" [(ngModel)]="selectedYear">
+            <mat-select [disableOptionCentering]="true" (ngModelChange)="changeYear($event)" [(ngModel)]="selectedYear">
                 <mat-option *ngFor="let year of years" [value]="year">
                     {{year}}
                 </mat-option>
@@ -24,7 +24,7 @@
 
         <mat-form-field appearance="fill">
             <mat-label>Select Month</mat-label>
-            <mat-select [disabled]="flexibleDates" (ngModelChange)="changeMonth($event)" [(ngModel)]="selectedMonth">
+            <mat-select [disableOptionCentering]="true" [disabled]="flexibleDates" (ngModelChange)="changeMonth($event)" [(ngModel)]="selectedMonth">
                 <mat-option *ngFor="let month of monthList" [value]="month.value">
                     {{month.display}}
                 </mat-option>
@@ -41,7 +41,7 @@
 
         <mat-form-field appearance="fill">
             <mat-label>Select Day of Month</mat-label>
-            <mat-select [disabled]="selectedWeek || selectedDay || !(dateList && dateList.length > 0)" (ngModelChange)="changeDate($event)" [(ngModel)]="selectedDate">
+            <mat-select [disableOptionCentering]="true" [disabled]="selectedWeek || selectedDay || !(dateList && dateList.length > 0)" (ngModelChange)="changeDate($event)" [(ngModel)]="selectedDate">
                 <mat-option *ngFor="let date of dateList" [value]="date">
                     {{date}}
                 </mat-option>
@@ -58,7 +58,7 @@
 
         <mat-form-field appearance="fill">
             <mat-label>Select Week of Month</mat-label>
-            <mat-select [disabled]="selectedDate || !(dateList && dateList.length > 0)  || flexibleDates" (ngModelChange)="changeWeek($event)" [(ngModel)]="selectedWeek">
+            <mat-select [disableOptionCentering]="true" [disabled]="selectedDate || !(dateList && dateList.length > 0)  || flexibleDates" (ngModelChange)="changeWeek($event)" [(ngModel)]="selectedWeek">
                 <mat-option *ngFor="let week of weekList" [value]="week">
                     {{week}}
                 </mat-option>
@@ -72,7 +72,7 @@
 
         <mat-form-field appearance="fill">
             <mat-label>Select Day of Week</mat-label>
-            <mat-select [disabled]="selectedDate || !(dateList && dateList.length > 0) || flexibleDates" (ngModelChange)="changeDay($event)" [(ngModel)]="selectedDay">
+            <mat-select [disableOptionCentering]="true" [disabled]="selectedDate || !(dateList && dateList.length > 0) || flexibleDates" (ngModelChange)="changeDay($event)" [(ngModel)]="selectedDay">
                 <mat-option *ngFor="let day of dayList" [value]="day.value">
                     {{day.display}}
                 </mat-option>

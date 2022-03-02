@@ -4,7 +4,8 @@
       <div class="row">
         <div class="col-12">
           <a class="navbar-brand" [routerLinkActive]="['active']" class="path" [routerLinkActiveOptions]="{exact: true}">
-            <img src="../assets/coschedule-logo.png" height="40" alt="" loading="lazy" />
+            <img src="../assets/logo.svg" height="80" width="80" alt="" loading="lazy" />
+            <span class="logo">Calender Scheduler</span>
           </a>
           <a [routerLinkActive]="['active']" class="path" [routerLinkActiveOptions]="{exact: true}" [routerLink]="['']">Dashboard</a>
           <a [routerLinkActive]="['active']" class="path" [routerLink]="['schedule']">Schedule</a>
@@ -19,6 +20,6 @@
     </div>
   </nav>
 </header>
-<div class="container-fluid m-t-70">
+<div class="container-fluid m-t-90">
   <router-outlet></router-outlet>
 </div>
