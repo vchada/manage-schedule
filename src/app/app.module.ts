@@ -12,15 +12,21 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CreateRoleComponent } from './create-role/create-role.component';
-import { DashboardComponent } from './dashboard/dashboard.component'
+import { ScheduleComponent } from './schedule/schedule.component'
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { HttpClientModule } from '@angular/common/http';
+import { DashboardComponent } from './dashboard/dashboard.component';
+
+import { MatTableModule } from "@angular/material/table";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatSortModule } from "@angular/material/sort";
 
 @NgModule({
   declarations: [
     AppComponent,
     ExampleSectionComponent,
     CreateRoleComponent,
+    ScheduleComponent,
     DashboardComponent
   ],
   imports: [
@@ -35,6 +41,9 @@ import { HttpClientModule } from '@angular/common/http';
     MatIconModule,
     MatInputModule,
     MatCheckboxModule,
+    MatTableModule,
+        MatPaginatorModule,
+        MatSortModule,
     HttpClientModule
   ],
   providers: [],
