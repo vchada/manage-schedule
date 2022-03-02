@@ -9,7 +9,7 @@ export class HttpService {
   constructor(private http: HttpClient) { }
 
   getSelectedDate(reqData) {
-    return this.http.post('https://jsonplaceholder.typicode.com/getdate', reqData)
+    return this.http.post('http://localhost:8080/dates/preview', reqData)
       .pipe(
         retry(2),
         catchError(this.handleError)
@@ -33,6 +33,31 @@ export class HttpService {
         catchError(this.handleError)
       );
   }
+
+  saveCalendar(reqData) {
+    return this.http.post('http://localhost:8080/holiday/saveCalendar', reqData)
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
+  getRuleIds() {
+    return this.http.get('http://localhost:8080/holiday/get-all-holiday-rule-ids')
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
+  getAllCalender(year) {
+    return this.http.get('http://localhost:8080/holiday/get-all-calendars/' + year)
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+  
 
   handleError(error: HttpErrorResponse) {
     return throwError(error);

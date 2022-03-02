@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { HttpService } from '../services/http.service';
@@ -9,6 +9,8 @@ import { HttpService } from '../services/http.service';
   styleUrls: ['./create-role.component.scss']
 })
 export class CreateRoleComponent implements OnInit {
+
+  @ViewChild('confirmationModal') confirmationModal: ElementRef;
 
   form: FormGroup = new FormGroup({});
   selectedPrefrence = []
@@ -63,6 +65,11 @@ export class CreateRoleComponent implements OnInit {
   changeFlexibledate(evt) {
     this.flexibleDates = evt;
     if (this.flexibleDates) {
+      this.selectedMonth = null;
+      this.selectedDate = null;
+      this.selectedWeek = null;
+      this.selectedDay = null;
+      this.selectedPrefrence = [];
 
     } else {
       this.selectedPrefrence = [];
@@ -123,14 +130,15 @@ export class CreateRoleComponent implements OnInit {
 
   apply() {
     const reqData = {
-
+      year: this.selectedYear,
+      dayOfTheMonth: 0,
+      dayOfTheWeek: this.dayList.find(item => item.value === this.selectedDay).display.toUpperCase(),
+      month: this.monthList.find(item => item.value === this.selectedMonth).display.toUpperCase(),
+      weekOfTheMonth: this.selectedWeek
     }
-    // API Call goes here
-    this.httpService.getSelectedDate(reqData).subscribe(res => {
+    this.httpService.getSelectedDate(reqData).subscribe((res: any) => {
       if (res) {
-
-        const date = new Date();
-        this.selectedPrefrence = [moment(date).format('L')];
+        this.selectedPrefrence = [moment(res).format('L')];
       }
     }, err => {
       console.error(err);
@@ -166,9 +174,9 @@ export class CreateRoleComponent implements OnInit {
         }
         this.selectedDateList.forEach(item => {
           if(reqData.customDays === '') {
-            reqData.customDays = reqData.customDays + moment(item).format('YYYY-MM-DD');
+            reqData.customDays = reqData.customDays + moment(item).format('MM-DD');
           } else {
-            reqData.customDays = reqData.customDays + ',' + moment(item).format('YYYY-MM-DD');
+            reqData.customDays = reqData.customDays + ',' + moment(item).format('MM-DD');
           }
         })
 
@@ -186,8 +194,9 @@ export class CreateRoleComponent implements OnInit {
         }
       }
 
-      this.httpService.saveSelectedDate(reqData).subscribe(res => {
-        if (res) {
+      this.httpService.saveSelectedDate(reqData).subscribe((res: any) => {
+        if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
+          this.confirmationModal.nativeElement.click();
         }
       }, err => {
         console.error(err);
