@@ -1,11 +1,16 @@
-.m-t-70 {
-    margin-top: 70px !important;
+.m-t-90 {
+    margin-top: 90px !important;
 }
 
 .navbar {
     box-shadow: 0 3px 6px -2px grey;
 }
 
+.logo {
+    font-size: 22px;
+    font-weight: bolder;
+    color: #012834;
+}
 
 .path {
     text-decoration: none;
@@ -24,6 +29,8 @@
  }
 .profile {
     float: right;
+    position: relative;
+    top: 28px;s
     span {
         font-size: 20px;
         margin-right: 7px;

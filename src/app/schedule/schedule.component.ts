@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import * as moment from 'moment';
 import { HttpService } from '../services/http.service';
@@ -11,6 +12,8 @@ import { HttpService } from '../services/http.service';
 export class ScheduleComponent implements OnInit {
 
   selectedDateList = [];
+  form: FormGroup = new FormGroup({});
+  @ViewChild('confirmationModal') confirmationModal: ElementRef;
 
   years = [
     2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032
@@ -22,13 +25,18 @@ export class ScheduleComponent implements OnInit {
 
   selectedPrefrence = []
   selectedPrefrenceList = [];
-  constructor(private httpService: HttpService) { }
+  constructor(private httpService: HttpService, private fb: FormBuilder) {
+    this.form = fb.group({
+      name: ['', [Validators.required]]
+    })
+   }
 
   ngOnInit(): void {
     this.fetchHolidayList(this.selectedYear);
   }
 
   fetchHolidayList(selectedYear) {
+    this.prefrenceList = [];
     this.httpService.getHolidayList(selectedYear).subscribe(res => {
       if (res ) {
         Object.keys(res).forEach(item => {
@@ -100,7 +108,7 @@ export class ScheduleComponent implements OnInit {
       if (ruleIds ) {
         
         const reqData = {
-          name: "VenkatTest1",
+          name: this.form.value.name,
           createdDateAndTime: null,
           createdUser: "Venkat Chada",
           lastModifiedUser: null,
@@ -117,7 +125,7 @@ export class ScheduleComponent implements OnInit {
         })
         this.httpService.saveCalendar(reqData).subscribe((res: any) => {
           if (res && res.message === 'CALENDER_PERSISTED_SUCCESSFULLY') {
-            
+            this.confirmationModal.nativeElement.click();
           }
         }, err => {
           console.error(err);

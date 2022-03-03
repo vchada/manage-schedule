@@ -8,8 +8,10 @@ import { HttpService } from '../services/http.service';
 })
 export class DashboardComponent implements OnInit {
 
-  displayedColumns = ["seqNo", "description", "duration"];
+  displayedColumns = ["name", "active", "ruleIds", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   dataSource: any = [];
+ 
+
 
   constructor(private httpService:HttpService) {}
 
