@@ -46,7 +46,7 @@ export class CreateRoleComponent implements OnInit {
     { display: 'Monday', value: '01' },
     { display: 'Tuesday', value: '02' },
     { display: 'Wednesday', value: '03' },
-    { display: 'Thrusday', value: '04' },
+    { display: 'Thursday', value: '04' },
     { display: 'Friday', value: '05' },
     { display: 'Saturday', value: '06' },
     { display: 'Sunday', value: '07' },
@@ -183,9 +183,9 @@ export class CreateRoleComponent implements OnInit {
       } else {
         reqData = {
           holidayType: this.form.value.name,
-          month: this.monthList.find(item => item.value === this.selectedMonth).display.toUpperCase(),
+          month: this.selectedMonth,
           dayOfTheMonth: '',
-          dayOfTheWeek: this.dayList.find(item => item.value === this.selectedDay).display.toUpperCase(),
+          dayOfTheWeek: this.selectedDay,
           weekOfTheMonth: this.selectedWeek,
           customDays: "",
           createdUser: 'User',
