@@ -7,3 +7,11 @@ table {
       font-weight: 600;
   }
   
+.min-h-50 {
+    min-height: calc((100vh - 96px) / 2) !important;
+    display: block !important;
+}
+
+.pointer {
+    cursor: pointer;
+}

@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { HttpService } from '../services/http.service';
 
@@ -55,10 +56,50 @@ export class CreateRoleComponent implements OnInit {
 
   flexibleDates = false;
 
-  constructor(private fb: FormBuilder, private httpService: HttpService) {
+  constructor(private fb: FormBuilder, private httpService: HttpService, private router: Router) {
     this.form = fb.group({
       name: ['', [Validators.required]]
     })
+
+    if(this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state){
+      const stateData = this.router.getCurrentNavigation().extras.state;
+      // holidayType: 'test-rule',
+      // month: '',
+      // dayOfTheMonth: '',
+      // dayOfTheWeek: '',
+      // weekOfTheMonth: '',
+      // customDays: '01-01,02-01,03-01,04-01,03-31,02-28,01-31,04-30',
+      // createdUser: 'User',
+      // lastModifiedUser: 'User',
+      // isActive: true
+
+
+
+      // this.selectedYear = 2022;
+      this.flexibleDates = stateData.customDays ? true : false;
+
+      if (this.flexibleDates) {
+        this.selectedMonth = null;
+        this.selectedDate = null;
+        this.selectedWeek = null;
+        this.selectedDay = null;
+
+        if(stateData.customDays) {
+          stateData.customDays.split(',').forEach(item => {
+            this.selectedPrefrence.push(moment(item + '-' + this.selectedYear).format('L'));
+          })
+        }
+  
+      } else {
+        this.selectedMonth = stateData.month;
+        this.selectedWeek = stateData.weekOfTheMonth;
+        this.selectedDay = stateData.dayOfTheWeek;
+
+        this.selectedPrefrence = []
+      }
+
+      
+    }
 
   }
 
@@ -79,6 +120,7 @@ export class CreateRoleComponent implements OnInit {
 
 
   ngOnInit(): void {
+    
   }
 
 
@@ -144,7 +186,7 @@ export class CreateRoleComponent implements OnInit {
       console.error(err);
 
       const date = new Date();
-      this.selectedPrefrence = [moment(date)];
+      this.selectedPrefrence = [moment(date).format('L')];
     })
 
   }
@@ -193,7 +235,7 @@ export class CreateRoleComponent implements OnInit {
           isActive: true
         }
       }
-
+      debugger;
       this.httpService.saveSelectedDate(reqData).subscribe((res: any) => {
         if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
           this.confirmationModal.nativeElement.click();
