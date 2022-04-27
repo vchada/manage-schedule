@@ -26,6 +26,14 @@ export class DashboardComponent implements OnInit {
           console.error(err);
         })
 
+        this.httpService.getAllRules().subscribe((res: any) => {
+          if (res) {
+            this.ruleDataSource = res;
+          }
+        }, err => {
+          console.error(err);
+        })
+
         this.dataSource = [
           {
             name : 'test',
@@ -51,6 +59,15 @@ export class DashboardComponent implements OnInit {
     }
 
     goToCreateRule(row) {
+      this.httpService.getRuleDetails(row.ruleId).subscribe((res: any) => {
+        if (res) {
+          const ruleDetails = res;          
+          this.router.navigate(['create-rule'], {state: row});
+        }
+      }, err => {
+        console.error(err);
+      })
+
       row = {
         holidayType: "test-rule",
         month: "",

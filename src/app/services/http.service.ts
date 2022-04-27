@@ -57,7 +57,22 @@ export class HttpService {
         catchError(this.handleError)
       );
   }
-  
+
+  getAllRules() {
+    return this.http.get('http://localhost:8080/holiday/get-all-rules')
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
+  getRuleDetails(ruleId) {
+    return this.http.get('http://localhost:8080/holiday/get-rule-details-by-ruleId', {params: {ruleId: ruleId}})
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
 
   handleError(error: HttpErrorResponse) {
     return throwError(error);
