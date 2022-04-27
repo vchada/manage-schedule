@@ -34,6 +34,14 @@ export class HttpService {
       );
   }
 
+  updateSelectedRule(reqData) {
+    return this.http.post('http://localhost:8080/holiday/update', reqData)
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
   saveCalendar(reqData) {
     return this.http.post('http://localhost:8080/holiday/saveCalendar', reqData)
       .pipe(

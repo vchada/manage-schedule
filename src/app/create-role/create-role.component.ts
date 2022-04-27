@@ -12,10 +12,14 @@ import { HttpService } from '../services/http.service';
 export class CreateRoleComponent implements OnInit {
 
   @ViewChild('confirmationModal') confirmationModal: ElementRef;
+  @ViewChild('disbaleConfirmationModal') disbaleConfirmationModal: ElementRef;
+  
 
   form: FormGroup = new FormGroup({});
   selectedPrefrence = []
   selectedDateList = [];
+  editRule = false;
+  editRuleId = '';
 
   years = [
     2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032
@@ -98,7 +102,17 @@ export class CreateRoleComponent implements OnInit {
         this.selectedPrefrence = []
       }
 
+      this.editRuleId = stateData.ruleId;
+
+      this.form.patchValue({
+        name: stateData.holidayType
+      })
+
+      this.editRule = true;
+
       
+    } else {
+      this.editRule = false;
     }
 
   }
@@ -199,7 +213,37 @@ export class CreateRoleComponent implements OnInit {
     this.selectedMonth = '';
   }
 
+  disableRuleConfirm() {    
+    if(this.createRequestData()) {
+      let reqData = this.createRequestData();
+      reqData.isActive = false;
+      reqData['ruleId'] = this.editRuleId;
+      this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
+        if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
+          this.disbaleConfirmationModal.nativeElement.click();          
+          this.router.navigate(['dashboard']);
+        }
+      }, err => {
+        console.error(err);
+      })
+    }
+  }
+
   submitRule() {
+    if(this.createRequestData()) {
+      const reqdata = this.createRequestData();
+      this.httpService.saveSelectedDate(reqdata).subscribe((res: any) => {
+        if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
+          this.confirmationModal.nativeElement.click();
+          this.router.navigate(['dashboard']);
+        }
+      }, err => {
+        console.error(err);
+      })
+    }
+  }
+
+  createRequestData() {
     let reqData: any = {};
     if((this.flexibleDates && this.selectedDateList && this.selectedDateList.length > 0) || (!this.flexibleDates && this.selectedMonth && this.selectedWeek && this.selectedDay) ){
       if(this.flexibleDates) {
@@ -235,14 +279,9 @@ export class CreateRoleComponent implements OnInit {
           isActive: true
         }
       }
-      debugger;
-      this.httpService.saveSelectedDate(reqData).subscribe((res: any) => {
-        if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
-          this.confirmationModal.nativeElement.click();
-        }
-      }, err => {
-        console.error(err);
-      })
+      return reqData;
+    } else {
+      return false;
     }
   }
 

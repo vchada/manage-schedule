@@ -69,6 +69,7 @@ export class DashboardComponent implements OnInit {
       })
 
       row = {
+        ruleId: 'idass',
         holidayType: "test-rule",
         month: "",
         dayOfTheMonth: "",

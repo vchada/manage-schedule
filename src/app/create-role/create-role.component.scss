@@ -51,3 +51,17 @@
 .full-width {
     width: 100%;
 }
+
+.update-rule-title {
+    padding: 25px 20px 0px;
+
+    .label {
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .value {
+        font-size: 16px;;
+    }
+
+}
