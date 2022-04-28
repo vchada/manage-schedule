@@ -50,20 +50,20 @@ export class DashboardComponent implements OnInit {
         console.error(err);
       })
 
-      row = {
-        ruleId: 'id123',
-        holidayType: "test-rule",
-        month: "",
-        dayOfTheMonth: "",
-        dayOfTheWeek: "",
-        weekOfTheMonth: "",
-        customDays: "01-01,02-01,03-01,04-01,03-31,02-28,01-31,04-30",
-        createdUser: "User",
-        lastModifiedUser: "User",
-        isActive: true
-      }
+      // row = {
+      //   ruleId: 'id123',
+      //   holidayType: "test-rule",
+      //   month: "",
+      //   dayOfTheMonth: "",
+      //   dayOfTheWeek: "",
+      //   weekOfTheMonth: "",
+      //   customDays: "01-01,02-01,03-01,04-01,03-31,02-28,01-31,04-30",
+      //   createdUser: "User",
+      //   lastModifiedUser: "User",
+      //   isActive: true
+      // }
 
-      this.router.navigate(['create-rule'], {state: row});
+      // this.router.navigate(['create-rule'], {state: row});
     }
 
 }
