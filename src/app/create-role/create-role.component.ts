@@ -95,11 +95,12 @@ export class CreateRoleComponent implements OnInit {
         }
   
       } else {
-        this.selectedMonth = stateData.month;
-        this.selectedWeek = stateData.weekOfTheMonth;
-        this.selectedDay = stateData.dayOfTheWeek;
+        this.changeMonth(stateData.month);
+        this.changeWeek(stateData.weekOfTheMonth);   
+        this.changeDay(stateData.dayOfTheWeek);
 
         this.selectedPrefrence = []
+        this.apply();
       }
 
       this.editRuleId = stateData.ruleId;
@@ -199,8 +200,8 @@ export class CreateRoleComponent implements OnInit {
     }, err => {
       console.error(err);
 
-      const date = new Date();
-      this.selectedPrefrence = [moment(date).format('L')];
+      // const date = new Date();
+      // this.selectedPrefrence = [moment(date).format('L')];
     })
 
   }
