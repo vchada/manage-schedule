@@ -35,7 +35,7 @@ export class HttpService {
   }
 
   updateSelectedRule(reqData) {
-    return this.http.post('http://localhost:8080/holiday/update', reqData)
+    return this.http.post('http://localhost:8080/holiday/update-rule', reqData)
       .pipe(
         retry(2),
         catchError(this.handleError)

@@ -34,28 +34,7 @@ export class DashboardComponent implements OnInit {
           console.error(err);
         })
 
-        this.dataSource = [
-          {
-            name : 'test',
-            active : 'test',
-            ruleIds : 'test',
-            createdDateAndTime : 'test',
-            createdUser : 'test',
-            lastModifiedDateAndTime : 'test',
-            lastModifiedUser: 'test'
-          }
-        ]
-        this.ruleDataSource = [
-          {
-            ruleId : 'test1',
-            ruleName : 'test1',
-            active : 'test1',
-            createdDateAndTime : 'test1',
-            createdUser : 'test1',
-            lastModifiedDateAndTime : 'test1',
-            lastModifiedUser: 'test1'
-          }
-        ]
+
     }
 
     goToCreateRule(row) {
@@ -81,17 +60,6 @@ export class DashboardComponent implements OnInit {
       //   isActive: true
       // }
 
-      row = {
-        holidayType: "test-28pril",
-        month: "01",
-        dayOfTheMonth: "",
-        dayOfTheWeek: "01",
-        weekOfTheMonth: 3,
-        customDays: "",
-        createdUser: "User",
-        lastModifiedUser: "User",
-        isActive: true
-      }
       this.router.navigate(['create-rule'], {state: row});
     }
 
