@@ -65,7 +65,10 @@ export class CreateRoleComponent implements OnInit {
       name: ['', [Validators.required]]
     })
 
+    // This will trigger in case of edit rule
     if(this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state){
+      
+      // this is edit rule data coming from dashboard
       const stateData = this.router.getCurrentNavigation().extras.state;
       // holidayType: 'test-rule',
       // month: '',
@@ -103,6 +106,8 @@ export class CreateRoleComponent implements OnInit {
         this.apply();
       }
 
+      // Todo needs to check ruleId coming or not
+      debugger;
       this.editRuleId = stateData.ruleId;
 
       this.form.patchValue({
@@ -217,10 +222,12 @@ export class CreateRoleComponent implements OnInit {
   disableRuleConfirm() {    
     if(this.createRequestData()) {
       let reqData = this.createRequestData();
+      debugger;
+      // check for reqData
       reqData.isActive = false;
       reqData['ruleId'] = this.editRuleId;
       this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
-        if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
+        if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
           this.disbaleConfirmationModal.nativeElement.click();          
           this.router.navigate(['dashboard']);
         }
@@ -230,17 +237,33 @@ export class CreateRoleComponent implements OnInit {
     }
   }
 
-  submitRule() {
+  saveRule() {
     if(this.createRequestData()) {
-      const reqdata = this.createRequestData();
-      this.httpService.saveSelectedDate(reqdata).subscribe((res: any) => {
-        if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
-          this.confirmationModal.nativeElement.click();
-          this.router.navigate(['dashboard']);
-        }
-      }, err => {
-        console.error(err);
-      })
+      let reqData = this.createRequestData();
+      if(this.editRuleId) {
+        // Update rule
+        reqData['ruleId'] = this.editRuleId;
+        this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
+          if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
+            this.disbaleConfirmationModal.nativeElement.click();          
+            this.router.navigate(['dashboard']);
+          }
+        }, err => {
+          console.error(err);
+        })
+      } else {
+        // Save new rule
+        this.httpService.saveSelectedDate(reqData).subscribe((res: any) => {
+          if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
+            this.confirmationModal.nativeElement.click();
+            this.router.navigate(['dashboard']);
+          }
+        }, err => {
+          console.error(err);
+        })
+
+      }
+
     }
   }
 
