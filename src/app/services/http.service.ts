@@ -16,7 +16,7 @@ export class HttpService {
       );
   }
 
-  
+
   getHolidayList(year) {
     return this.http.get('http://localhost:8080/holiday/get-all-holidays/' + year)
       .pipe(
@@ -24,7 +24,7 @@ export class HttpService {
         catchError(this.handleError)
       );
   }
-  
+
 
   saveSelectedDate(reqData) {
     return this.http.post('http://localhost:8080/holiday/save', reqData)
@@ -51,7 +51,7 @@ export class HttpService {
   }
 
   getRuleIds() {
-    return this.http.get('http://localhost:8080/holiday/get-all-holiday-rule-ids')
+    return this.http.get('http://localhost:8080/holiday/get-all-holidays/2022')
       .pipe(
         retry(2),
         catchError(this.handleError)

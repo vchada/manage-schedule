@@ -67,22 +67,22 @@
         <table mat-table [dataSource]="ruleDataSource" class="mat-elevation-z8">
 
           <!-- rule id Column -->
-          <ng-container matColumnDef="ruleId">
+          <ng-container matColumnDef="id">
             <th mat-header-cell *matHeaderCellDef> Rule Id </th>
-            <td mat-cell *matCellDef="let element"> {{element.ruleId}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
           </ng-container>
 
 
           <!-- rule name Column -->
-          <ng-container matColumnDef="ruleName">
+          <ng-container matColumnDef="holidayType">
             <th mat-header-cell *matHeaderCellDef> Rule Name </th>
-            <td mat-cell *matCellDef="let element"> {{element.ruleName}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.holidayType}} </td>
           </ng-container>
 
           <!-- active Column -->
-          <ng-container matColumnDef="active">
+          <ng-container matColumnDef="isActive">
             <th mat-header-cell *matHeaderCellDef> Active </th>
-            <td mat-cell *matCellDef="let element"> {{element.active}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.isActive}} </td>
           </ng-container>
 
           <ng-container matColumnDef="createdDateAndTime">

@@ -11,8 +11,8 @@ export class DashboardComponent implements OnInit {
 
   displayedColumns = ["name", "active", "ruleIds", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   dataSource: any = [];
- 
-  displayedRuleColumns = ["ruleId", "ruleName", "active", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
+
+  displayedRuleColumns = ["id", "holidayType", "isActive", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   ruleDataSource: any = [];
 
   constructor(private httpService:HttpService, private router: Router) {}
@@ -61,7 +61,7 @@ export class DashboardComponent implements OnInit {
     goToCreateRule(row) {
       this.httpService.getRuleDetails(row.ruleId).subscribe((res: any) => {
         if (res) {
-          const ruleDetails = res;          
+          const ruleDetails = res;
           this.router.navigate(['create-rule'], {state: row});
         }
       }, err => {
