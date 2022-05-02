@@ -13,7 +13,7 @@ export class CreateRoleComponent implements OnInit {
 
   @ViewChild('confirmationModal') confirmationModal: ElementRef;
   @ViewChild('disbaleConfirmationModal') disbaleConfirmationModal: ElementRef;
-  
+
 
   form: FormGroup = new FormGroup({});
   selectedPrefrence = []
@@ -66,8 +66,8 @@ export class CreateRoleComponent implements OnInit {
     })
 
     // This will trigger in case of edit rule
-    if(this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state){
-      
+    if (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state) {
+
       // this is edit rule data coming from dashboard
       const stateData = this.router.getCurrentNavigation().extras.state;
       // holidayType: 'test-rule',
@@ -91,24 +91,34 @@ export class CreateRoleComponent implements OnInit {
         this.selectedWeek = null;
         this.selectedDay = null;
 
-        if(stateData.customDays) {
+        if (stateData.customDays) {
           stateData.customDays.split(',').forEach(item => {
             this.selectedPrefrence.push(moment(item + '-' + this.selectedYear).format('L'));
           })
         }
-  
+
       } else {
-        this.changeMonth(stateData.month);
-        this.changeWeek(stateData.weekOfTheMonth);   
-        this.changeDay(stateData.dayOfTheWeek);
+        // this.changeMonth(stateData.month);
+        // this.changeWeek(+stateData.weekOfTheMonth);
+        // this.changeDay(stateData.dayOfTheWeek);
+
+        if(stateData.month) {
+          this.changeMonth(this.monthList.find(item => item.display.toUpperCase() == stateData.month).value);
+        }
+
+        this.changeWeek(+stateData.weekOfTheMonth);
+  
+        if(stateData.dayOfTheWeek) {
+          this.changeDay(this.dayList.find(item => item.display.toUpperCase() == stateData.dayOfTheWeek).value);
+        }
 
         this.selectedPrefrence = []
         this.apply();
       }
 
       // Todo needs to check ruleId coming or not
-      debugger;
-      this.editRuleId = stateData.ruleId;
+       
+      this.editRuleId = stateData.id;
 
       this.form.patchValue({
         name: stateData.holidayType
@@ -116,7 +126,7 @@ export class CreateRoleComponent implements OnInit {
 
       this.editRule = true;
 
-      
+
     } else {
       this.editRule = false;
     }
@@ -140,7 +150,7 @@ export class CreateRoleComponent implements OnInit {
 
 
   ngOnInit(): void {
-    
+
   }
 
 
@@ -194,12 +204,13 @@ export class CreateRoleComponent implements OnInit {
     const reqData = {
       year: this.selectedYear,
       dayOfTheMonth: 0,
-      dayOfTheWeek: this.dayList.find(item => item.value === this.selectedDay).display.toUpperCase(),
-      month: this.monthList.find(item => item.value === this.selectedMonth).display.toUpperCase(),
+      dayOfTheWeek: this.dayList.find(item => (item.display.toUpperCase() === this.selectedDay) || (item.value === this.selectedDay)).display.toUpperCase(),
+      month: this.monthList.find(item => (item.display.toUpperCase() === this.selectedMonth) || (item.value === this.selectedMonth)).display.toUpperCase(),
       weekOfTheMonth: this.selectedWeek
     }
     this.httpService.getSelectedDate(reqData).subscribe((res: any) => {
       if (res) {
+        this.selectedPrefrence = [];
         this.selectedPrefrence = [moment(res).format('L')];
       }
     }, err => {
@@ -219,16 +230,24 @@ export class CreateRoleComponent implements OnInit {
     this.selectedMonth = '';
   }
 
-  disableRuleConfirm() {    
-    if(this.createRequestData()) {
+  disableRuleConfirm() {
+    if (this.createRequestData()) {
       let reqData = this.createRequestData();
-      debugger;
+       
       // check for reqData
       reqData.isActive = false;
-      reqData['ruleId'] = this.editRuleId;
+      reqData['id'] = this.editRuleId;
+      if(reqData.month) {
+        reqData.month = this.monthList.find(item => item.value == reqData.month).display.toUpperCase();
+      }
+
+      if(reqData.dayList) {
+        reqData.month = this.dayList.find(item => item.value == reqData.dayOfTheWeek).display.toUpperCase();
+      }
+
       this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
         if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
-          this.disbaleConfirmationModal.nativeElement.click();          
+          this.disbaleConfirmationModal.nativeElement.click();
           this.router.navigate(['dashboard']);
         }
       }, err => {
@@ -238,14 +257,22 @@ export class CreateRoleComponent implements OnInit {
   }
 
   saveRule() {
-    if(this.createRequestData()) {
+    if (this.createRequestData()) {
       let reqData = this.createRequestData();
-      if(this.editRuleId) {
+      if (this.editRuleId) {
         // Update rule
-        reqData['ruleId'] = this.editRuleId;
+        reqData['id'] = this.editRuleId;
+
+        if(reqData.month) {
+          reqData.month = this.monthList.find(item => item.value == reqData.month).display.toUpperCase();
+        }
+  
+        if(reqData.dayList) {
+          reqData.month = this.dayList.find(item => item.value == reqData.dayOfTheWeek).display.toUpperCase();
+        }
         this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
           if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
-            this.disbaleConfirmationModal.nativeElement.click();          
+            this.confirmationModal.nativeElement.click();
             this.router.navigate(['dashboard']);
           }
         }, err => {
@@ -269,13 +296,13 @@ export class CreateRoleComponent implements OnInit {
 
   createRequestData() {
     let reqData: any = {};
-    if((this.flexibleDates && this.selectedDateList && this.selectedDateList.length > 0) || (!this.flexibleDates && this.selectedMonth && this.selectedWeek && this.selectedDay) ){
-      if(this.flexibleDates) {
+    if ((this.flexibleDates && this.selectedDateList && this.selectedDateList.length > 0) || (!this.flexibleDates && this.selectedMonth && this.selectedWeek && this.selectedDay)) {
+      if (this.flexibleDates) {
         reqData = {
           holidayType: this.form.value.name,
-          month: '',
+          month: null,
           dayOfTheMonth: '',
-          dayOfTheWeek: '',
+          dayOfTheWeek: null,
           weekOfTheMonth: '',
           customDays: "",
           createdUser: 'User',
@@ -283,7 +310,7 @@ export class CreateRoleComponent implements OnInit {
           isActive: true
         }
         this.selectedDateList.forEach(item => {
-          if(reqData.customDays === '') {
+          if (reqData.customDays === '') {
             reqData.customDays = reqData.customDays + moment(item).format('MM-DD');
           } else {
             reqData.customDays = reqData.customDays + ',' + moment(item).format('MM-DD');
