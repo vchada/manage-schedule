@@ -13,6 +13,7 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
 
   @Input() year = '';
   @Input() prefrence = [];
+  @Input() prefrenceExclude = [];
   @Input() customDateSelection = true;
   @Output() dateSelected = new EventEmitter();
 
@@ -78,15 +79,30 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
     //   this.prefrences = [];
     // }
     
-    if(changes.prefrence && changes.prefrence.currentValue && changes.prefrence.currentValue.length > 0) {
-      changes.prefrence.currentValue.forEach(item => {
-        if(moment(item).isValid()) {
-          if(this.customDateSelection) {
-            this.prefrences.push(moment(item));
-          } else {
-            this.prefrences = [];
-            this.prefrences.push(moment(item));
+    if(changes.prefrence && changes.prefrence.currentValue) {
+      if(this.customDateSelection) {
+        this.prefrences = changes.prefrence.currentValue.length === 0? []: this.prefrences;
+        changes.prefrence.currentValue.forEach(item => {
+          if(moment(item).isValid()) {
+              this.prefrences.push(moment(item));
           }
+        })
+      } else {
+        this.prefrences = [];
+        changes.prefrence.currentValue.forEach(item => {
+          if(moment(item).isValid()) {
+              this.prefrences.push(moment(item));
+          }
+        })
+      }
+    }
+
+    if(changes.prefrenceExclude && changes.prefrenceExclude.currentValue && changes.prefrenceExclude.currentValue.length > 0) {
+      changes.prefrenceExclude.currentValue.forEach(item => {
+        if(moment(item).isValid()) {
+          this.prefrences = this.prefrences.filter(val => {
+            return moment(val).format('L') !== moment(item).format('L')
+          })
         }
       })
     }
@@ -115,7 +131,8 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
     return mandaydates;
   }
 
-  yearChanged($event: any) {
+  yearChanged($event: any) 
+  {
     this.calendarDate = new Date($event, this.calendarDate.getMonth(), this.calendarDate.getDate());
     this.sendYearChanged.emit(this.calendarDate);
   }
