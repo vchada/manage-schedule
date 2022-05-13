@@ -12,7 +12,7 @@ export class DashboardComponent implements OnInit {
   displayedColumns = ["name", "active", "ruleIds", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   dataSource: any = [];
 
-  displayedRuleColumns = ["id", "holidayType", "isActive", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
+  displayedRuleColumns = ["holidayType", "isActive", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   ruleDataSource: any = [];
 
   constructor(private httpService:HttpService, private router: Router) {}
@@ -28,15 +28,13 @@ export class DashboardComponent implements OnInit {
 
         this.httpService.getAllRules().subscribe((res: any) => {
           if (res) {
-            this.ruleDataSource = res;
+            Object.keys(res).forEach(item => {
+              this.ruleDataSource.push(res[item][0]);
+            })
           }
         }, err => {
           console.error(err);
         })
-
-        this.ruleDataSource = [{
-          id: 123
-        }]
 
     }
 

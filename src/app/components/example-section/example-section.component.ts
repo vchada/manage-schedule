@@ -76,7 +76,7 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
 
     // if(changes.prefrence && !changes.prefrence.firstChange && changes.prefrence.currentValue) {
-    //   this.prefrences = [];
+    //   this.prefrences = [];..
     // }
     
     if(changes.prefrence && changes.prefrence.currentValue) {

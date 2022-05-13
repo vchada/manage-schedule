@@ -91,7 +91,7 @@ export class CreateRoleComponent implements OnInit {
 
 
       // this.selectedYear = 2022;
-      this.flexibleDates = stateData.customDays ? true : false;
+      this.flexibleDates = stateData[0].customDays ? true : false;
 
       if (this.flexibleDates) {
         this.selectedMonth = null;
@@ -99,8 +99,8 @@ export class CreateRoleComponent implements OnInit {
         this.selectedWeek = null;
         this.selectedDay = null;
 
-        if (stateData.customDays) {
-          stateData.customDays.split(',').forEach(item => {
+        if (stateData[0].customDays) {
+          stateData[0].customDays.split(',').forEach(item => {
             this.selectedPrefrence.push(moment(item + '-' + this.selectedYear).format('L'));
           })
         }
@@ -109,29 +109,45 @@ export class CreateRoleComponent implements OnInit {
         // this.changeMonth(stateData.month);
         // this.changeWeek(+stateData.weekOfTheMonth);
         // this.changeDay(stateData.dayOfTheWeek);
+        let month = [];
+        let week = [];
+        let day = [];
+        stateData.forEach(val => {
+          if(!month.includes( this.monthList.find(item => item.display.toUpperCase() == val.month).value )) {
+            month.push(this.monthList.find(item => item.display.toUpperCase() == val.month).value);
+          }
 
-        if(stateData.month) {
+          if(!week.includes( val.weekOfTheMonth )) {
+            week.push(val.weekOfTheMonth);
+          }
+
+          if(!day.includes( this.dayList.find(item => item.display.toUpperCase() == val.dayOfTheWeek).value )) {
+            day.push(this.dayList.find(item => item.display.toUpperCase() == val.dayOfTheWeek).value);
+          }
+        })
+
+        if(month) {
           // this.changeMonth(this.monthList.find(item => item.display.toUpperCase() == stateData.month).value);
-          this.changeMonth(stateData.month);
+          this.changeMonth(month);
         }
 
-        this.changeWeek(stateData.weekOfTheMonth);
+        this.changeWeek(week);
   
-        if(stateData.dayOfTheWeek) {
+        if(day) {
           // this.changeDay(this.dayList.find(item => item.display.toUpperCase() == stateData.dayOfTheWeek).value);
-          this.changeDay(stateData.dayOfTheWeek);
+          this.changeDay(day);
         }
 
-        this.selectedPrefrence = []
+        this.selectedPrefrence = [];
         this.apply();
       }
 
       // Todo needs to check ruleId coming or not
        
-      this.editRuleId = stateData.id;
+      // this.editRuleId = stateData.id;
 
       this.form.patchValue({
-        name: stateData.holidayType
+        name: stateData[0].holidayType
       })
 
       this.editRule = true;
@@ -189,11 +205,15 @@ export class CreateRoleComponent implements OnInit {
 
 
     let status = true;
-    this.monthSelect.options.forEach((item: MatOption) => {
-      if (!item.selected) {
-        status = false;
-      }
-    });
+    if(this.monthSelect) {
+      this.monthSelect.options.forEach((item: MatOption) => {
+        if (!item.selected) {
+          status = false;
+        }
+      });
+    } else {
+      status = Month.length === this.monthList.length;
+    }
     this.allMonthSelected = status;
   }
 
@@ -215,11 +235,16 @@ export class CreateRoleComponent implements OnInit {
     this.selectedWeek = (week && week.length > 0) ? week: null;
     this.selectedDate = null;
     let status = true;
-    this.weekSelect.options.forEach((item: MatOption) => {
-      if (!item.selected) {
-        status = false;
-      }
-    });
+    if(this.weekSelect) {
+      this.weekSelect.options.forEach((item: MatOption) => {
+        if (!item.selected) {
+          status = false;
+        }
+      });
+
+    } else {
+      status = week.length === this.weekList.length;
+    }
     this.allWeekSelected = status;
   }
 
@@ -235,11 +260,16 @@ export class CreateRoleComponent implements OnInit {
     this.selectedDay = (day && day.length > 0)? day: null;
     this.selectedDate = null;
     let status = true;
-    this.daySelect.options.forEach((item: MatOption) => {
-      if (!item.selected) {
-        status = false;
-      }
-    });
+    if(this.daySelect) {
+      this.daySelect.options.forEach((item: MatOption) => {
+        if (!item.selected) {
+          status = false;
+        }
+      });
+
+    } else {
+      status = day.length === this.dayList.length;
+    }
     this.allDaySelected = status;
   }
 

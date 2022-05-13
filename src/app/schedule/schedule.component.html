@@ -1,6 +1,6 @@
 
   <div class="row m-y-20">
-    <div class="col-2">
+    <div class="col-1 min-width-225">
 
       <mat-form-field appearance="fill">
         <mat-label>Select Year</mat-label>
@@ -13,7 +13,7 @@
 
     </div>
 
-    <div class="col-2">
+    <div class="col-1 min-width-225">
 
       <mat-form-field appearance="fill">
         <mat-label>Select Rule to include</mat-label>
@@ -26,7 +26,7 @@
 
     </div>
 
-    <div class="col-2">
+    <div class="col-1 min-width-225">
 
       <mat-form-field appearance="fill">
         <mat-label>Select Rule to exclude</mat-label>
@@ -34,6 +34,18 @@
           <mat-option *ngFor="let prefrence of prefrenceListToExclude" [value]="prefrence.name">
             {{prefrence.name}}
           </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    <div class="col-1 min-width-225">
+
+      <mat-form-field appearance="fill">
+        <mat-label>Calender Type</mat-label>
+        <mat-select [disableOptionCentering]="true">
+          <mat-option>Periodic</mat-option>
+          <mat-option>Regular</mat-option>
         </mat-select>
       </mat-form-field>
 
