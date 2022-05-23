@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import * as moment from 'moment';
 import { HttpService } from '../services/http.service';
@@ -31,34 +32,87 @@ export class ScheduleComponent implements OnInit {
   selectedPrefrenceToExclude = [];
   selectedPrefrenceListToExclude = [];
 
-  constructor(private httpService: HttpService, private fb: FormBuilder) {
+  editSchedule = false;
+
+  constructor(private httpService: HttpService, private fb: FormBuilder, private router: Router) {
     this.form = fb.group({
-      name: ['', [Validators.required]]
+      name: ['', [Validators.required]],
+      description: ['']
     })
+
+    this.fetchHolidayList(this.selectedYear);
+    if (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state) {
+
+      // this is edit rule data coming from dashboard
+      const stateData = this.router.getCurrentNavigation().extras.state;
+      stateData['rulesExcluded'] = 'test_update_20,MARCH_MONDAY';
+      stateData['rulesIncluded'] = 'test_update_19,test_update_18,r23';
+      stateData['year'] = 2022;
+
+      this.editSchedule = true;
+
+      this.httpService.getHolidayList(stateData.year).subscribe(res => {
+        if (res ) {
+          this.prefrenceList = [];
+          this.prefrenceListToInclude = [];
+          this.prefrenceListToExclude = [];
+          Object.keys(res).forEach(item => {
+  
+            const obj = {
+              name: item,
+              dates: []
+            }
+  
+            res[item].split(',').forEach(val => {
+              obj.dates.push(val + '-' + this.selectedYear)
+            })
+  
+            this.prefrenceList.push(obj)
+          })
+  
+          this.prefrenceListToInclude = [...this.prefrenceList];
+          this.prefrenceListToExclude = [...this.prefrenceList];
+
+
+          this.changePrefrence(stateData.rulesIncluded.split(','));
+          this.changePrefrenceToExclude(stateData.rulesExcluded.split(','));
+
+          this.form.controls.name.patchValue(stateData.name);
+          this.form.controls.name.disable();
+        }
+      }, err => {
+        console.error(err);
+      })
+
+
+      
+
+    } else {
+    }
    }
 
   ngOnInit(): void {
-    this.fetchHolidayList(this.selectedYear);
+    
   }
 
   fetchHolidayList(selectedYear) {
     this.prefrenceList = [];
+    this.prefrenceListToInclude = [];
+    this.prefrenceListToExclude = [];
     this.httpService.getHolidayList(selectedYear).subscribe(res => {
       if (res ) {
         Object.keys(res).forEach(item => {
-          this.prefrenceList.push({
-            name: item,
-            dates: res[item].split(',')
-          })
-        })
-        this.prefrenceList.push({
-          name: 'April all monday',
-          dates: ['2022-04-04', '2022-04-11', '2022-04-18', '2022-04-25']
-        })
 
-        this.prefrenceList.push({
-          name: 'April exclude 11',
-          dates: ['2022-04-11']
+          const obj = {
+            name: item,
+            dates: []
+          }
+
+          res[item].split(',').forEach(val => {
+            obj.dates.push(val + '-' + this.selectedYear)
+          })
+
+          this.prefrenceList.push(obj)
         })
 
         this.prefrenceListToInclude = [...this.prefrenceList];
@@ -153,7 +207,7 @@ export class ScheduleComponent implements OnInit {
   save() {
     this.httpService.getRuleIds().subscribe((ruleIds: any) => {
       if (ruleIds ) {
-        
+        debugger;
         const reqData = {
           name: this.form.value.name,
           createdDateAndTime: null,
@@ -161,7 +215,10 @@ export class ScheduleComponent implements OnInit {
           lastModifiedUser: null,
           lastModifiedDateAndTime: null,
           active: true,
-          ruleIds: ""
+          ruleIds: "",
+          year: this.selectedYear,
+          rulesIncluded: this.createStr(this.selectedPrefrence),
+          rulesExcluded: this.createStr(this.selectedPrefrenceToExclude)
         }
         this.selectedPrefrence.forEach(item => {
           if(reqData.ruleIds === '') {
@@ -182,6 +239,22 @@ export class ScheduleComponent implements OnInit {
       console.error(err);
     })
 
+  }
+
+  disable() {
+
+  }
+
+  createStr(arr) {
+    let returnStr = '';
+    arr.forEach(item => {
+      if(returnStr === '') {
+        returnStr = item;
+      } else {
+        returnStr = returnStr + ',' + item;
+      }
+    })
+    return returnStr;
   }
 
   generate() { }

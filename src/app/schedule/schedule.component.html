@@ -70,10 +70,16 @@
   </div>
 
   <div class="row">
-    <div class="col-12 btn-container">
+    <div class="col-12 btn-container" *ngIf="!editSchedule">
       <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
       <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup" class="btn btn-dark">Save</button>
       <button type="button" (click)="generate()" class="btn btn-dark generate">Generate</button>
+    </div>
+
+    <div class="col-12 btn-container" *ngIf="editSchedule">
+      <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
+      <button type="button" (click)="disable()" class="btn btn-dark">Disable</button>
+      <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup" class="btn btn-dark">Update</button>
     </div>
   </div>
 
@@ -98,6 +104,16 @@
                       Calender Name is required.
                   </mat-error>
               </mat-form-field>
+
+              <mat-form-field class="full-width" appearance="fill">
+                <mat-label>Description</mat-label>
+                <input matInput placeholder="" formControlName="description">
+                <mat-error *ngIf="form.get('description').hasError('required')">
+                    Calender Name is required.
+                </mat-error>
+            </mat-form-field>
+
+              
 
           </div>
           <div class="modal-footer">

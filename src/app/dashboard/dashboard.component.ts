@@ -37,6 +37,17 @@ export class DashboardComponent implements OnInit {
         })
 
     }
+    
+    goToDashboard(row) {
+      // this.httpService.getRuleDetails(row.holidayType).subscribe((res: any) => {
+      //   if (res) {
+           
+          this.router.navigate(['schedule'], {state: row});
+      //   }
+      // }, err => {
+      //   console.error(err);
+      // })
+    }
 
     goToCreateRule(row) {
       this.httpService.getRuleDetails(row.holidayType).subscribe((res: any) => {

@@ -21,7 +21,6 @@ export class CreateRoleComponent implements OnInit {
   selectedPrefrence = []
   selectedDateList = [];
   editRule = false;
-  editRuleId = '';
 
   years = [
     2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032
@@ -142,16 +141,12 @@ export class CreateRoleComponent implements OnInit {
         this.apply();
       }
 
-      // Todo needs to check ruleId coming or not
-       
-      // this.editRuleId = stateData.id;
-
       this.form.patchValue({
         name: stateData[0].holidayType
       })
 
       this.editRule = true;
-
+      this.form.controls.name.disable();
 
     } else {
       this.editRule = false;
@@ -332,7 +327,6 @@ export class CreateRoleComponent implements OnInit {
        
       // check for reqData
       reqData.isActive = 'IN_ACTIVE';
-      reqData['id'] = this.editRuleId;
 
       this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
         if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
@@ -348,15 +342,15 @@ export class CreateRoleComponent implements OnInit {
   saveRule() {
     if (this.createRequestData()) {
       let reqData = this.createRequestData();
-      if (this.editRuleId) {
+      if (this.editRule) {
         // Update rule
-        if (this.flexibleDates) {
-          reqData['id'] = this.editRuleId;
-        } else {
-          reqData.forEach(req => {
-            req['id'] = this.editRuleId;
-          })
-        }
+        // if (this.flexibleDates) {
+        //   reqData['id'] = this.editRuleId;
+        // } else {
+        //   reqData.forEach(req => {
+        //     req['id'] = this.editRuleId;
+        //   })
+        // }
 
         this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
           if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
