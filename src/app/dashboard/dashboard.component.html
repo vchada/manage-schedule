@@ -25,11 +25,20 @@
           </ng-container>
 
           <!-- rule ids Column -->
-          <ng-container matColumnDef="ruleIds">
-            <th mat-header-cell *matHeaderCellDef> Rule Ids </th>
-            <td mat-cell *matCellDef="let element"> {{element.ruleIds}} </td>
+          <ng-container matColumnDef="rulesIncluded">
+            <th mat-header-cell *matHeaderCellDef> Rule Included </th>
+            <td mat-cell *matCellDef="let element"> {{element.rulesIncluded}} </td>
           </ng-container>
 
+          <ng-container matColumnDef="rulesExcluded">
+            <th mat-header-cell *matHeaderCellDef> Rule Excluded </th>
+            <td mat-cell *matCellDef="let element"> {{element.rulesExcluded}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef> Description </th>
+            <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+          </ng-container>
 
           <ng-container matColumnDef="createdDateAndTime">
             <th mat-header-cell *matHeaderCellDef> Create date and time </th>
@@ -76,6 +85,11 @@
           <ng-container matColumnDef="isActive">
             <th mat-header-cell *matHeaderCellDef> Active </th>
             <td mat-cell *matCellDef="let element"> {{element.isActive}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef> Description </th>
+            <td mat-cell *matCellDef="let element"> {{element.description}} </td>
           </ng-container>
 
           <ng-container matColumnDef="createdDateAndTime">

@@ -50,6 +50,14 @@ export class HttpService {
       );
   }
 
+  updateCalendar(reqData) {
+    return this.http.post('http://localhost:8080/holiday/updateCalendar', reqData)
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
   getRuleIds() {
     return this.http.get('http://localhost:8080/holiday/get-all-holidays/2022')
       .pipe(

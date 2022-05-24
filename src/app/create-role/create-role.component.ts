@@ -69,7 +69,8 @@ export class CreateRoleComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private httpService: HttpService, private router: Router) {
     this.form = fb.group({
-      name: ['', [Validators.required]]
+      name: ['', [Validators.required]],
+      description: ['']
     })
 
     // This will trigger in case of edit rule
@@ -142,7 +143,8 @@ export class CreateRoleComponent implements OnInit {
       }
 
       this.form.patchValue({
-        name: stateData[0].holidayType
+        name: stateData[0].holidayType,
+        description: stateData[0].description
       })
 
       this.editRule = true;
@@ -341,17 +343,10 @@ export class CreateRoleComponent implements OnInit {
 
   saveRule() {
     if (this.createRequestData()) {
-      let reqData = this.createRequestData();
       if (this.editRule) {
-        // Update rule
-        // if (this.flexibleDates) {
-        //   reqData['id'] = this.editRuleId;
-        // } else {
-        //   reqData.forEach(req => {
-        //     req['id'] = this.editRuleId;
-        //   })
-        // }
-
+        let reqData = this.createUpdateRequestData();
+        
+        debugger;
         this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
           if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
             this.confirmationModal.nativeElement.click();
@@ -362,6 +357,7 @@ export class CreateRoleComponent implements OnInit {
         })
       } else {
         // Save new rule
+        let reqData = this.createRequestData();
         this.httpService.saveSelectedDate(reqData).subscribe((res: any) => {
           if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
             this.confirmationModal.nativeElement.click();
@@ -389,7 +385,8 @@ export class CreateRoleComponent implements OnInit {
           customDays: "",
           createdUser: 'User',
           lastModifiedUser: 'User',
-          isActive: 'ACTIVE'
+          isActive: 'ACTIVE',
+          description: this.form.value.description
         }
         this.selectedDateList.forEach(item => {
           if (reqData.customDays === '') {
@@ -408,7 +405,6 @@ export class CreateRoleComponent implements OnInit {
           this.selectedWeek.forEach(week => {
             this.selectedDay.forEach(day => {
               req.push({
-
                 holidayType: this.form.value.name,
                 month: month,
                 dayOfTheMonth: '',
@@ -417,7 +413,8 @@ export class CreateRoleComponent implements OnInit {
                 customDays: "",
                 createdUser: 'User',
                 lastModifiedUser: 'User',
-                isActive: 'ACTIVE'
+                isActive: 'ACTIVE',
+                description: this.form.value.description
               })
             })
           })
@@ -429,6 +426,58 @@ export class CreateRoleComponent implements OnInit {
     }
   }
 
+  createUpdateRequestData() {
+    let reqData: any = {};
+    if ((this.flexibleDates && this.selectedDateList && this.selectedDateList.length > 0) || (!this.flexibleDates && this.selectedMonth && this.selectedWeek && this.selectedDay)) {
+      if (this.flexibleDates) {
+        reqData = {
+          holidayType: this.form.controls.name.value,
+          month: null,
+          dayOfTheMonth: '',
+          dayOfTheWeek: null,
+          weekOfTheMonth: '',
+          customDays: "",
+          createdUser: 'User',
+          lastModifiedUser: 'User',
+          isActive: 'ACTIVE',
+          description: this.form.value.description
+        }
+        this.selectedDateList.forEach(item => {
+          if (reqData.customDays === '') {
+            reqData.customDays = reqData.customDays + moment(item).format('MM-DD');
+          } else {
+            reqData.customDays = reqData.customDays + ',' + moment(item).format('MM-DD');
+          }
+        })
+
+        return reqData;
+
+      } else {        
+        const req = [];
+        this.selectedMonth.forEach(month => {
+          this.selectedWeek.forEach(week => {
+            this.selectedDay.forEach(day => {
+              req.push({
+                holidayType: this.form.controls.name.value,
+                month: month - 1,
+                dayOfTheMonth: '',
+                dayOfTheWeek: day - 1,
+                weekOfTheMonth: week,
+                customDays: "",
+                createdUser: 'User',
+                lastModifiedUser: 'User',
+                isActive: 'ACTIVE',
+                description: this.form.value.description
+              })
+            })
+          })
+        })
+        return req;
+      }
+    } else {
+      return false;
+    }
+  }
 
   dateSelected(dates) {
     this.selectedDateList = dates;

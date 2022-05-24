@@ -45,9 +45,9 @@ export class ScheduleComponent implements OnInit {
 
       // this is edit rule data coming from dashboard
       const stateData = this.router.getCurrentNavigation().extras.state;
-      stateData['rulesExcluded'] = 'test_update_20,MARCH_MONDAY';
-      stateData['rulesIncluded'] = 'test_update_19,test_update_18,r23';
-      stateData['year'] = 2022;
+      // stateData['rulesExcluded'] = 'test_update_20,MARCH_MONDAY';
+      // stateData['rulesIncluded'] = 'test_update_19,test_update_18,r23';
+      // stateData['year'] = 2022;
 
       this.editSchedule = true;
 
@@ -78,6 +78,8 @@ export class ScheduleComponent implements OnInit {
           this.changePrefrenceToExclude(stateData.rulesExcluded.split(','));
 
           this.form.controls.name.patchValue(stateData.name);
+          this.form.controls.description.patchValue(stateData.description);
+          
           this.form.controls.name.disable();
         }
       }, err => {
@@ -207,9 +209,8 @@ export class ScheduleComponent implements OnInit {
   save() {
     this.httpService.getRuleIds().subscribe((ruleIds: any) => {
       if (ruleIds ) {
-        debugger;
         const reqData = {
-          name: this.form.value.name,
+          name: this.form.controls.name.value,
           createdDateAndTime: null,
           createdUser: "Venkat Chada",
           lastModifiedUser: null,
@@ -227,13 +228,27 @@ export class ScheduleComponent implements OnInit {
             reqData.ruleIds = reqData.ruleIds + ',' + ruleIds[item]
           }
         })
-        this.httpService.saveCalendar(reqData).subscribe((res: any) => {
-          if (res && res.message === 'CALENDER_PERSISTED_SUCCESSFULLY') {
-            this.confirmationModal.nativeElement.click();
-          }
-        }, err => {
-          console.error(err);
-        })
+        reqData['description'] = this.form.value.description;
+
+        if(!this.editSchedule) {
+          this.httpService.saveCalendar(reqData).subscribe((res: any) => {
+            if (res && res.message === 'CALENDER_PERSISTED_SUCCESSFULLY') {
+              this.confirmationModal.nativeElement.click();
+              this.router.navigate(['dashboard']);
+            }
+          }, err => {
+            console.error(err);
+          })
+        } else {
+          this.httpService.updateCalendar(reqData).subscribe((res: any) => {
+            if (res && res.message === 'CALENDAR UPDATED SUCCESSFULLY') {
+              this.confirmationModal.nativeElement.click();
+              this.router.navigate(['dashboard']);
+            }
+          }, err => {
+            console.error(err);
+          })
+        }
       }
     }, err => {
       console.error(err);

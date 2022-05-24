@@ -9,10 +9,10 @@ import { HttpService } from '../services/http.service';
 })
 export class DashboardComponent implements OnInit {
 
-  displayedColumns = ["name", "active", "ruleIds", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
+  displayedColumns = ["name", "active", "rulesIncluded", "rulesExcluded",  "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   dataSource: any = [];
 
-  displayedRuleColumns = ["holidayType", "isActive", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
+  displayedRuleColumns = ["holidayType", "isActive", "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   ruleDataSource: any = [];
 
   constructor(private httpService:HttpService, private router: Router) {}

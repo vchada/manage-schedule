@@ -131,6 +131,14 @@
                     </mat-error>
                 </mat-form-field>
 
+                <mat-form-field class="full-width" appearance="fill">
+                    <mat-label>Description</mat-label>
+                    <input matInput placeholder="" formControlName="description">
+                    <mat-error *ngIf="form.get('description').hasError('required')">
+                        Calender Name is required.
+                    </mat-error>
+                </mat-form-field>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
