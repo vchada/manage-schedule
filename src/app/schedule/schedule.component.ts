@@ -12,9 +12,13 @@ import { HttpService } from '../services/http.service';
 })
 export class ScheduleComponent implements OnInit {
 
+  availableCalender = [];
   selectedDateList = [];
+  calenderType = 'regular';
   form: FormGroup = new FormGroup({});
   @ViewChild('confirmationModal') confirmationModal: ElementRef;
+  @ViewChild('closeConfirmationModal') closeConfirmationModal: ElementRef;
+  
 
   years = [
     2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032
@@ -41,14 +45,11 @@ export class ScheduleComponent implements OnInit {
     })
 
     this.fetchHolidayList(this.selectedYear);
+    this.getAvailableRules(this.selectedYear);
     if (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state) {
 
       // this is edit rule data coming from dashboard
       const stateData = this.router.getCurrentNavigation().extras.state;
-      // stateData['rulesExcluded'] = 'test_update_20,MARCH_MONDAY';
-      // stateData['rulesIncluded'] = 'test_update_19,test_update_18,r23';
-      // stateData['year'] = 2022;
-
       this.editSchedule = true;
 
       this.httpService.getHolidayList(stateData.year).subscribe(res => {
@@ -97,6 +98,19 @@ export class ScheduleComponent implements OnInit {
     
   }
 
+
+  getAvailableRules(year) {
+  
+    this.httpService.getAllCalender(year).subscribe((res: any) => {
+      if (res) {
+        this.availableCalender = res;
+      }
+    }, err => {
+      console.error(err);
+    })
+
+  }
+
   fetchHolidayList(selectedYear) {
     this.prefrenceList = [];
     this.prefrenceListToInclude = [];
@@ -134,6 +148,7 @@ export class ScheduleComponent implements OnInit {
     this.selectedPrefrence = [];
     this.selectedPrefrenceList = [];
     this.fetchHolidayList(this.selectedYear);
+    this.getAvailableRules(this.selectedYear);
   }
 
   changePrefrence(prefrence) {
@@ -163,6 +178,8 @@ export class ScheduleComponent implements OnInit {
   sendYearChanged(year) {
     this.selectedYear = (new Date(year)).getFullYear();
     this.fetchHolidayList(this.selectedYear);
+
+    this.getAvailableRules(this.selectedYear);
     this.selectedPrefrence = [];
   }
 
@@ -207,6 +224,15 @@ export class ScheduleComponent implements OnInit {
   }
 
   save() {
+    let isNameAlreadyExist = false;
+        this.availableCalender.forEach(item => {
+          if(item.name.toUpperCase() === this.form.value.name.toUpperCase()) {
+            isNameAlreadyExist = true;
+          }
+        }) 
+        if(isNameAlreadyExist && !this.editSchedule) {
+          this.form.controls.name.setErrors({alreadyExist: true});
+        } else {
     this.httpService.getRuleIds().subscribe((ruleIds: any) => {
       if (ruleIds ) {
         const reqData = {
@@ -233,7 +259,7 @@ export class ScheduleComponent implements OnInit {
         if(!this.editSchedule) {
           this.httpService.saveCalendar(reqData).subscribe((res: any) => {
             if (res && res.message === 'CALENDER_PERSISTED_SUCCESSFULLY') {
-              this.confirmationModal.nativeElement.click();
+              this.closeConfirmationModal.nativeElement.click();
               this.router.navigate(['dashboard']);
             }
           }, err => {
@@ -242,7 +268,7 @@ export class ScheduleComponent implements OnInit {
         } else {
           this.httpService.updateCalendar(reqData).subscribe((res: any) => {
             if (res && res.message === 'CALENDAR UPDATED SUCCESSFULLY') {
-              this.confirmationModal.nativeElement.click();
+              this.closeConfirmationModal.nativeElement.click();
               this.router.navigate(['dashboard']);
             }
           }, err => {
@@ -253,6 +279,7 @@ export class ScheduleComponent implements OnInit {
     }, err => {
       console.error(err);
     })
+  }
 
   }
 

@@ -48,14 +48,6 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
 
   @Output() sendYearChanged = new EventEmitter();
 
-  selectPrefrences() {
-    this.selectedDates = {
-      date: new Date('01/01/' + this.year),
-      list: this.prefrences
-    }
-    this.finalSelectedDates = this.selectedDates.list;
-    this.dateSelected.emit(this.finalSelectedDates);
-  }
   
   @Input() loadingData = false;
   @Input() calendarDate = new Date();
@@ -69,7 +61,17 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
       date: new Date('01/01/' + this.year),
       list: this.prefrences
     }
-    this.finalSelectedDates = this.selectedDates.list;
+    this.finalSelectedDates = [...this.selectedDates.list];
+    this.dateSelected.emit(this.finalSelectedDates);
+  }
+
+
+  selectPrefrences() {
+    this.selectedDates = {
+      date: new Date('01/01/' + this.year),
+      list: this.prefrences
+    }
+    this.finalSelectedDates = [...this.selectedDates.list];
     this.dateSelected.emit(this.finalSelectedDates);
   }
 
@@ -95,6 +97,7 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
           }
         })
       }
+      this.selectPrefrences();
     }
 
     if(changes.prefrenceExclude && changes.prefrenceExclude.currentValue && changes.prefrenceExclude.currentValue.length > 0) {
@@ -105,9 +108,9 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
           })
         }
       })
+      this.selectPrefrences();
     }
 
-    this.selectPrefrences();
 
   }
 

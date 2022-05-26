@@ -43,9 +43,9 @@
 
       <mat-form-field appearance="fill">
         <mat-label>Calender Type</mat-label>
-        <mat-select [disableOptionCentering]="true">
-          <mat-option>Periodic</mat-option>
-          <mat-option>Regular</mat-option>
+        <mat-select [disableOptionCentering]="true" [(ngModel)]="calenderType">
+          <mat-option value="periodic">Periodic</mat-option>
+          <mat-option value="regular">Regular</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -91,7 +91,7 @@
       <div class="modal-content">
           <div class="modal-header">
               <h2 class="modal-title m-0" id="confirmationPopupTitle">Submit Calender</h2>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button type="button" #closeConfirmationModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           
           <form [formGroup]="form">
@@ -103,14 +103,14 @@
                   <mat-error *ngIf="form.get('name').hasError('required')">
                       Calender Name is required.
                   </mat-error>
+                  <mat-error *ngIf="form.get('name').hasError('alreadyExist')">
+                      Rule Name already exist.
+                  </mat-error>
               </mat-form-field>
 
               <mat-form-field class="full-width" appearance="fill">
                 <mat-label>Description</mat-label>
                 <input matInput placeholder="" formControlName="description">
-                <mat-error *ngIf="form.get('description').hasError('required')">
-                    Calender Name is required.
-                </mat-error>
             </mat-form-field>
 
               

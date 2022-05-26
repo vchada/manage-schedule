@@ -4,7 +4,7 @@
     </div>
 </div>
 <div class="row m-y-20">
-    <div class="col-2">
+    <div class="col-1 min-width-225 ">
 
         <mat-form-field appearance="fill">
             <mat-label>Select Year</mat-label>
@@ -18,14 +18,14 @@
     </div>
 
 
-    <div class="col-2" >
+    <div class="col-1 min-width-225 " >
 
             
         <mat-checkbox class="example-margin" (ngModelChange)="changeFlexibledate($event)" [(ngModel)]="flexibleDates">Flexible Date(s)</mat-checkbox>
 
     </div> 
 
-    <div class="col-2">
+    <div class="col-1 min-width-225 ">
 
         <mat-form-field appearance="fill">
             <mat-label>Select Month</mat-label>
@@ -43,7 +43,7 @@
 
     </div>
 
-    <div class="col-2" >
+    <div class="col-1 min-width-225 " >
 
         <mat-form-field appearance="fill">
             <mat-label>Select Week of Month</mat-label>
@@ -62,7 +62,7 @@
     </div>
 
 
-    <div class="col-2">
+    <div class="col-1 min-width-225 ">
 
         <mat-form-field appearance="fill">
             <mat-label>Select Day of Week</mat-label>
@@ -81,6 +81,14 @@
     </div>
 
     <div class="col-2">
+        <mat-radio-group class="day-radio-group" name="afterBeforeDay" [(ngModel)]="afterBeforeDaySelection" ngDefaultControl>
+            <mat-radio-button #button class="day-radio-button" [disabled]="(selectedDateList.length > 1) || ((selectedMonth?.length > 1) || (selectedWeek?.length > 1) || ((selectedDay?.length > 1)))" *ngFor="let day of afterBeforeDay" [value]="day" (click)="checkState(button)">
+              {{day}}
+            </mat-radio-button>
+          </mat-radio-group>
+    </div>
+
+    <div class="col-2 p-t-10">
         <button type="button" (click)="reset()" class="btn btn-secondary">Reset</button>
         <button type="button" (click)="apply()" [disabled]="!(selectedMonth && selectedMonth.length > 0) || !(selectedWeek && selectedWeek.length > 0) || !(selectedDay && selectedDay.length > 0)" class="btn btn-dark ms-2">Preview</button>
     </div>
@@ -117,7 +125,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title m-0" id="confirmationPopupTitle"><span *ngIf="editRule">Update Rule</span><span *ngIf="!editRule">Create Rule</span></h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" #closeConfirmationModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
             <form [formGroup]="form">
@@ -129,17 +137,18 @@
                     <mat-error *ngIf="form.get('name').hasError('required')">
                         Rule Name is required.
                     </mat-error>
+                    <mat-error *ngIf="form.get('name').hasError('alreadyExist')">
+                        Rule Name already exist.
+                    </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="full-width" appearance="fill">
                     <mat-label>Description</mat-label>
                     <input matInput placeholder="" formControlName="description">
-                    <mat-error *ngIf="form.get('description').hasError('required')">
-                        Calender Name is required.
-                    </mat-error>
                 </mat-form-field>
 
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" [disabled]="!form.valid" (click)="saveRule()" class="btn btn-dark">Submit Rule</button>

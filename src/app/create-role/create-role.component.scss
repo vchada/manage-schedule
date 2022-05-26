@@ -56,6 +56,9 @@
     margin: 5px 17px;
   }
 
+.example-margin {
+    margin-top: 20px;
+}
 .update-rule-title {
     padding: 25px 20px 0px;
 
@@ -69,3 +72,27 @@
     }
 
 }
+
+
+.min-width-225 {
+    min-width: 225px !important;
+}
+
+.p-t-10 {
+    padding-top: 10px;
+}
+
+.day-radio-group {
+    // display: inline-flex;
+    // flex-direction: column;
+    position: relative;
+    top: 15px
+  }
+  
+  .day-radio-button {
+    margin: 5px;
+  }
+  
+  .day-selected-value {
+    margin: 15px 0;
+  }

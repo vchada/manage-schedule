@@ -205,16 +205,16 @@ export class YearCalendarComponent implements OnInit, OnChanges {
 
   eventDayCick(day, trigger: CdkOverlayOrigin) {
     if(this.customDateSelection) {
-      this.eventDayClicked.emit({
-        day,
-        trigger
-      });
       let selectedIndex = this.selectedDates.list.findIndex(date => new Date(date).toDateString() === new Date(day.date).toDateString());
       if (selectedIndex > -1) {
         this.selectedDates.list = this.selectedDates.list.filter(date => new Date(date).toDateString() !== new Date(day.date).toDateString());
       } else {
         this.selectedDates.list.push(new Date(day.date));
       }
+      this.eventDayClicked.emit({
+        day,
+        trigger
+      });
       this.render(this.year, this.selectedDates.list);
     }
   }

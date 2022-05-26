@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
@@ -14,8 +14,10 @@ import { HttpService } from '../services/http.service';
 export class CreateRoleComponent implements OnInit {
 
   @ViewChild('confirmationModal') confirmationModal: ElementRef;
+  @ViewChild('closeConfirmationModal') closeConfirmationModal: ElementRef;
   @ViewChild('disbaleConfirmationModal') disbaleConfirmationModal: ElementRef;
 
+  availableRules = [];
 
   form: FormGroup = new FormGroup({});
   selectedPrefrence = []
@@ -67,30 +69,21 @@ export class CreateRoleComponent implements OnInit {
 
   flexibleDates = false;
 
-  constructor(private fb: FormBuilder, private httpService: HttpService, private router: Router) {
+
+  afterBeforeDaySelection: string;
+  afterBeforeDay: string[] = ['Day before', 'Day after'];
+
+  currentCheckedValue = null;
+
+  constructor(private fb: FormBuilder, private httpService: HttpService, private router: Router, private ren: Renderer2) {
     this.form = fb.group({
-      name: ['', [Validators.required]],
+      name: ['', [Validators.required, ]],
       description: ['']
     })
-
+    this.getAvailableRules(this.selectedYear);
     // This will trigger in case of edit rule
     if (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state) {
-
-      // this is edit rule data coming from dashboard
       const stateData = this.router.getCurrentNavigation().extras.state;
-      // holidayType: 'test-rule',
-      // month: '',
-      // dayOfTheMonth: '',
-      // dayOfTheWeek: '',
-      // weekOfTheMonth: '',
-      // customDays: '01-01,02-01,03-01,04-01,03-31,02-28,01-31,04-30',
-      // createdUser: 'User',
-      // lastModifiedUser: 'User',
-      // isActive: true
-
-
-
-      // this.selectedYear = 2022;
       this.flexibleDates = stateData[0].customDays ? true : false;
 
       if (this.flexibleDates) {
@@ -106,9 +99,6 @@ export class CreateRoleComponent implements OnInit {
         }
 
       } else {
-        // this.changeMonth(stateData.month);
-        // this.changeWeek(+stateData.weekOfTheMonth);
-        // this.changeDay(stateData.dayOfTheWeek);
         let month = [];
         let week = [];
         let day = [];
@@ -134,7 +124,6 @@ export class CreateRoleComponent implements OnInit {
         this.changeWeek(week);
   
         if(day) {
-          // this.changeDay(this.dayList.find(item => item.display.toUpperCase() == stateData.dayOfTheWeek).value);
           this.changeDay(day);
         }
 
@@ -154,6 +143,16 @@ export class CreateRoleComponent implements OnInit {
       this.editRule = false;
     }
 
+  }
+
+  getAvailableRules(year) {
+    this.httpService.getAllRules().subscribe((res: any) => {
+      if (res) {
+        this.availableRules = res;
+      }
+    }, err => {
+      console.error(err);
+    })
   }
 
   changeFlexibledate(evt) {
@@ -188,6 +187,7 @@ export class CreateRoleComponent implements OnInit {
     this.selectedWeek = null;
     this.selectedDay = null;
     this.dateList = [];
+    this.getAvailableRules(this.selectedYear);
   }
 
   changeMonth(Month) {
@@ -317,6 +317,7 @@ export class CreateRoleComponent implements OnInit {
 
   sendYearChanged(year) {
     this.selectedYear = (new Date(year)).getFullYear();
+    this.getAvailableRules(this.selectedYear);
   }
 
   cancel() {
@@ -325,7 +326,7 @@ export class CreateRoleComponent implements OnInit {
 
   disableRuleConfirm() {
     if (this.createRequestData()) {
-      let reqData = this.createRequestData();
+      let reqData = this.createUpdateRequestData();
        
       // check for reqData
       reqData.isActive = 'IN_ACTIVE';
@@ -346,26 +347,42 @@ export class CreateRoleComponent implements OnInit {
       if (this.editRule) {
         let reqData = this.createUpdateRequestData();
         
-        debugger;
         this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
           if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
-            this.confirmationModal.nativeElement.click();
+            this.closeConfirmationModal.nativeElement.click();
             this.router.navigate(['dashboard']);
           }
         }, err => {
           console.error(err);
         })
       } else {
+        
         // Save new rule
-        let reqData = this.createRequestData();
-        this.httpService.saveSelectedDate(reqData).subscribe((res: any) => {
-          if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
-            this.confirmationModal.nativeElement.click();
-            this.router.navigate(['dashboard']);
+
+        let isNameAlreadyExist = false;
+        Object.keys(this.availableRules).forEach(item => {
+          if(item.toUpperCase() === this.form.value.name.toLowerCase()) {
+            isNameAlreadyExist = true;
           }
-        }, err => {
-          console.error(err);
-        })
+        }) 
+
+        if(isNameAlreadyExist) {
+          this.form.controls.name.setErrors({alreadyExist: true});
+        } else {
+
+          this.form.controls.name.setErrors(null);
+          let reqData = this.createRequestData();
+          this.httpService.saveSelectedDate(reqData).subscribe((res: any) => {
+            if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
+              this.closeConfirmationModal.nativeElement.click();
+
+              this.router.navigate(['dashboard']);
+            }
+          }, err => {
+            console.error(err);
+          })
+        }
+
 
       }
 
@@ -373,10 +390,10 @@ export class CreateRoleComponent implements OnInit {
   }
 
   createRequestData() {
-    let reqData: any = {};
+    let reqData: any = [];
     if ((this.flexibleDates && this.selectedDateList && this.selectedDateList.length > 0) || (!this.flexibleDates && this.selectedMonth && this.selectedWeek && this.selectedDay)) {
       if (this.flexibleDates) {
-        reqData = {
+        reqData = [{
           holidayType: this.form.value.name,
           month: null,
           dayOfTheMonth: '',
@@ -387,7 +404,7 @@ export class CreateRoleComponent implements OnInit {
           lastModifiedUser: 'User',
           isActive: 'ACTIVE',
           description: this.form.value.description
-        }
+        }]
         this.selectedDateList.forEach(item => {
           if (reqData.customDays === '') {
             reqData.customDays = reqData.customDays + moment(item).format('MM-DD');
@@ -427,10 +444,10 @@ export class CreateRoleComponent implements OnInit {
   }
 
   createUpdateRequestData() {
-    let reqData: any = {};
+    let reqData: any = [];
     if ((this.flexibleDates && this.selectedDateList && this.selectedDateList.length > 0) || (!this.flexibleDates && this.selectedMonth && this.selectedWeek && this.selectedDay)) {
       if (this.flexibleDates) {
-        reqData = {
+        reqData = [{
           holidayType: this.form.controls.name.value,
           month: null,
           dayOfTheMonth: '',
@@ -441,7 +458,7 @@ export class CreateRoleComponent implements OnInit {
           lastModifiedUser: 'User',
           isActive: 'ACTIVE',
           description: this.form.value.description
-        }
+        }]
         this.selectedDateList.forEach(item => {
           if (reqData.customDays === '') {
             reqData.customDays = reqData.customDays + moment(item).format('MM-DD');
@@ -481,6 +498,21 @@ export class CreateRoleComponent implements OnInit {
 
   dateSelected(dates) {
     this.selectedDateList = dates;
+  }
+
+
+  checkState(el) {
+    setTimeout(() => {
+      if (this.currentCheckedValue && this.currentCheckedValue === el.value) {
+        el.checked = false;
+        this.ren.removeClass(el['_elementRef'].nativeElement, 'cdk-focused');
+        this.ren.removeClass(el['_elementRef'].nativeElement, 'cdk-program-focused');
+        this.currentCheckedValue = null;
+        this.afterBeforeDaySelection = null;
+      } else {
+        this.currentCheckedValue = el.value
+      }
+    })
   }
 
   getDateArray(year, month) {

@@ -9,6 +9,7 @@ import { YearCalendarModule } from './lib/year-calendar.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from "@angular/material/icon";
 import { MatSelectModule } from '@angular/material/select'; 
+import { MatRadioModule } from '@angular/material/radio';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CreateRoleComponent } from './create-role/create-role.component';
@@ -36,6 +37,7 @@ import { MatSortModule } from "@angular/material/sort";
     ReactiveFormsModule,
     MatSelectModule,
     MatFormFieldModule,
+    MatRadioModule,
     BrowserAnimationsModule,
     FormsModule,
     MatIconModule,
