@@ -71,7 +71,7 @@ export class CreateRoleComponent implements OnInit {
 
 
   afterBeforeDaySelection: string;
-  afterBeforeDay: string[] = ['Day before', 'Day after'];
+  afterBeforeDay: any[] = [{display: 'Day before', value: 'DAY_BEFORE'}, {display: 'Day after', value: 'DAY_AFTER'}];
 
   currentCheckedValue = null;
 
@@ -128,6 +128,7 @@ export class CreateRoleComponent implements OnInit {
         }
 
         this.selectedPrefrence = [];
+        this.afterBeforeDaySelection = stateData[0].lastModifiedUser;
         this.apply();
       }
 
@@ -304,10 +305,35 @@ export class CreateRoleComponent implements OnInit {
 
     this.httpService.getSelectedDate(req).subscribe((res: any) => {
       if (res && res.length > 0) {
-        this.selectedPrefrence = [];
-        res.forEach(item => {
-          this.selectedPrefrence.push(moment(item).format('L'));
-        })
+
+        if(res.length === 1) {
+          if(this.afterBeforeDaySelection === 'DAY_BEFORE') {
+            this.selectedPrefrence = [];
+            res.forEach(item => {
+              this.selectedPrefrence.push(moment(item).subtract(1, "days").format('L'));
+            })
+          } 
+  
+          if(this.afterBeforeDaySelection === 'DAY_AFTER') {
+            this.selectedPrefrence = [];
+            res.forEach(item => {
+              this.selectedPrefrence.push(moment(item).add(1, "days").format('L'));
+            })
+          }
+  
+          if(!this.afterBeforeDaySelection) {
+            this.selectedPrefrence = [];
+            res.forEach(item => {
+              this.selectedPrefrence.push(moment(item).format('L'));
+            })
+          }
+        } else {
+
+          this.selectedPrefrence = [];
+          res.forEach(item => {
+            this.selectedPrefrence.push(moment(item).format('L'));
+          })
+        }
       }
     }, err => {
       console.error(err);
@@ -329,7 +355,9 @@ export class CreateRoleComponent implements OnInit {
       let reqData = this.createUpdateRequestData();
        
       // check for reqData
-      reqData.isActive = 'IN_ACTIVE';
+      reqData.forEach(item => {
+        item.isActive = 'IN_ACTIVE';
+      })
 
       this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
         if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
@@ -361,7 +389,7 @@ export class CreateRoleComponent implements OnInit {
 
         let isNameAlreadyExist = false;
         Object.keys(this.availableRules).forEach(item => {
-          if(item.toUpperCase() === this.form.value.name.toLowerCase()) {
+          if(item.toUpperCase() === this.form.value.name.toUpperCase()) {
             isNameAlreadyExist = true;
           }
         }) 
@@ -401,7 +429,7 @@ export class CreateRoleComponent implements OnInit {
           weekOfTheMonth: '',
           customDays: "",
           createdUser: 'User',
-          lastModifiedUser: 'User',
+          lastModifiedUser: '',
           isActive: 'ACTIVE',
           description: this.form.value.description
         }]
@@ -429,7 +457,7 @@ export class CreateRoleComponent implements OnInit {
                 weekOfTheMonth: week,
                 customDays: "",
                 createdUser: 'User',
-                lastModifiedUser: 'User',
+                lastModifiedUser: this.afterBeforeDaySelection,
                 isActive: 'ACTIVE',
                 description: this.form.value.description
               })
@@ -455,7 +483,7 @@ export class CreateRoleComponent implements OnInit {
           weekOfTheMonth: '',
           customDays: "",
           createdUser: 'User',
-          lastModifiedUser: 'User',
+          lastModifiedUser: '',
           isActive: 'ACTIVE',
           description: this.form.value.description
         }]
@@ -482,7 +510,7 @@ export class CreateRoleComponent implements OnInit {
                 weekOfTheMonth: week,
                 customDays: "",
                 createdUser: 'User',
-                lastModifiedUser: 'User',
+                lastModifiedUser: this.afterBeforeDaySelection,
                 isActive: 'ACTIVE',
                 description: this.form.value.description
               })
@@ -512,6 +540,8 @@ export class CreateRoleComponent implements OnInit {
       } else {
         this.currentCheckedValue = el.value
       }
+
+      
     })
   }
 

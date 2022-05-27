@@ -1,6 +1,6 @@
 <div class="row" *ngIf="editRule">
     <div class="col-12 update-rule-title">
-        <span class="label">Rule - </span><span class="value">{{form.value.name}}</span>
+        <span class="label">Rule - </span><span class="value">{{form.controls.name.value}}</span>
     </div>
 </div>
 <div class="row m-y-20">
@@ -82,8 +82,8 @@
 
     <div class="col-2">
         <mat-radio-group class="day-radio-group" name="afterBeforeDay" [(ngModel)]="afterBeforeDaySelection" ngDefaultControl>
-            <mat-radio-button #button class="day-radio-button" [disabled]="(selectedDateList.length > 1) || ((selectedMonth?.length > 1) || (selectedWeek?.length > 1) || ((selectedDay?.length > 1)))" *ngFor="let day of afterBeforeDay" [value]="day" (click)="checkState(button)">
-              {{day}}
+            <mat-radio-button #button class="day-radio-button" [disabled]="(selectedDateList.length > 1) || ((selectedMonth?.length > 1) || (selectedWeek?.length > 1) || (selectedDay?.length > 1)) || (flexibleDates && (!selectedDateList ||  (selectedDateList?.length === 0))) || (!flexibleDates  && ((!selectedMonth  ||selectedMonth?.length > 1) || (!selectedWeek || selectedWeek?.length > 1) || (!selectedDay || selectedDay?.length > 1))) || flexibleDates" *ngFor="let day of afterBeforeDay" [value]="day.value" (click)="checkState(button)">
+              {{day.display}}
             </mat-radio-button>
           </mat-radio-group>
     </div>
