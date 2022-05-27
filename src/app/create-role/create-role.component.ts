@@ -434,10 +434,10 @@ export class CreateRoleComponent implements OnInit {
           description: this.form.value.description
         }]
         this.selectedDateList.forEach(item => {
-          if (reqData.customDays === '') {
-            reqData.customDays = reqData.customDays + moment(item).format('MM-DD');
+          if (reqData[0].customDays === '') {
+            reqData[0].customDays = reqData[0].customDays + moment(item).format('MM-DD');
           } else {
-            reqData.customDays = reqData.customDays + ',' + moment(item).format('MM-DD');
+            reqData[0].customDays = reqData[0].customDays + ',' + moment(item).format('MM-DD');
           }
         })
 
@@ -488,10 +488,10 @@ export class CreateRoleComponent implements OnInit {
           description: this.form.value.description
         }]
         this.selectedDateList.forEach(item => {
-          if (reqData.customDays === '') {
-            reqData.customDays = reqData.customDays + moment(item).format('MM-DD');
+          if (reqData[0].customDays === '') {
+            reqData[0].customDays = reqData[0].customDays + moment(item).format('MM-DD');
           } else {
-            reqData.customDays = reqData.customDays + ',' + moment(item).format('MM-DD');
+            reqData[0].customDays = reqData[0].customDays + ',' + moment(item).format('MM-DD');
           }
         })
 
