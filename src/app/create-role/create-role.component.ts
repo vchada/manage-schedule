@@ -4,6 +4,7 @@ import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
+import { CommonDataService } from '../services/common-data.service';
 import { HttpService } from '../services/http.service';
 
 @Component({
@@ -16,6 +17,11 @@ export class CreateRoleComponent implements OnInit {
   @ViewChild('confirmationModal') confirmationModal: ElementRef;
   @ViewChild('closeConfirmationModal') closeConfirmationModal: ElementRef;
   @ViewChild('disbaleConfirmationModal') disbaleConfirmationModal: ElementRef;
+  @ViewChild('closeDisableModal') closeDisableModal: ElementRef;
+  @ViewChild('enableConfirmationModal') enableConfirmationModal: ElementRef;
+  @ViewChild('closeEnableModal') closeEnableModal: ElementRef;
+  
+  isDisabled = false;
 
   availableRules = [];
 
@@ -75,17 +81,19 @@ export class CreateRoleComponent implements OnInit {
 
   currentCheckedValue = null;
 
-  constructor(private fb: FormBuilder, private httpService: HttpService, private router: Router, private ren: Renderer2) {
+  constructor(private fb: FormBuilder, private httpService: HttpService, private router: Router, private ren: Renderer2, private commonDataService: CommonDataService) {
     this.form = fb.group({
       name: ['', [Validators.required, ]],
+      displayName: [''],
       description: ['']
     })
-    this.getAvailableRules(this.selectedYear);
     // This will trigger in case of edit rule
     if (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state) {
       const stateData = this.router.getCurrentNavigation().extras.state;
       this.flexibleDates = stateData[0].customDays ? true : false;
-
+      this.selectedYear = +stateData[0].year;
+      this.isDisabled = stateData[0].isActive === 'ACTIVE' ? false: true;
+      this.getAvailableRules(this.selectedYear);
       if (this.flexibleDates) {
         this.selectedMonth = null;
         this.selectedDate = null;
@@ -134,14 +142,18 @@ export class CreateRoleComponent implements OnInit {
 
       this.form.patchValue({
         name: stateData[0].holidayType,
+        displayName: stateData[0].displayName,
         description: stateData[0].description
       })
 
       this.editRule = true;
+      this.form.controls.displayName.setValidators(Validators.required);
       this.form.controls.name.disable();
+      this.form.updateValueAndValidity();
 
     } else {
       this.editRule = false;
+      this.getAvailableRules(this.selectedYear);
     }
 
   }
@@ -183,11 +195,15 @@ export class CreateRoleComponent implements OnInit {
 
   changeYear(year) {
     this.selectedYear = year;
+    this.flexibleDates = false;
     this.selectedMonth = null;
     this.selectedDate = null;
     this.selectedWeek = null;
     this.selectedDay = null;
     this.dateList = [];
+    this.commonDataService.setYearChange(this.selectedYear);
+    this.editRule = false;
+    this.isDisabled = false;
     this.getAvailableRules(this.selectedYear);
   }
 
@@ -350,6 +366,26 @@ export class CreateRoleComponent implements OnInit {
     this.selectedMonth = '';
   }
 
+  enableRuleConfirm() {
+    if (this.createRequestData()) {
+      let reqData = this.createUpdateRequestData();
+       
+      // check for reqData
+      reqData.forEach(item => {
+        item.isActive = 'ACTIVE';
+      })
+
+      this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
+        if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
+          this.closeEnableModal.nativeElement.click();
+          this.router.navigate(['dashboard']);
+        }
+      }, err => {
+        console.error(err);
+      })
+    }
+  }
+
   disableRuleConfirm() {
     if (this.createRequestData()) {
       let reqData = this.createUpdateRequestData();
@@ -377,7 +413,7 @@ export class CreateRoleComponent implements OnInit {
         
         this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
           if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
-            this.closeConfirmationModal.nativeElement.click();
+            this.closeDisableModal.nativeElement.click();
             this.router.navigate(['dashboard']);
           }
         }, err => {
@@ -431,7 +467,9 @@ export class CreateRoleComponent implements OnInit {
           createdUser: 'User',
           lastModifiedUser: '',
           isActive: 'ACTIVE',
-          description: this.form.value.description
+          description: this.form.value.description,
+          year: this.selectedYear,
+          displayName: this.form.value.name
         }]
         this.selectedDateList.forEach(item => {
           if (reqData[0].customDays === '') {
@@ -459,7 +497,9 @@ export class CreateRoleComponent implements OnInit {
                 createdUser: 'User',
                 lastModifiedUser: this.afterBeforeDaySelection,
                 isActive: 'ACTIVE',
-                description: this.form.value.description
+                description: this.form.value.description,
+                year: this.selectedYear,
+                displayName: this.form.value.name
               })
             })
           })
@@ -485,7 +525,9 @@ export class CreateRoleComponent implements OnInit {
           createdUser: 'User',
           lastModifiedUser: '',
           isActive: 'ACTIVE',
-          description: this.form.value.description
+          description: this.form.value.description,
+          year: this.selectedYear,
+          displayName: this.form.value.displayName
         }]
         this.selectedDateList.forEach(item => {
           if (reqData[0].customDays === '') {
@@ -512,7 +554,9 @@ export class CreateRoleComponent implements OnInit {
                 createdUser: 'User',
                 lastModifiedUser: this.afterBeforeDaySelection,
                 isActive: 'ACTIVE',
-                description: this.form.value.description
+                description: this.form.value.description,
+                year: this.selectedYear,
+                displayName: this.form.value.displayName
               })
             })
           })

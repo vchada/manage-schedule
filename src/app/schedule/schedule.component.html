@@ -78,7 +78,8 @@
 
     <div class="col-12 btn-container" *ngIf="editSchedule">
       <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
-      <button type="button" (click)="disable()" class="btn btn-dark">Disable</button>
+      <button type="button" *ngIf="!isDisabled && editSchedule" data-bs-toggle="modal" data-bs-target="#disbaleConfirmationModal"  class="btn btn-dark">Disable</button>
+      <button type="button" *ngIf="isDisabled && editSchedule" data-bs-toggle="modal" data-bs-target="#enableConfirmationModal"  class="btn btn-dark">Enable</button>
       <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup" class="btn btn-dark">Update</button>
     </div>
   </div>
@@ -97,16 +98,24 @@
           <form [formGroup]="form">
           <div class="modal-body">
 
-              <mat-form-field class="full-width" appearance="fill">
+              <mat-form-field class="full-width" appearance="fill" *ngIf="!editSchedule">
                   <mat-label>Calender Name</mat-label>
                   <input matInput placeholder="" formControlName="name">
                   <mat-error *ngIf="form.get('name').hasError('required')">
                       Calender Name is required.
                   </mat-error>
                   <mat-error *ngIf="form.get('name').hasError('alreadyExist')">
-                      Rule Name already exist.
+                      Calender Name already exist.
                   </mat-error>
               </mat-form-field>
+
+              <mat-form-field class="full-width" appearance="fill" *ngIf="editSchedule">
+                <mat-label>Calender Name</mat-label>
+                <input matInput placeholder="" formControlName="displayName">
+                <mat-error *ngIf="form.get('displayName').hasError('required')">
+                    Calender Name is required.
+                </mat-error>
+            </mat-form-field>
 
               <mat-form-field class="full-width" appearance="fill">
                 <mat-label>Description</mat-label>
@@ -121,6 +130,50 @@
               <button type="button" [disabled]="!form.valid" (click)="save()" class="btn btn-dark">Save Calender</button>
           </div>
           </form>
+      </div>
+  </div>
+</div>
+
+<!--Rule disable Modal -->
+<div class="modal fade" id="disbaleConfirmationModal" #disbaleConfirmationModal tabindex="-1" aria-labelledby="disbaleConfirmationModal" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h2 class="modal-title m-0" id="disbaleConfirmationModalTitle">Disable Calendar</h2>
+              <button type="button" #closeDisableModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <div class="modal-body">
+
+              <span>Are you sure, you want to disable {{form.controls.displayName.value}}?</span>
+
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" (click)="disableRuleConfirm()" class="btn btn-dark">Ok</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!--Rule enable Modal -->
+<div class="modal fade" id="enableConfirmationModal" #enableConfirmationModal tabindex="-1" aria-labelledby="enableConfirmationModal" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h2 class="modal-title m-0" id="enableConfirmationModalTitle">Enable Calendar</h2>
+              <button type="button" #closeEnableModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <div class="modal-body">
+
+              <span>Are you sure, you want to enable {{form.controls.displayName.value}}?</span>
+
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" (click)="enableRuleConfirm()" class="btn btn-dark">Ok</button>
+          </div>
       </div>
   </div>
 </div>

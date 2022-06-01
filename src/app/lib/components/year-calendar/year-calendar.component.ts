@@ -3,6 +3,7 @@ import { YearCalendarService } from '../../year-calendar.service';
 import { YCConfig } from '../../year-calendar-interfaces';
 import { CdkOverlayOrigin } from '@angular/cdk/overlay';
 import { DEFAULT_CONFIG } from '../../constants/default-config';
+import { CommonDataService } from 'src/app/services/common-data.service';
 
 export const DAYS_OF_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
@@ -26,12 +27,17 @@ export class YearCalendarComponent implements OnInit, OnChanges {
   maxValueInYear: number;
   currentDate: Date = new Date();
   constructor(
-    private ycService: YearCalendarService
+    private ycService: YearCalendarService,
+    private commonDataService:CommonDataService
   ) { }
 
   ngOnInit() {
     this.ycConfig.headerTemplate = this.ycConfig.headerTemplate || this.defaultHeaderTemplate;
     // this.render(this.currentDate.getFullYear());
+    this.commonDataService.yearChangeEvt.subscribe((year: any) => {      
+      this.render(year);
+    })
+
   }
 
   ngOnChanges(changes: SimpleChanges) {

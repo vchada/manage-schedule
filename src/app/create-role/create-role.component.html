@@ -1,6 +1,6 @@
 <div class="row" *ngIf="editRule">
     <div class="col-12 update-rule-title">
-        <span class="label">Rule - </span><span class="value">{{form.controls.name.value}}</span>
+        <span class="label">Rule - </span><span class="value">{{form.controls.displayName.value}}</span>
     </div>
 </div>
 <div class="row m-y-20">
@@ -111,7 +111,8 @@
     <div class="col-12 btn-container">
         
         <button type="button" (click)="cancel()" class="btn btn-secondary">Clear</button>
-        <button type="button" *ngIf="editRule" data-bs-toggle="modal" data-bs-target="#disbaleConfirmationModal" class="btn btn-dark">Disable Rule</button>
+        <button type="button" *ngIf="editRule && !isDisabled" data-bs-toggle="modal" data-bs-target="#disbaleConfirmationModal" class="btn btn-dark">Disable Rule</button>
+        <button type="button" *ngIf="editRule && isDisabled" data-bs-toggle="modal" data-bs-target="#enableConfirmationModal" class="btn btn-dark">Enable Rule</button>
         <button type="button" *ngIf="flexibleDates" [disabled]="!(selectedDateList && selectedDateList.length > 0)" data-bs-toggle="modal" data-bs-target="#confirmationModal"
             class="btn btn-dark"><span *ngIf="editRule">Update Rule</span><span *ngIf="!editRule">Save Rule</span></button>
         <button type="button" *ngIf="!flexibleDates" [disabled]="!(selectedMonth && selectedWeek && selectedDay)" data-bs-toggle="modal" data-bs-target="#confirmationModal"
@@ -131,7 +132,7 @@
             <form [formGroup]="form">
             <div class="modal-body">
 
-                <mat-form-field class="full-width" appearance="fill">
+                <mat-form-field class="full-width" appearance="fill" *ngIf="!editRule">
                     <mat-label>Rule Name</mat-label>
                     <input matInput placeholder="" formControlName="name">
                     <mat-error *ngIf="form.get('name').hasError('required')">
@@ -139,6 +140,14 @@
                     </mat-error>
                     <mat-error *ngIf="form.get('name').hasError('alreadyExist')">
                         Rule Name already exist.
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="full-width" appearance="fill" *ngIf="editRule">
+                    <mat-label>Rule Name</mat-label>
+                    <input matInput placeholder="" formControlName="displayName">
+                    <mat-error *ngIf="form.get('displayName').hasError('required')">
+                        Rule Name is required.
                     </mat-error>
                 </mat-form-field>
 
@@ -164,12 +173,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title m-0" id="disbaleConfirmationModalTitle">Disable Rule</h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" #closeDisableModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
             <div class="modal-body">
 
-                <span>Are you sure, you want to disable {{form.value.name}}?</span>
+                <span>Are you sure, you want to disable {{form.controls.displayName.value}}?</span>
 
             </div>
             <div class="modal-footer">
@@ -179,3 +188,25 @@
         </div>
     </div>
 </div>
+
+<!--Rule enable Modal -->
+<div class="modal fade" id="enableConfirmationModal" #enableConfirmationModal tabindex="-1" aria-labelledby="enableConfirmationModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title m-0" id="enableConfirmationModalTitle">Enable Rule</h2>
+                <button type="button" #closeEnableModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+  
+                <span>Are you sure, you want to enable {{form.controls.displayName.value}}?</span>
+  
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" (click)="enableRuleConfirm()" class="btn btn-dark">Ok</button>
+            </div>
+        </div>
+    </div>
+  </div>

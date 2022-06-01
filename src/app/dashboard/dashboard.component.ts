@@ -9,7 +9,7 @@ import { HttpService } from '../services/http.service';
 })
 export class DashboardComponent implements OnInit {
 
-  displayedColumns = ["name", "active", "rulesIncluded", "rulesExcluded",  "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
+  displayedColumns = ["name", "isActive", "rulesIncluded", "rulesExcluded",  "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   dataSource: any = [];
 
   displayedRuleColumns = ["holidayType", "isActive", "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];

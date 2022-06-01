@@ -18,7 +18,11 @@ export class ScheduleComponent implements OnInit {
   form: FormGroup = new FormGroup({});
   @ViewChild('confirmationModal') confirmationModal: ElementRef;
   @ViewChild('closeConfirmationModal') closeConfirmationModal: ElementRef;
-  
+  @ViewChild('disbaleConfirmationModal') disbaleConfirmationModal: ElementRef;
+  @ViewChild('closeDisableModal') closeDisableModal: ElementRef;
+  @ViewChild('enableConfirmationModal') enableConfirmationModal: ElementRef;
+  @ViewChild('closeEnableModal') closeEnableModal: ElementRef;
+  isDisabled = false;
 
   years = [
     2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032
@@ -41,6 +45,7 @@ export class ScheduleComponent implements OnInit {
   constructor(private httpService: HttpService, private fb: FormBuilder, private router: Router) {
     this.form = fb.group({
       name: ['', [Validators.required]],
+      displayName: [''],
       description: ['']
     })
 
@@ -51,7 +56,8 @@ export class ScheduleComponent implements OnInit {
       // this is edit rule data coming from dashboard
       const stateData = this.router.getCurrentNavigation().extras.state;
       this.editSchedule = true;
-
+      this.selectedYear = +stateData.year;
+      this.isDisabled = stateData.isActive === 'ACTIVE' ? false: true;
       this.httpService.getHolidayList(stateData.year).subscribe(res => {
         if (res ) {
           this.prefrenceList = [];
@@ -79,9 +85,14 @@ export class ScheduleComponent implements OnInit {
           this.changePrefrenceToExclude(stateData.rulesExcluded.split(','));
 
           this.form.controls.name.patchValue(stateData.name);
+          this.form.controls.displayName.patchValue(stateData.displayName);
+
+          this.form.controls.displayName.setValidators(Validators.required);
           this.form.controls.description.patchValue(stateData.description);
           
           this.form.controls.name.disable();
+
+          this.form.updateValueAndValidity();
         }
       }, err => {
         console.error(err);
@@ -147,6 +158,12 @@ export class ScheduleComponent implements OnInit {
     this.selectedYear = year;
     this.selectedPrefrence = [];
     this.selectedPrefrenceList = [];
+
+    this.selectedPrefrenceToExclude = [];
+    this.selectedPrefrenceListToExclude = [];
+
+    this.isDisabled = false;
+    this.editSchedule = false;
     this.fetchHolidayList(this.selectedYear);
     this.getAvailableRules(this.selectedYear);
   }
@@ -226,7 +243,7 @@ export class ScheduleComponent implements OnInit {
   save() {
     let isNameAlreadyExist = false;
         this.availableCalender.forEach(item => {
-          if(item.name.toUpperCase() === this.form.value.name.toUpperCase()) {
+          if(item.name.toUpperCase() === this.form.controls.name.value.toUpperCase()) {
             isNameAlreadyExist = true;
           }
         }) 
@@ -241,9 +258,10 @@ export class ScheduleComponent implements OnInit {
           createdUser: "Venkat Chada",
           lastModifiedUser: null,
           lastModifiedDateAndTime: null,
-          active: true,
+          isActive: 'ACTIVE',
           ruleIds: "",
           year: this.selectedYear,
+          displayName: this.editSchedule ? this.form.controls.displayName.value : this.form.controls.name.value,
           rulesIncluded: this.createStr(this.selectedPrefrence),
           rulesExcluded: this.createStr(this.selectedPrefrenceToExclude)
         }
@@ -283,8 +301,85 @@ export class ScheduleComponent implements OnInit {
 
   }
 
-  disable() {
+  enableRuleConfirm() {
+    this.httpService.getRuleIds().subscribe((ruleIds: any) => {
+      if (ruleIds ) {
+        const reqData = {
+          name: this.form.controls.name.value,
+          createdDateAndTime: null,
+          createdUser: "Venkat Chada",
+          lastModifiedUser: null,
+          lastModifiedDateAndTime: null,
+          isActive: 'ACTIVE',
+          ruleIds: "",
+          year: this.selectedYear,
+          displayName: this.editSchedule ? this.form.controls.displayName.value : this.form.controls.name.value,
+          rulesIncluded: this.createStr(this.selectedPrefrence),
+          rulesExcluded: this.createStr(this.selectedPrefrenceToExclude)
+        }
+        this.selectedPrefrence.forEach(item => {
+          if(reqData.ruleIds === '') {
+            reqData.ruleIds = reqData.ruleIds + ruleIds[item]
+          } else {
+            reqData.ruleIds = reqData.ruleIds + ',' + ruleIds[item]
+          }
+        })
+        reqData['description'] = this.form.value.description;
 
+        
+        this.httpService.updateCalendar(reqData).subscribe((res: any) => {
+          if (res && res.message === 'CALENDAR UPDATED SUCCESSFULLY') {
+            this.closeEnableModal.nativeElement.click();
+            this.router.navigate(['dashboard']);
+          }
+        }, err => {
+          console.error(err);
+        })
+      }
+    }, err => {
+      console.error(err);
+    })
+  }
+
+
+  disableRuleConfirm() {
+    this.httpService.getRuleIds().subscribe((ruleIds: any) => {
+      if (ruleIds ) {
+        const reqData = {
+          name: this.form.controls.name.value,
+          createdDateAndTime: null,
+          createdUser: "Venkat Chada",
+          lastModifiedUser: null,
+          lastModifiedDateAndTime: null,
+          isActive: 'IN_ACTIVE',
+          ruleIds: "",
+          year: this.selectedYear,
+          displayName: this.editSchedule ? this.form.controls.displayName.value : this.form.controls.name.value,
+          rulesIncluded: this.createStr(this.selectedPrefrence),
+          rulesExcluded: this.createStr(this.selectedPrefrenceToExclude)
+        }
+        this.selectedPrefrence.forEach(item => {
+          if(reqData.ruleIds === '') {
+            reqData.ruleIds = reqData.ruleIds + ruleIds[item]
+          } else {
+            reqData.ruleIds = reqData.ruleIds + ',' + ruleIds[item]
+          }
+        })
+        reqData['description'] = this.form.value.description;
+
+        
+        this.httpService.updateCalendar(reqData).subscribe((res: any) => {
+          if (res && res.message === 'CALENDAR UPDATED SUCCESSFULLY') {
+            this.closeDisableModal.nativeElement.click();
+            this.router.navigate(['dashboard']);
+          }
+        }, err => {
+          console.error(err);
+        })
+      }
+    }, err => {
+      console.error(err);
+    })
   }
 
   createStr(arr) {
