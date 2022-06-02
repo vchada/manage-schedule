@@ -41,6 +41,7 @@ export class ScheduleComponent implements OnInit {
   selectedPrefrenceListToExclude = [];
 
   editSchedule = false;
+  existingCalendarDetails: any;
 
   constructor(private httpService: HttpService, private fb: FormBuilder, private router: Router) {
     this.form = fb.group({
@@ -50,11 +51,12 @@ export class ScheduleComponent implements OnInit {
     })
 
     this.fetchHolidayList(this.selectedYear);
-    this.getAvailableRules(this.selectedYear);
+    this.getAllExistingcalenderNames();
     if (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state) {
 
       // this is edit rule data coming from dashboard
       const stateData = this.router.getCurrentNavigation().extras.state;
+      this.existingCalendarDetails = stateData;
       this.editSchedule = true;
       this.selectedYear = +stateData.year;
       this.isDisabled = stateData.isActive === 'ACTIVE' ? false: true;
@@ -83,7 +85,7 @@ export class ScheduleComponent implements OnInit {
 
           this.changePrefrence(stateData.rulesIncluded.split(','));
           this.changePrefrenceToExclude(stateData.rulesExcluded.split(','));
-
+          
           this.form.controls.name.patchValue(stateData.name);
           this.form.controls.displayName.patchValue(stateData.displayName);
 
@@ -110,11 +112,18 @@ export class ScheduleComponent implements OnInit {
   }
 
 
-  getAvailableRules(year) {
+  getAllExistingcalenderNames() {
   
-    this.httpService.getAllCalender(year).subscribe((res: any) => {
+    this.httpService.getAllExistingcalenderNames().subscribe((res: any) => {
       if (res) {
         this.availableCalender = res;
+        this.availableCalender = this.availableCalender.filter(item => {
+          if(this.existingCalendarDetails && this.existingCalendarDetails.name) {
+            return ((item === this.existingCalendarDetails.name) || (item === this.existingCalendarDetails.displayName)) ? false: true;
+          } else {
+            return true;
+          }
+        })
       }
     }, err => {
       console.error(err);
@@ -162,10 +171,10 @@ export class ScheduleComponent implements OnInit {
     this.selectedPrefrenceToExclude = [];
     this.selectedPrefrenceListToExclude = [];
 
-    this.isDisabled = false;
-    this.editSchedule = false;
+    // this.isDisabled = false;
+    // this.editSchedule = false;
     this.fetchHolidayList(this.selectedYear);
-    this.getAvailableRules(this.selectedYear);
+    this.getAllExistingcalenderNames();
   }
 
   changePrefrence(prefrence) {
@@ -184,7 +193,7 @@ export class ScheduleComponent implements OnInit {
     this.selectedPrefrenceToExclude = prefrence;
     this.selectedPrefrenceListToExclude = [];
     this.selectedPrefrenceToExclude.forEach(item => {
-      if(item) {
+      if(item && this.prefrenceList.find(val => val.name === item)) {
         this.selectedPrefrenceListToExclude = [...this.selectedPrefrenceListToExclude ,...(this.prefrenceList.find(val => val.name === item).dates)]
       }
     })
@@ -196,12 +205,16 @@ export class ScheduleComponent implements OnInit {
     this.selectedYear = (new Date(year)).getFullYear();
     this.fetchHolidayList(this.selectedYear);
 
-    this.getAvailableRules(this.selectedYear);
+    this.getAllExistingcalenderNames();
     this.selectedPrefrence = [];
   }
 
   cancel() {
     this.selectedPrefrence = [];
+    this.selectedPrefrenceList = [];
+
+    this.selectedPrefrenceToExclude = [];
+    this.selectedPrefrenceListToExclude = [];
   }
 
   remove(prefrence) {
@@ -243,19 +256,30 @@ export class ScheduleComponent implements OnInit {
   save() {
     let isNameAlreadyExist = false;
         this.availableCalender.forEach(item => {
-          if(item.name.toUpperCase() === this.form.controls.name.value.toUpperCase()) {
-            isNameAlreadyExist = true;
+          if(!this.editSchedule) {
+            if(item.toUpperCase() === this.form.controls.name.value.toUpperCase()) {
+              isNameAlreadyExist = true;
+            }
+          } else {
+            if(item.toUpperCase() === this.form.controls.displayName.value.toUpperCase()) {
+              isNameAlreadyExist = true;
+            }
           }
-        }) 
-        if(isNameAlreadyExist && !this.editSchedule) {
-          this.form.controls.name.setErrors({alreadyExist: true});
+        })
+
+        if(isNameAlreadyExist) {
+          if(!this.editSchedule) {
+            this.form.controls.name.setErrors({alreadyExist: true});
+          } else {
+            this.form.controls.displayName.setErrors({alreadyExist: true});
+          }
         } else {
     this.httpService.getRuleIds().subscribe((ruleIds: any) => {
       if (ruleIds ) {
         const reqData = {
           name: this.form.controls.name.value,
           createdDateAndTime: null,
-          createdUser: "Venkat Chada",
+          createdUser: "User",
           lastModifiedUser: null,
           lastModifiedDateAndTime: null,
           isActive: 'ACTIVE',
@@ -307,7 +331,7 @@ export class ScheduleComponent implements OnInit {
         const reqData = {
           name: this.form.controls.name.value,
           createdDateAndTime: null,
-          createdUser: "Venkat Chada",
+          createdUser: "User",
           lastModifiedUser: null,
           lastModifiedDateAndTime: null,
           isActive: 'ACTIVE',
@@ -348,7 +372,7 @@ export class ScheduleComponent implements OnInit {
         const reqData = {
           name: this.form.controls.name.value,
           createdDateAndTime: null,
-          createdUser: "Venkat Chada",
+          createdUser: "User",
           lastModifiedUser: null,
           lastModifiedDateAndTime: null,
           isActive: 'IN_ACTIVE',

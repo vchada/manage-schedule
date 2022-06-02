@@ -74,8 +74,26 @@ export class HttpService {
       );
   }
 
+  
+  getAllExistingcalenderNames() {
+    return this.http.get('http://localhost:8080/holiday/get-all-existing-calendar-names/')
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
   getAllRules() {
     return this.http.get('http://localhost:8080/holiday/get-all-rules')
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
+  
+  getAllExistingRuleNames() {
+    return this.http.get('http://localhost:8080/holiday/get-all-existing-rule-names')
       .pipe(
         retry(2),
         catchError(this.handleError)

@@ -71,13 +71,13 @@
 
   <div class="row">
     <div class="col-12 btn-container" *ngIf="!editSchedule">
-      <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
+      <button type="button" (click)="cancel()" class="btn btn-dark">Clear</button>
       <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup" class="btn btn-dark">Save</button>
       <button type="button" (click)="generate()" class="btn btn-dark generate">Generate</button>
     </div>
 
     <div class="col-12 btn-container" *ngIf="editSchedule">
-      <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
+      <button type="button" (click)="cancel()" class="btn btn-dark">Clear</button>
       <button type="button" *ngIf="!isDisabled && editSchedule" data-bs-toggle="modal" data-bs-target="#disbaleConfirmationModal"  class="btn btn-dark">Disable</button>
       <button type="button" *ngIf="isDisabled && editSchedule" data-bs-toggle="modal" data-bs-target="#enableConfirmationModal"  class="btn btn-dark">Enable</button>
       <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup" class="btn btn-dark">Update</button>
@@ -114,6 +114,9 @@
                 <input matInput placeholder="" formControlName="displayName">
                 <mat-error *ngIf="form.get('displayName').hasError('required')">
                     Calender Name is required.
+                </mat-error>
+                <mat-error *ngIf="form.get('displayName').hasError('alreadyExist')">
+                    Calender Name already exist.
                 </mat-error>
             </mat-form-field>
 

@@ -74,7 +74,7 @@ export class CreateRoleComponent implements OnInit {
   selectedDay = null;
 
   flexibleDates = false;
-
+  existingRuleDetails: any;
 
   afterBeforeDaySelection: string;
   afterBeforeDay: any[] = [{display: 'Day before', value: 'DAY_BEFORE'}, {display: 'Day after', value: 'DAY_AFTER'}];
@@ -90,10 +90,12 @@ export class CreateRoleComponent implements OnInit {
     // This will trigger in case of edit rule
     if (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state) {
       const stateData = this.router.getCurrentNavigation().extras.state;
+      this.existingRuleDetails = stateData;
       this.flexibleDates = stateData[0].customDays ? true : false;
       this.selectedYear = +stateData[0].year;
       this.isDisabled = stateData[0].isActive === 'ACTIVE' ? false: true;
-      this.getAvailableRules(this.selectedYear);
+      this.getAllExistingRuleNames();
+      // this.getAvailableRules(this.selectedYear);
       if (this.flexibleDates) {
         this.selectedMonth = null;
         this.selectedDate = null;
@@ -153,15 +155,22 @@ export class CreateRoleComponent implements OnInit {
 
     } else {
       this.editRule = false;
-      this.getAvailableRules(this.selectedYear);
+      // this.getAvailableRules(this.selectedYear);
     }
-
+    this.getAllExistingRuleNames();
   }
 
-  getAvailableRules(year) {
-    this.httpService.getAllRules().subscribe((res: any) => {
+  getAllExistingRuleNames() {
+    this.httpService.getAllExistingRuleNames().subscribe((res: any) => {
       if (res) {
         this.availableRules = res;
+        this.availableRules = this.availableRules.filter(item => {
+          if(this.existingRuleDetails && this.existingRuleDetails[0]) {
+            return ((item === this.existingRuleDetails[0].holidayType) || (item === this.existingRuleDetails[0].displayName)) ? false: true;
+          } else {
+            return true;
+          }
+        })
       }
     }, err => {
       console.error(err);
@@ -202,9 +211,11 @@ export class CreateRoleComponent implements OnInit {
     this.selectedDay = null;
     this.dateList = [];
     this.commonDataService.setYearChange(this.selectedYear);
-    this.editRule = false;
-    this.isDisabled = false;
-    this.getAvailableRules(this.selectedYear);
+    // this.editRule = false;
+    // this.isDisabled = false;
+    // this.existingRuleDetails = null;
+    // this.getAllExistingRuleNames();
+    // this.getAvailableRules(this.selectedYear);
   }
 
   changeMonth(Month) {
@@ -359,11 +370,26 @@ export class CreateRoleComponent implements OnInit {
 
   sendYearChanged(year) {
     this.selectedYear = (new Date(year)).getFullYear();
-    this.getAvailableRules(this.selectedYear);
+    this.existingRuleDetails = null;
+    this.getAllExistingRuleNames();
+    // this.getAvailableRules(this.selectedYear);
   }
 
   cancel() {
-    this.selectedMonth = '';
+    // this.selectedYear = 2022;
+    this.flexibleDates = false;
+    this.selectedMonth = null;
+    this.selectedDate = null;
+    this.selectedWeek = null;
+    this.selectedDay = null;
+    this.dateList = [];
+    this.commonDataService.setYearChange(this.selectedYear);
+    // this.editRule = false;
+    // this.isDisabled = false;
+    // this.existingRuleDetails = null;
+    // this.getAllExistingRuleNames();
+    this.selectedPrefrence = [];
+    // this.getAvailableRules(this.selectedYear);
   }
 
   enableRuleConfirm() {
@@ -409,22 +435,35 @@ export class CreateRoleComponent implements OnInit {
   saveRule() {
     if (this.createRequestData()) {
       if (this.editRule) {
-        let reqData = this.createUpdateRequestData();
-        
-        this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
-          if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
-            this.closeDisableModal.nativeElement.click();
-            this.router.navigate(['dashboard']);
+        let isNameAlreadyExist = false;
+        this.availableRules.forEach(item => {
+          if(item.toUpperCase() === this.form.value.displayName.toUpperCase()) {
+            isNameAlreadyExist = true;
           }
-        }, err => {
-          console.error(err);
-        })
+        }) 
+
+        if(isNameAlreadyExist) {
+          this.form.controls.displayName.setErrors({alreadyExist: true});
+        } else {
+
+          this.form.controls.displayName.setErrors(null);
+          let reqData = this.createUpdateRequestData();
+          
+          this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
+            if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
+              this.closeConfirmationModal.nativeElement.click();
+              this.router.navigate(['dashboard']);
+            }
+          }, err => {
+            console.error(err);
+          })
+        }
       } else {
         
         // Save new rule
 
         let isNameAlreadyExist = false;
-        Object.keys(this.availableRules).forEach(item => {
+        this.availableRules.forEach(item => {
           if(item.toUpperCase() === this.form.value.name.toUpperCase()) {
             isNameAlreadyExist = true;
           }

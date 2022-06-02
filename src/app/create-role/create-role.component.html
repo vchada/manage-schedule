@@ -110,7 +110,7 @@
 <div class="row">
     <div class="col-12 btn-container">
         
-        <button type="button" (click)="cancel()" class="btn btn-secondary">Clear</button>
+        <button type="button" (click)="cancel()" class="btn btn-dark">Clear</button>
         <button type="button" *ngIf="editRule && !isDisabled" data-bs-toggle="modal" data-bs-target="#disbaleConfirmationModal" class="btn btn-dark">Disable Rule</button>
         <button type="button" *ngIf="editRule && isDisabled" data-bs-toggle="modal" data-bs-target="#enableConfirmationModal" class="btn btn-dark">Enable Rule</button>
         <button type="button" *ngIf="flexibleDates" [disabled]="!(selectedDateList && selectedDateList.length > 0)" data-bs-toggle="modal" data-bs-target="#confirmationModal"
@@ -148,6 +148,9 @@
                     <input matInput placeholder="" formControlName="displayName">
                     <mat-error *ngIf="form.get('displayName').hasError('required')">
                         Rule Name is required.
+                    </mat-error>
+                    <mat-error *ngIf="form.get('displayName').hasError('alreadyExist')">
+                        Rule Name already exist.
                     </mat-error>
                 </mat-form-field>
 
