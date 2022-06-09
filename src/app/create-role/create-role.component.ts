@@ -81,6 +81,10 @@ export class CreateRoleComponent implements OnInit {
 
   currentCheckedValue = null;
 
+
+  prefrenceListToInclude = [];
+  selectedIncludedPrefrence = [];
+
   constructor(private fb: FormBuilder, private httpService: HttpService, private router: Router, private ren: Renderer2, private commonDataService: CommonDataService) {
     this.form = fb.group({
       name: ['', [Validators.required, ]],
@@ -95,6 +99,24 @@ export class CreateRoleComponent implements OnInit {
       this.selectedYear = +stateData[0].year;
       this.isDisabled = stateData[0].isActive === 'ACTIVE' ? false: true;
       this.getAllExistingRuleNames();
+
+      this.prefrenceListToInclude = [];
+      this.httpService.getHolidayList(this.selectedYear).subscribe(res => {
+        if (res ) {
+          Object.keys(res).forEach(item => {
+
+            const obj = {
+              name: item,
+              dates: []
+            }
+
+            res[item].split(',').forEach(val => {
+              obj.dates.push(val + '-' + this.selectedYear)
+            })
+
+            this.prefrenceListToInclude.push(obj)
+          })
+
       // this.getAvailableRules(this.selectedYear);
       if (this.flexibleDates) {
         this.selectedMonth = null;
@@ -147,15 +169,29 @@ export class CreateRoleComponent implements OnInit {
         displayName: stateData[0].displayName,
         description: stateData[0].description
       })
+      if(stateData[0].rulesIncluded !== '') {
+        this.selectedIncludedPrefrence = stateData[0].rulesIncluded.split(',');
+        stateData[0].rulesIncluded.split(',').forEach(item => {
+          if(item) {
+            this.selectedPrefrence = [...this.selectedPrefrence ,...(this.prefrenceListToInclude.find(val => val.name === item).dates)]
+          }
+        })
+      }
 
       this.editRule = true;
       this.form.controls.displayName.setValidators(Validators.required);
       this.form.controls.name.disable();
       this.form.updateValueAndValidity();
 
+    }
+  }, err => {
+    console.error(err);
+  })
+
     } else {
       this.editRule = false;
       // this.getAvailableRules(this.selectedYear);
+    this.fetchHolidayList(this.selectedYear);
     }
     this.getAllExistingRuleNames();
   }
@@ -184,12 +220,25 @@ export class CreateRoleComponent implements OnInit {
       this.selectedDate = null;
       this.selectedWeek = null;
       this.selectedDay = null;
+      // this.selectedPrefrence = [];
+
       this.selectedPrefrence = [];
+      this.selectedIncludedPrefrence.forEach(item => {
+        if(item) {
+          this.selectedPrefrence = [...this.selectedPrefrence ,...(this.prefrenceListToInclude.find(val => val.name === item).dates)]
+        }
+      })
 
     } else {
+      // this.selectedPrefrence = [];
       this.selectedPrefrence = [];
+      this.selectedIncludedPrefrence.forEach(item => {
+        if(item) {
+          this.selectedPrefrence = [...this.selectedPrefrence ,...(this.prefrenceListToInclude.find(val => val.name === item).dates)]
+        }
+      })
     }
-    this.selectedDateList = [];
+    // this.selectedDateList = [];
   }
 
 
@@ -197,6 +246,82 @@ export class CreateRoleComponent implements OnInit {
 
   }
 
+  fetchHolidayList(selectedYear) {
+    this.prefrenceListToInclude = [];
+    this.httpService.getHolidayList(selectedYear).subscribe(res => {
+      if (res ) {
+        Object.keys(res).forEach(item => {
+
+          const obj = {
+            name: item,
+            dates: []
+          }
+
+          res[item].split(',').forEach(val => {
+            obj.dates.push(val + '-' + this.selectedYear)
+          })
+
+          this.prefrenceListToInclude.push(obj)
+        })
+      }
+    }, err => {
+      console.error(err);
+    })
+  }
+
+
+  changePrefrence(prefrence) {
+    if(prefrence.length > this.selectedIncludedPrefrence.length) {
+      let addedPreference = '';
+      prefrence.forEach(val => {
+        if(!this.selectedIncludedPrefrence.includes(val)) {
+          addedPreference = val;
+        }
+      })
+      const addDates = this.prefrenceListToInclude.find(val => val.name === addedPreference).dates;
+      this.selectedPrefrence = [...this.selectedPrefrence, ...addDates];
+    } else {
+      let removedPreference = '';
+      this.selectedIncludedPrefrence.forEach(val => {
+        if(!prefrence.includes(val)) {
+          removedPreference = val;
+        }
+      })
+
+      const removeDates = this.prefrenceListToInclude.find(val => val.name === removedPreference).dates;
+      this.selectedPrefrence = this.selectedPrefrence.filter(item => {
+        return !removeDates.includes(item);
+      })
+    }
+
+
+
+    this.selectedIncludedPrefrence = prefrence;
+    // this.selectedPrefrence = [];
+    // this.selectedIncludedPrefrence.forEach(item => {
+    //   if(item) {
+    //     this.selectedPrefrence = [...this.selectedPrefrence ,...(this.prefrenceListToInclude.find(val => val.name === item).dates)]
+    //   }
+    // })
+  }
+
+  remove(prefrence) {
+    this.selectedIncludedPrefrence = this.selectedIncludedPrefrence.filter(item => item !== prefrence);
+
+    // this.selectedPrefrence = [];
+    // this.selectedIncludedPrefrence.forEach(item => {
+    //   if(item) {
+    //     this.selectedPrefrence = [...this.selectedPrefrence ,...(this.prefrenceListToInclude.find(val => val.name === item).dates)]
+    //   }
+    // })
+
+    const removeDates = this.prefrenceListToInclude.find(val => val.name === prefrence).dates;
+    this.selectedPrefrence = this.selectedPrefrence.filter(item => {
+      return !removeDates.includes(item);
+    })
+
+
+  }
 
   get f() {
     return this.form.controls;
@@ -210,7 +335,10 @@ export class CreateRoleComponent implements OnInit {
     this.selectedWeek = null;
     this.selectedDay = null;
     this.dateList = [];
+    this.selectedIncludedPrefrence = [];
+    this.selectedPrefrence = [];
     this.commonDataService.setYearChange(this.selectedYear);
+    this.fetchHolidayList(this.selectedYear);
     // this.editRule = false;
     // this.isDisabled = false;
     // this.existingRuleDetails = null;
@@ -329,38 +457,39 @@ export class CreateRoleComponent implements OnInit {
         })
       })
     })
-
+    let newdates = [];
     this.httpService.getSelectedDate(req).subscribe((res: any) => {
       if (res && res.length > 0) {
 
         if(res.length === 1) {
           if(this.afterBeforeDaySelection === 'DAY_BEFORE') {
-            this.selectedPrefrence = [];
+            // this.selectedPrefrence = [];
             res.forEach(item => {
-              this.selectedPrefrence.push(moment(item).subtract(1, "days").format('L'));
+              newdates.push(moment(item).subtract(1, "days").format('L'));
             })
           } 
   
           if(this.afterBeforeDaySelection === 'DAY_AFTER') {
-            this.selectedPrefrence = [];
+            // this.selectedPrefrence = [];
             res.forEach(item => {
-              this.selectedPrefrence.push(moment(item).add(1, "days").format('L'));
+              newdates.push(moment(item).add(1, "days").format('L'));
             })
           }
   
           if(!this.afterBeforeDaySelection) {
-            this.selectedPrefrence = [];
+            // this.selectedPrefrence = [];
             res.forEach(item => {
-              this.selectedPrefrence.push(moment(item).format('L'));
+              newdates.push(moment(item).format('L'));
             })
           }
         } else {
 
-          this.selectedPrefrence = [];
+          // this.selectedPrefrence = [];
           res.forEach(item => {
-            this.selectedPrefrence.push(moment(item).format('L'));
+            newdates.push(moment(item).format('L'));
           })
         }
+        this.selectedPrefrence = [...this.selectedPrefrence, ...newdates];
       }
     }, err => {
       console.error(err);
@@ -389,6 +518,7 @@ export class CreateRoleComponent implements OnInit {
     // this.existingRuleDetails = null;
     // this.getAllExistingRuleNames();
     this.selectedPrefrence = [];
+    this.selectedIncludedPrefrence = [];
     // this.getAvailableRules(this.selectedYear);
   }
 
@@ -508,8 +638,16 @@ export class CreateRoleComponent implements OnInit {
           isActive: 'ACTIVE',
           description: this.form.value.description,
           year: this.selectedYear,
-          displayName: this.form.value.name
+          displayName: this.form.value.name,
+          rulesIncluded: ''
         }]
+        this.selectedIncludedPrefrence.forEach(item => {
+          if(reqData[0].rulesIncluded === '') {
+            reqData[0].rulesIncluded = item;
+          } else {
+            reqData[0].rulesIncluded = reqData[0].rulesIncluded + ',' + item;
+          }
+        })
         this.selectedDateList.forEach(item => {
           if (reqData[0].customDays === '') {
             reqData[0].customDays = reqData[0].customDays + moment(item).format('MM-DD');
@@ -526,7 +664,7 @@ export class CreateRoleComponent implements OnInit {
         this.selectedMonth.forEach(month => {
           this.selectedWeek.forEach(week => {
             this.selectedDay.forEach(day => {
-              req.push({
+              const reqObj = {
                 holidayType: this.form.value.name,
                 month: month,
                 dayOfTheMonth: '',
@@ -538,8 +676,20 @@ export class CreateRoleComponent implements OnInit {
                 isActive: 'ACTIVE',
                 description: this.form.value.description,
                 year: this.selectedYear,
-                displayName: this.form.value.name
+                displayName: this.form.value.name,
+                rulesIncluded: ''
+              }
+
+
+              this.selectedIncludedPrefrence.forEach(item => {
+                if(reqObj.rulesIncluded === '') {
+                  reqObj.rulesIncluded = item;
+                } else {
+                  reqObj.rulesIncluded = reqObj.rulesIncluded + ',' + item;
+                }
               })
+
+              req.push(reqObj);
             })
           })
         })
@@ -566,8 +716,16 @@ export class CreateRoleComponent implements OnInit {
           isActive: 'ACTIVE',
           description: this.form.value.description,
           year: this.selectedYear,
-          displayName: this.form.value.displayName
+          displayName: this.form.value.displayName,
+          rulesIncluded: ''
         }]
+        this.selectedIncludedPrefrence.forEach(item => {
+          if(reqData[0].rulesIncluded === '') {
+            reqData[0].rulesIncluded = item;
+          } else {
+            reqData[0].rulesIncluded = reqData[0].rulesIncluded + ',' + item;
+          }
+        })
         this.selectedDateList.forEach(item => {
           if (reqData[0].customDays === '') {
             reqData[0].customDays = reqData[0].customDays + moment(item).format('MM-DD');
@@ -583,7 +741,7 @@ export class CreateRoleComponent implements OnInit {
         this.selectedMonth.forEach(month => {
           this.selectedWeek.forEach(week => {
             this.selectedDay.forEach(day => {
-              req.push({
+              const reqObj = {
                 holidayType: this.form.controls.name.value,
                 month: month - 1,
                 dayOfTheMonth: '',
@@ -595,8 +753,20 @@ export class CreateRoleComponent implements OnInit {
                 isActive: 'ACTIVE',
                 description: this.form.value.description,
                 year: this.selectedYear,
-                displayName: this.form.value.displayName
+                displayName: this.form.value.displayName,
+                rulesIncluded: ''
+              }
+
+
+              this.selectedIncludedPrefrence.forEach(item => {
+                if(reqObj.rulesIncluded === '') {
+                  reqObj.rulesIncluded = item;
+                } else {
+                  reqObj.rulesIncluded = reqObj.rulesIncluded + ',' + item;
+                }
               })
+
+              req.push(reqObj);
             })
           })
         })

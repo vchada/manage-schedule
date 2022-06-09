@@ -83,7 +83,7 @@ export class ExampleSectionComponent implements OnInit, OnChanges {
     
     if(changes.prefrence && changes.prefrence.currentValue) {
       if(this.customDateSelection) {
-        this.prefrences = changes.prefrence.currentValue.length === 0? []: this.prefrences;
+        this.prefrences = changes.prefrence.currentValue.length === 0? []: changes.prefrence.currentValue;
         changes.prefrence.currentValue.forEach(item => {
           if(moment(item).isValid()) {
               this.prefrences.push(moment(item));

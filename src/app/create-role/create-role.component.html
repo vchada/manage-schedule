@@ -96,6 +96,29 @@
 
 </div>
 
+<div class="row m-y-20">
+
+    <div class="col-1 min-width-225">
+
+      <mat-form-field appearance="fill">
+        <mat-label>Select Rule to include</mat-label>
+        <mat-select [disableOptionCentering]="true" multiple (ngModelChange)="changePrefrence($event)" [(ngModel)]="selectedIncludedPrefrence">
+          <mat-option *ngFor="let prefrence of prefrenceListToInclude" [value]="prefrence.name">
+            {{prefrence.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    
+    <div class="col-10" >
+      <div class="box">
+        <span class="tube" *ngFor="let prefrence of selectedIncludedPrefrence"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="remove(prefrence)">&#10006;</a></span>
+      </div>
+    </div>
+  </div>
+
 
 <div class="row">
     <div class="col-12">
