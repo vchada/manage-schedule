@@ -54,7 +54,7 @@
 
 <ng-template #defaultHeaderTemplate let-ycConfig="ycConfig" let-year="year" let-fns="fns">
   <div class="year-calendar__header__options">
-    <button [disabled]="loadingData" *ngIf="!ycConfig?.prevBtn?.hide"
+    <button [disabled]="loadingData || disablePrev" *ngIf="!ycConfig?.prevBtn?.hide"
       class="year-calendar__header__options__option {{ycConfig?.prevBtn?.class}}" (click)="fns.prevYearClick()">
       {{ycConfig?.prevBtn?.text || 'Previous'}}
     </button>
@@ -62,7 +62,7 @@
     <span class="year-calendar__header__options_year">
       {{ year }}
     </span>
-    <button [disabled]="loadingData" *ngIf="!ycConfig?.nextBtn?.hide"
+    <button [disabled]="loadingData || disableNext" *ngIf="!ycConfig?.nextBtn?.hide"
       class="year-calendar__header__options__option {{ycConfig?.nextBtn?.class}}" (click)="fns.nextYearClick()">
       {{ycConfig?.nextBtn?.text || 'Next'}}
     </button>

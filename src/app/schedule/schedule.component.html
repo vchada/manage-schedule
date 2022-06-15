@@ -1,4 +1,8 @@
-
+<div class="row" *ngIf="editSchedule">
+  <div class="col-12 update-rule-title">
+      <span class="label">Calendar - </span><span class="value">{{form.controls.displayName.value}}</span>
+  </div>
+</div>
   <div class="row m-y-20">
     <div class="col-1 min-width-225">
 
@@ -54,7 +58,7 @@
     <div class="col-6" >
       <div class="box">
         <span class="tube" *ngFor="let prefrence of selectedPrefrence"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="remove(prefrence)">&#10006;</a></span>
-        <span class="tube-exclude" *ngFor="let prefrence of selectedPrefrenceToExclude"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="removeExcluded(prefrence)">&#10006;</a></span>
+        <span *ngFor="let prefrence of selectedPrefrenceToExclude"><span class="tube-exclude" *ngIf="prference"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="removeExcluded(prefrence)">&#10006;</a></span></span>
       </div>
     </div>
   </div>

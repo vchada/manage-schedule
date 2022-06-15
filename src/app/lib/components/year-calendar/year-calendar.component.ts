@@ -26,6 +26,8 @@ export class YearCalendarComponent implements OnInit, OnChanges {
   yearData = [];
   maxValueInYear: number;
   currentDate: Date = new Date();
+  disablePrev = false;
+  disableNext = false;
   constructor(
     private ycService: YearCalendarService,
     private commonDataService:CommonDataService
@@ -33,9 +35,49 @@ export class YearCalendarComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.ycConfig.headerTemplate = this.ycConfig.headerTemplate || this.defaultHeaderTemplate;
+    let minyear = new Date().getFullYear();
+      this.disableNext = false;
+      this.disablePrev = false;
+      if((this.year) > minyear) {
+        this.disablePrev = false;
+      } else if((this.year) === minyear) {
+        this.disablePrev = true;
+      } else {
+        this.disablePrev = false;
+      }
+
+      let maxyear = new Date().getFullYear() + 10;
+      if((this.year) < maxyear) {
+        this.disableNext = false;
+      } else if((this.year) === maxyear) {
+        this.disableNext = true;
+      } else {
+        this.disableNext = true;
+      }
     // this.render(this.currentDate.getFullYear());
     this.commonDataService.yearChangeEvt.subscribe((year: any) => {      
       this.render(year);
+
+      let minyear = new Date().getFullYear();
+      this.disableNext = false;
+      this.disablePrev = false;
+      if((year) > minyear) {
+        this.disablePrev = false;
+      } else if((this.year) === minyear) {
+        this.disablePrev = true;
+      } else {
+        this.disablePrev = false;
+      }
+
+      let maxyear = new Date().getFullYear() + 10;
+      if((year) < maxyear) {
+        this.disableNext = false;
+      } else if((year) === maxyear) {
+        this.disableNext = true;
+      } else {
+        this.disableNext = true;
+      }
+
     })
 
   }
@@ -187,21 +229,35 @@ export class YearCalendarComponent implements OnInit, OnChanges {
 
   nextYearClick() {
     let maxyear = new Date().getFullYear() + 10;
+    this.disablePrev = false;
     if((this.year + 1) <= maxyear) {
-
+      this.disableNext = false;
       this.selectedDates.list = [];
       this.render(this.year + 1, this.selectedDates.list);
       this.viewYearChanged.emit(this.year);
+    } else {
+      this.disableNext = true;
     }
   }
 
   prevYearClick() {
     let minyear = new Date().getFullYear();
-    if((this.year - 1) >= minyear) {
+    this.disableNext = false;
+    this.disablePrev = true;
+    if((this.year - 1) > minyear) {
+      this.disablePrev = false;
 
       this.selectedDates.list = [];
       this.render(this.year - 1, this.selectedDates.list);
       this.viewYearChanged.emit(this.year);
+    } else if((this.year - 1) === minyear) {
+      this.disablePrev = true;
+
+      this.selectedDates.list = [];
+      this.render(this.year - 1, this.selectedDates.list);
+      this.viewYearChanged.emit(this.year);
+    } else {
+      this.disablePrev = true;
     }
   }
 

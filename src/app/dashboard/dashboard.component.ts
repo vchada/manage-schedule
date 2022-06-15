@@ -41,6 +41,37 @@ export class DashboardComponent implements OnInit {
     goToDashboard(row) {
       // this.httpService.getRuleDetails(row.holidayType).subscribe((res: any) => {
       //   if (res) {
+          // let rulesToIncludeFromRule = [];
+          // if(row.rulesIncluded && row.rulesIncluded.split(',').length > 0) {
+          //   row.rulesIncluded.split(',').forEach(item => {
+          //     this.httpService.getRuleDetails(item).subscribe((res: any) => {
+          //       if (res) {
+          //         if(res[0].rulesIncluded) {
+          //           rulesToIncludeFromRule.push(res[0].rulesIncluded)
+          //         }
+          //       }
+          //     }, err => {
+          //       console.error(err);
+          //     })
+          //   })
+          // }
+
+          // let rulesToExcludeFromRule = [];
+          // if(row.rulesExcluded && row.rulesExcluded.split(',').length > 0) {
+          //   row.rulesExcluded.split(',').forEach(item => {
+          //     this.httpService.getRuleDetails(item).subscribe((res: any) => {
+          //       if (res) {
+          //         if(res[0].rulesExcluded) {
+          //           rulesToExcludeFromRule.push(res[0].rulesIncluded)
+          //         }
+          //       }
+          //     }, err => {
+          //       console.error(err);
+          //     })
+          //   })
+          // }
+
+          // debugger;
            
           this.router.navigate(['schedule'], {state: row});
       //   }

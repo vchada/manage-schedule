@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import * as moment from 'moment';
+import { CommonDataService } from '../services/common-data.service';
 import { HttpService } from '../services/http.service';
 
 @Component({
@@ -43,7 +44,7 @@ export class ScheduleComponent implements OnInit {
   editSchedule = false;
   existingCalendarDetails: any;
 
-  constructor(private httpService: HttpService, private fb: FormBuilder, private router: Router) {
+  constructor(private httpService: HttpService, private fb: FormBuilder, private router: Router, private commonDataService: CommonDataService) {
     this.form = fb.group({
       name: ['', [Validators.required]],
       displayName: [''],
@@ -165,23 +166,53 @@ export class ScheduleComponent implements OnInit {
 
   changeYear(year) {
     this.selectedYear = year;
-    this.selectedPrefrence = [];
-    this.selectedPrefrenceList = [];
+    // this.selectedPrefrence = [];
+    // this.selectedPrefrenceList = [];
 
-    this.selectedPrefrenceToExclude = [];
-    this.selectedPrefrenceListToExclude = [];
+    // this.selectedPrefrenceToExclude = [];
+    // this.selectedPrefrenceListToExclude = [];
 
     // this.isDisabled = false;
     // this.editSchedule = false;
-    this.fetchHolidayList(this.selectedYear);
+    
+    this.prefrenceList = [];
+    this.prefrenceListToInclude = [];
+    this.prefrenceListToExclude = [];
+    this.httpService.getHolidayList(this.selectedYear).subscribe(res => {
+      if (res ) {
+        Object.keys(res).forEach(item => {
+
+          const obj = {
+            name: item,
+            dates: []
+          }
+
+          res[item].split(',').forEach(val => {
+            obj.dates.push(val + '-' + this.selectedYear)
+          })
+
+          this.prefrenceList.push(obj)
+        })
+
+        this.prefrenceListToInclude = [...this.prefrenceList];
+        this.prefrenceListToExclude = [...this.prefrenceList];
+
+
+        this.changePrefrence(this.selectedPrefrence);
+        this.changePrefrenceToExclude(this.selectedPrefrenceListToExclude);
+      }
+    }, err => {
+      console.error(err);
+    })
     this.getAllExistingcalenderNames();
+    this.commonDataService.setYearChange(this.selectedYear);
   }
 
   changePrefrence(prefrence) {
     this.selectedPrefrence = prefrence;
     this.selectedPrefrenceList = [];
     this.selectedPrefrence.forEach(item => {
-      if(item) {
+      if(item && this.prefrenceList.find(val => val.name === item) && this.prefrenceList.find(val => val.name === item).dates) {
         this.selectedPrefrenceList = [...this.selectedPrefrenceList ,...(this.prefrenceList.find(val => val.name === item).dates)]
       }
     })

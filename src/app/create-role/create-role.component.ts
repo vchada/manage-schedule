@@ -104,6 +104,7 @@ export class CreateRoleComponent implements OnInit {
       this.httpService.getHolidayList(this.selectedYear).subscribe(res => {
         if (res ) {
           Object.keys(res).forEach(item => {
+            if(item !== stateData[0].holidayType) {
 
             const obj = {
               name: item,
@@ -115,6 +116,7 @@ export class CreateRoleComponent implements OnInit {
             })
 
             this.prefrenceListToInclude.push(obj)
+          }
           })
 
       // this.getAvailableRules(this.selectedYear);
