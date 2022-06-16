@@ -58,7 +58,7 @@
     <div class="col-6" >
       <div class="box">
         <span class="tube" *ngFor="let prefrence of selectedPrefrence"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="remove(prefrence)">&#10006;</a></span>
-        <span *ngFor="let prefrence of selectedPrefrenceToExclude"><span class="tube-exclude" *ngIf="prference"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="removeExcluded(prefrence)">&#10006;</a></span></span>
+        <span *ngFor="let prefrence of selectedPrefrenceToExclude"><span class="tube-exclude" *ngIf="prefrence"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="removeExcluded(prefrence)">&#10006;</a></span></span>
       </div>
     </div>
   </div>

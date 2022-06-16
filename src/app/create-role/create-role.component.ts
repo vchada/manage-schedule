@@ -332,17 +332,58 @@ export class CreateRoleComponent implements OnInit {
   }
 
   changeYear(year) {
+    let prevYear = this.selectedYear;
+    let prevPrefrence = this.selectedPrefrence;
     this.selectedYear = year;
-    this.flexibleDates = false;
-    this.selectedMonth = null;
-    this.selectedDate = null;
-    this.selectedWeek = null;
-    this.selectedDay = null;
-    this.dateList = [];
-    this.selectedIncludedPrefrence = [];
-    this.selectedPrefrence = [];
+    // this.flexibleDates = false;
+    // this.selectedMonth = null;
+    // this.selectedDate = null;
+    // this.selectedWeek = null;
+    // this.selectedDay = null;
+    // this.dateList = [];
+    // this.selectedIncludedPrefrence = [];
+    // this.selectedPrefrence = [];
+    
     this.commonDataService.setYearChange(this.selectedYear);
-    this.fetchHolidayList(this.selectedYear);
+    
+    this.prefrenceListToInclude = [];
+    this.httpService.getHolidayList(this.selectedYear).subscribe(res => {
+      if (res ) {
+        Object.keys(res).forEach(item => {
+
+          const obj = {
+            name: item,
+            dates: []
+          }
+
+          res[item].split(',').forEach(val => {
+            obj.dates.push(val + '-' + this.selectedYear)
+          })
+
+          this.prefrenceListToInclude.push(obj)
+        })
+
+        this.selectedPrefrence = [];
+        if ((!this.flexibleDates && !this.selectedMonth)) {
+          let dates = [];
+          this.selectedIncludedPrefrence.forEach(item => {
+            if(this.prefrenceListToInclude.find(val => val.name === item)?.dates) {
+              dates = [...dates, ...(this.prefrenceListToInclude.find(val => val.name === item)?.dates)];
+            }            
+          })
+          this.selectedPrefrence = [...this.selectedPrefrence, ...dates];
+        } else if ((!this.flexibleDates && !this.selectedMonth) || (this.flexibleDates)) {
+          let dateUpdate = [];
+          prevPrefrence.forEach(item => {
+            dateUpdate.push(item.replace(prevYear, this.selectedYear))
+          })
+          this.selectedPrefrence = [...dateUpdate];
+        }
+      }
+    }, err => {
+      console.error(err);
+    })
+
     // this.editRule = false;
     // this.isDisabled = false;
     // this.existingRuleDetails = null;
@@ -502,8 +543,7 @@ export class CreateRoleComponent implements OnInit {
   }
 
   sendYearChanged(year) {
-    this.selectedYear = (new Date(year)).getFullYear();
-    this.changeYear(this.selectedYear);
+    this.changeYear((new Date(year)).getFullYear());
     // this.getAvailableRules(this.selectedYear);
   }
 
