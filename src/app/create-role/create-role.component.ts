@@ -127,9 +127,11 @@ export class CreateRoleComponent implements OnInit {
         this.selectedDay = null;
 
         if (stateData[0].customDays) {
+          let dates = []
           stateData[0].customDays.split(',').forEach(item => {
-            this.selectedPrefrence.push(moment(item + '-' + this.selectedYear).format('L'));
+            dates.push(moment(item + '-' + this.selectedYear).format('L'));
           })
+          this.selectedPrefrence = [...this.selectedPrefrence, ...dates];
         }
 
       } else {
@@ -501,8 +503,7 @@ export class CreateRoleComponent implements OnInit {
 
   sendYearChanged(year) {
     this.selectedYear = (new Date(year)).getFullYear();
-    this.existingRuleDetails = null;
-    this.getAllExistingRuleNames();
+    this.changeYear(this.selectedYear);
     // this.getAvailableRules(this.selectedYear);
   }
 

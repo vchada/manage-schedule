@@ -234,10 +234,7 @@ export class ScheduleComponent implements OnInit {
 
   sendYearChanged(year) {
     this.selectedYear = (new Date(year)).getFullYear();
-    this.fetchHolidayList(this.selectedYear);
-
-    this.getAllExistingcalenderNames();
-    this.selectedPrefrence = [];
+    this.changeYear(this.selectedYear);
   }
 
   cancel() {

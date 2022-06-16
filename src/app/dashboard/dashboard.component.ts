@@ -1,3 +1,4 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
@@ -9,11 +10,40 @@ import { HttpService } from '../services/http.service';
 })
 export class DashboardComponent implements OnInit {
 
-  displayedColumns = ["name", "isActive", "rulesIncluded", "rulesExcluded",  "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
+  displayedColumns = ["select", "name", "isActive", "rulesIncluded", "rulesExcluded",  "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   dataSource: any = [];
 
   displayedRuleColumns = ["holidayType", "isActive", "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   ruleDataSource: any = [];
+  selectedYear: any;
+  years = [
+    2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032
+  ]
+
+  selection = new SelectionModel<any>(true, []);
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+        this.selection.clear() :
+        this.dataSource.forEach(row => this.selection.select(row));
+  }
+
+  isRowSelected(row) {
+    if(this.selection && this.selection.selected && this.selection.selected.length > 0) {
+    return this.selection.selected.find(item => item.id === row.id) ? true : false;
+    } else {
+      return false;
+    }
+  }
+
 
   constructor(private httpService:HttpService, private router: Router) {}
 
@@ -35,6 +65,10 @@ export class DashboardComponent implements OnInit {
         }, err => {
           console.error(err);
         })
+
+    }
+
+    changeYear(year) {
 
     }
     
@@ -78,6 +112,10 @@ export class DashboardComponent implements OnInit {
       // }, err => {
       //   console.error(err);
       // })
+    }
+
+    generate() {
+
     }
 
     goToCreateRule(row) {
