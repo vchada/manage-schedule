@@ -345,7 +345,7 @@ export class CreateRoleComponent implements OnInit {
     // this.selectedPrefrence = [];
     
     this.commonDataService.setYearChange(this.selectedYear);
-    
+    const prevPrefrenceListToInclude = [...this.prefrenceListToInclude];
     this.prefrenceListToInclude = [];
     this.httpService.getHolidayList(this.selectedYear).subscribe(res => {
       if (res ) {
@@ -363,8 +363,8 @@ export class CreateRoleComponent implements OnInit {
           this.prefrenceListToInclude.push(obj)
         })
 
-        this.selectedPrefrence = [];
         if ((!this.flexibleDates && !this.selectedMonth)) {
+          this.selectedPrefrence = [];
           let dates = [];
           this.selectedIncludedPrefrence.forEach(item => {
             if(this.prefrenceListToInclude.find(val => val.name === item)?.dates) {
@@ -372,12 +372,105 @@ export class CreateRoleComponent implements OnInit {
             }            
           })
           this.selectedPrefrence = [...this.selectedPrefrence, ...dates];
-        } else if ((!this.flexibleDates && !this.selectedMonth) || (this.flexibleDates)) {
-          let dateUpdate = [];
-          prevPrefrence.forEach(item => {
-            dateUpdate.push(item.replace(prevYear, this.selectedYear))
+        } else if (this.flexibleDates) {
+          let allCustomDates = [...this.selectedPrefrence];
+          this.selectedIncludedPrefrence.forEach(item => {
+            if(prevPrefrenceListToInclude.find(val => val.name === item)) {
+              prevPrefrenceListToInclude.find(val => val.name === item).dates.forEach(a => {
+                allCustomDates = allCustomDates.filter(b => {
+                  let date1 = moment(b).format('L');
+                  let date2 = moment(a).format('L');
+                  
+                  return date1 != date2;
+                })
+              })
+            }
           })
-          this.selectedPrefrence = [...dateUpdate];
+
+          this.selectedPrefrence = [];
+          const newCustomDates = [];
+          allCustomDates.forEach(item => {
+            const date = moment(item).format('L');
+            const newDate = date.slice(0, date.length -4) + this.selectedYear;
+            newCustomDates.push(newDate);
+          })
+
+          this.selectedPrefrence = [...this.selectedPrefrence, ...newCustomDates];
+
+          let dates = [];
+          this.selectedIncludedPrefrence.forEach(item => {
+            if(this.prefrenceListToInclude.find(val => val.name === item)?.dates) {
+              dates = [...dates, ...(this.prefrenceListToInclude.find(val => val.name === item)?.dates)];
+            }            
+          })
+          this.selectedPrefrence = [...this.selectedPrefrence, ...dates];
+        } else if (!this.flexibleDates && this.selectedMonth && this.selectedWeek && this.selectedDay) {
+
+          this.selectedPrefrence = [];
+
+          const req = [];
+
+    this.selectedMonth.forEach(month => {
+      this.selectedWeek.forEach(week => {
+        this.selectedDay.forEach(day => {
+          req.push({
+            year: this.selectedYear,
+            dayOfTheMonth: 0,      
+            dayOfTheWeek: day,
+            month: month,
+            weekOfTheMonth: week
+          })
+        })
+      })
+    })
+    let newdates = [];
+    this.httpService.getSelectedDate(req).subscribe((res: any) => {
+      if (res && res.length > 0) {
+
+        if(res.length === 1) {
+          if(this.afterBeforeDaySelection === 'DAY_BEFORE') {
+            // this.selectedPrefrence = [];
+            res.forEach(item => {
+              newdates.push(moment(item).subtract(1, "days").format('L'));
+            })
+          } 
+  
+          if(this.afterBeforeDaySelection === 'DAY_AFTER') {
+            // this.selectedPrefrence = [];
+            res.forEach(item => {
+              newdates.push(moment(item).add(1, "days").format('L'));
+            })
+          }
+  
+          if(!this.afterBeforeDaySelection) {
+            // this.selectedPrefrence = [];
+            res.forEach(item => {
+              newdates.push(moment(item).format('L'));
+            })
+          }
+        } else {
+
+          // this.selectedPrefrence = [];
+          res.forEach(item => {
+            newdates.push(moment(item).format('L'));
+          })
+        }
+        this.selectedPrefrence = [...this.selectedPrefrence, ...newdates];
+
+
+        let dates = [];
+        this.selectedIncludedPrefrence.forEach(item => {
+          if(this.prefrenceListToInclude.find(val => val.name === item)?.dates) {
+            dates = [...dates, ...(this.prefrenceListToInclude.find(val => val.name === item)?.dates)];
+          }            
+        })
+        this.selectedPrefrence = [...this.selectedPrefrence, ...dates];
+      }
+    }, err => {
+      console.error(err);
+    })
+
+        
         }
       }
     }, err => {
