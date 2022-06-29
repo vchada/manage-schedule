@@ -81,13 +81,17 @@ export class ScheduleComponent implements OnInit {
           })
   
           this.prefrenceListToInclude = [...this.prefrenceList];
+
+        this.prefrenceListToInclude = [...this.prefrenceListToInclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
           this.prefrenceListToExclude = [...this.prefrenceList];
+
+        this.prefrenceListToExclude = [...this.prefrenceListToExclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
 
 
           this.changePrefrence(stateData.rulesIncluded.split(','));
           this.changePrefrenceToExclude(stateData.rulesExcluded.split(','));
           
-          this.form.controls.name.patchValue(stateData.name);
+          this.form.controls.name.patchValue(stateData.name.toLowerCase());
           this.form.controls.displayName.patchValue(stateData.displayName);
 
           this.form.controls.displayName.setValidators(Validators.required);
@@ -153,7 +157,11 @@ export class ScheduleComponent implements OnInit {
         })
 
         this.prefrenceListToInclude = [...this.prefrenceList];
+
+        this.prefrenceListToInclude = [...this.prefrenceListToInclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
         this.prefrenceListToExclude = [...this.prefrenceList];
+
+        this.prefrenceListToExclude = [...this.prefrenceListToExclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
       }
     }, err => {
       console.error(err);
@@ -195,11 +203,13 @@ export class ScheduleComponent implements OnInit {
         })
 
         this.prefrenceListToInclude = [...this.prefrenceList];
+        this.prefrenceListToInclude = [...this.prefrenceListToInclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
         this.prefrenceListToExclude = [...this.prefrenceList];
+        this.prefrenceListToExclude = [...this.prefrenceListToExclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
 
 
         this.changePrefrence(this.selectedPrefrence);
-        this.changePrefrenceToExclude(this.selectedPrefrenceListToExclude);
+        this.changePrefrenceToExclude(this.selectedPrefrenceToExclude);
       }
     }, err => {
       console.error(err);
@@ -218,6 +228,8 @@ export class ScheduleComponent implements OnInit {
     })
 
     this.prefrenceListToExclude = this.prefrenceList.filter(item => !prefrence.includes(item.name));
+
+    this.prefrenceListToExclude = [...this.prefrenceListToExclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
   }
 
   changePrefrenceToExclude(prefrence) {
@@ -230,6 +242,8 @@ export class ScheduleComponent implements OnInit {
     })
 
     this.prefrenceListToInclude = this.prefrenceList.filter(item => !prefrence.includes(item.name));
+
+    this.prefrenceListToInclude = [...this.prefrenceListToInclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
   }
 
   sendYearChanged(year) {

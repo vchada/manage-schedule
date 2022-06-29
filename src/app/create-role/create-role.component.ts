@@ -117,6 +117,8 @@ export class CreateRoleComponent implements OnInit {
 
             this.prefrenceListToInclude.push(obj)
           }
+
+        this.prefrenceListToInclude = [...this.prefrenceListToInclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
           })
 
       // this.getAvailableRules(this.selectedYear);
@@ -267,6 +269,8 @@ export class CreateRoleComponent implements OnInit {
 
           this.prefrenceListToInclude.push(obj)
         })
+
+        this.prefrenceListToInclude = [...this.prefrenceListToInclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
       }
     }, err => {
       console.error(err);
@@ -346,6 +350,7 @@ export class CreateRoleComponent implements OnInit {
     
     this.commonDataService.setYearChange(this.selectedYear);
     const prevPrefrenceListToInclude = [...this.prefrenceListToInclude];
+
     this.prefrenceListToInclude = [];
     this.httpService.getHolidayList(this.selectedYear).subscribe(res => {
       if (res ) {
@@ -362,6 +367,8 @@ export class CreateRoleComponent implements OnInit {
 
           this.prefrenceListToInclude.push(obj)
         })
+
+        this.prefrenceListToInclude = [...this.prefrenceListToInclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
 
         if ((!this.flexibleDates && !this.selectedMonth)) {
           this.selectedPrefrence = [];
