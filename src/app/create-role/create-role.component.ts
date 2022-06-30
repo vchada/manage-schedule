@@ -287,7 +287,7 @@ export class CreateRoleComponent implements OnInit {
         }
       })
       const addDates = this.prefrenceListToInclude.find(val => val.name === addedPreference).dates;
-      this.selectedPrefrence = [...this.selectedPrefrence, ...addDates];
+      this.selectedPrefrence = [...this.selectedPrefrence, ...this.selectedDateList, ...addDates];
     } else {
       let removedPreference = '';
       this.selectedIncludedPrefrence.forEach(val => {
@@ -323,9 +323,14 @@ export class CreateRoleComponent implements OnInit {
     //   }
     // })
 
-    const removeDates = this.prefrenceListToInclude.find(val => val.name === prefrence).dates;
+    const preDates = this.prefrenceListToInclude.find(val => val.name === prefrence).dates;
+
+    const removeDates = [];
+    preDates.forEach(item => {
+      removeDates.push(moment(item).format('L'))
+    })
     this.selectedPrefrence = this.selectedPrefrence.filter(item => {
-      return !removeDates.includes(item);
+      return !removeDates.includes(moment(item).format('L'));
     })
 
 
@@ -580,9 +585,27 @@ export class CreateRoleComponent implements OnInit {
   }
 
   reset() {
+    this.cancel();
+  }
+
+  cancel() {
+    // this.selectedYear = 2022;
+    this.flexibleDates = false;
+    this.selectedMonth = null;
     this.selectedDate = null;
     this.selectedWeek = null;
     this.selectedDay = null;
+    this.dateList = [];
+    this.commonDataService.setYearChange(this.selectedYear);
+    this.selectedIncludedPrefrence = [];
+    this.afterBeforeDaySelection = null;
+    // this.editRule = false;
+    // this.isDisabled = false;
+    // this.existingRuleDetails = null;
+    // this.getAllExistingRuleNames();
+    this.selectedPrefrence = [];
+    this.selectedIncludedPrefrence = [];
+    // this.getAvailableRules(this.selectedYear);
   }
 
   apply() {
@@ -647,23 +670,7 @@ export class CreateRoleComponent implements OnInit {
     // this.getAvailableRules(this.selectedYear);
   }
 
-  cancel() {
-    // this.selectedYear = 2022;
-    this.flexibleDates = false;
-    this.selectedMonth = null;
-    this.selectedDate = null;
-    this.selectedWeek = null;
-    this.selectedDay = null;
-    this.dateList = [];
-    this.commonDataService.setYearChange(this.selectedYear);
-    // this.editRule = false;
-    // this.isDisabled = false;
-    // this.existingRuleDetails = null;
-    // this.getAllExistingRuleNames();
-    this.selectedPrefrence = [];
-    this.selectedIncludedPrefrence = [];
-    // this.getAvailableRules(this.selectedYear);
-  }
+  
 
   enableRuleConfirm() {
     if (this.createRequestData()) {
