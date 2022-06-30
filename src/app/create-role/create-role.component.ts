@@ -227,7 +227,7 @@ export class CreateRoleComponent implements OnInit {
       this.selectedWeek = null;
       this.selectedDay = null;
       // this.selectedPrefrence = [];
-
+      this.afterBeforeDaySelection = null;
       this.selectedPrefrence = [];
       this.selectedIncludedPrefrence.forEach(item => {
         if(item) {
@@ -296,7 +296,7 @@ export class CreateRoleComponent implements OnInit {
         }
       })
 
-      const removeDates = this.prefrenceListToInclude.find(val => val.name === removedPreference).dates;
+      const removeDates = this.prefrenceListToInclude.find(val => val.name === removedPreference)? this.prefrenceListToInclude.find(val => val.name === removedPreference).dates: [];
       this.selectedPrefrence = this.selectedPrefrence.filter(item => {
         return !removeDates.includes(item);
       })
@@ -628,6 +628,17 @@ export class CreateRoleComponent implements OnInit {
     let newdates = [];
     this.httpService.getSelectedDate(req).subscribe((res: any) => {
       if (res && res.length > 0) {
+
+        this.selectedPrefrence = [];
+        let addDates = [];
+        this.selectedIncludedPrefrence.forEach(res => {
+          if(this.prefrenceListToInclude.find(val => val.name === res)) {
+            this.prefrenceListToInclude.find(val => val.name === res).dates.forEach(date => {
+              addDates.push(date);
+            })
+          }
+        })
+        this.selectedPrefrence = [...this.selectedPrefrence, ...addDates];
 
         if(res.length === 1) {
           if(this.afterBeforeDaySelection === 'DAY_BEFORE') {
