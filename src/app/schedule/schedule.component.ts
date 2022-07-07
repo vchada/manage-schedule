@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import * as moment from 'moment';
@@ -43,6 +43,8 @@ export class ScheduleComponent implements OnInit {
 
   editSchedule = false;
   existingCalendarDetails: any;
+
+  includeWeekends = new FormControl(false);
 
   constructor(private httpService: HttpService, private fb: FormBuilder, private router: Router, private commonDataService: CommonDataService) {
     this.form = fb.group({
@@ -113,7 +115,9 @@ export class ScheduleComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    
+    this.includeWeekends.valueChanges.subscribe(val => {
+      console.log('includeWeekends' + val);
+    })
   }
 
 

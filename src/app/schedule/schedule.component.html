@@ -18,28 +18,44 @@
     </div>
 
     <div class="col-1 min-width-225">
-
+    <!-- 
       <mat-form-field appearance="fill">
-        <mat-label>Select Rule to include</mat-label>
-        <mat-select [disableOptionCentering]="true" multiple (ngModelChange)="changePrefrence($event)" [(ngModel)]="selectedPrefrence">
+        <mat-label>Select Rule to include</mat-label> -->
+        <!-- <mat-select [disableOptionCentering]="true" multiple (ngModelChange)="changePrefrence($event)" [(ngModel)]="selectedPrefrence">
           <mat-option *ngFor="let prefrence of prefrenceListToInclude" [value]="prefrence.name">
             {{prefrence.name}}
           </mat-option>
-        </mat-select>
-      </mat-form-field>
+        </mat-select> -->
+      <!-- </mat-form-field> -->
+
+      <app-auto-complete *ngIf="prefrenceListToInclude && prefrenceListToInclude.length > 0"
+        [label]="'Select Rule to include'"
+        [rulesList]="prefrenceListToInclude"
+        (selectedRules)=changePrefrence($event)
+        [alredaySelectedRules]="selectedPrefrence"
+        >
+      </app-auto-complete>
 
     </div>
 
     <div class="col-1 min-width-225">
 
-      <mat-form-field appearance="fill">
+      <!-- <mat-form-field appearance="fill">
         <mat-label>Select Rule to exclude</mat-label>
         <mat-select [disableOptionCentering]="true" multiple (ngModelChange)="changePrefrenceToExclude($event)" [(ngModel)]="selectedPrefrenceToExclude">
           <mat-option *ngFor="let prefrence of prefrenceListToExclude" [value]="prefrence.name">
             {{prefrence.name}}
           </mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
+
+      <app-auto-complete *ngIf="prefrenceListToExclude && prefrenceListToExclude.length > 0"
+        [label]="'Select Rule to exclude'"
+        [rulesList]="prefrenceListToExclude"
+        (selectedRules)=changePrefrenceToExclude($event)
+        [alredaySelectedRules]="selectedPrefrenceToExclude"
+        >
+      </app-auto-complete>
 
     </div>
 
@@ -53,6 +69,12 @@
         </mat-select>
       </mat-form-field>
 
+    </div>
+
+    <div class="col-1 min-width-225">
+
+
+      <mat-slide-toggle class="includeWeekend" name="includeWeekend" ngDefaultControl [formControl]="includeWeekends">Include Weekends</mat-slide-toggle>
     </div>
 
     <div class="col-6" >

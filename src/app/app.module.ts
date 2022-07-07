@@ -22,13 +22,18 @@ import { MatTableModule } from "@angular/material/table";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatSortModule } from "@angular/material/sort";
 
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { AutoCompleteComponent } from './components/auto-complete/auto-complete.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     ExampleSectionComponent,
     CreateRoleComponent,
     ScheduleComponent,
-    DashboardComponent
+    DashboardComponent,
+    AutoCompleteComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +51,9 @@ import { MatSortModule } from "@angular/material/sort";
     MatTableModule,
         MatPaginatorModule,
         MatSortModule,
-    HttpClientModule
+    HttpClientModule,
+    MatAutocompleteModule,
+    MatSlideToggleModule
   ],
   providers: [],
   bootstrap: [AppComponent],
