@@ -17,8 +17,11 @@ export class HttpService {
   }
 
 
-  getHolidayList(year) {
-    return this.http.get('http://localhost:8080/holiday/get-all-holidays/' + year)
+  getHolidayList(year, includeWeekends?) {
+    if(includeWeekends === undefined || includeWeekends === null) {
+      includeWeekends = false
+    }
+    return this.http.get('http://localhost:8080/holiday/get-all-holidays/' + year + '/' +includeWeekends)
       .pipe(
         retry(2),
         catchError(this.handleError)

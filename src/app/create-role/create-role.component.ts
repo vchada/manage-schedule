@@ -385,7 +385,7 @@ export class CreateRoleComponent implements OnInit {
           })
           this.selectedPrefrence = [...this.selectedPrefrence, ...dates];
         } else if (this.flexibleDates) {
-          let allCustomDates = [...this.selectedPrefrence];
+          let allCustomDates = [...this.selectedDateList];
           this.selectedIncludedPrefrence.forEach(item => {
             if(prevPrefrenceListToInclude.find(val => val.name === item)) {
               prevPrefrenceListToInclude.find(val => val.name === item).dates.forEach(a => {
@@ -406,6 +406,7 @@ export class CreateRoleComponent implements OnInit {
             const newDate = date.slice(0, date.length -4) + this.selectedYear;
             newCustomDates.push(newDate);
           })
+          this.selectedDateList = [...newCustomDates];
 
           this.selectedPrefrence = [...this.selectedPrefrence, ...newCustomDates];
 

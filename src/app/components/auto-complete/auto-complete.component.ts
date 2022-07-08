@@ -15,6 +15,8 @@ export class AutoCompleteComponent implements OnInit, OnChanges {
   @Input() alredaySelectedRules;
   @Output() selectedRules = new EventEmitter();
 
+  selectedPrefrenceToExclude = [];
+
   constructor() { }
 
    @ViewChild('matAutocomplete') matAutocomplete;
@@ -35,12 +37,19 @@ export class AutoCompleteComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes.alredaySelectedRules && changes.alredaySelectedRules.currentValue && changes.alredaySelectedRules.currentValue.length > 0) {
-       changes.alredaySelectedRules.currentValue.forEach(item => {
-         if(this.rulesList.find(val => val.name = item)) {
-          this.initSelection(this.rulesList.find(val => val.name = item));
-         }
-       })
+      //  changes.alredaySelectedRules.currentValue.forEach(item => {
+      //    if(this.rulesList.find(val => val.name = item)) {
+      //     this.initSelection(this.rulesList.find(val => val.name = item));
+      //    }
+      //  })
+      this.selectedPrefrenceToExclude = changes.alredaySelectedRules.currentValue;
     }
+  }
+
+  changePrefrenceToExclude(evt) {
+    this.selectedPrefrenceToExclude = evt;
+
+    this.selectedRules.emit(this.selectedPrefrenceToExclude);
   }
 
   initSelection(user: any) {
@@ -102,12 +111,17 @@ export class AutoCompleteComponent implements OnInit, OnChanges {
       this.selectedUsers.splice(i, 1);
     }
 
-    this.userControl.setValue(this.selectedUsers);
-
-    let rulesSelected = []
+    let rulesSelected = [];
+    let selectedUserStr = '';
     this.selectedUsers.forEach(item => {
       rulesSelected.push(item.name);
+      if(selectedUserStr === '') {
+        selectedUserStr = item.name;
+      } else {
+        selectedUserStr = selectedUserStr + ',' + item.name;
+      }
     })
+    // this.userControl.setValue(selectedUserStr);
 
     this.selectedRules.emit(rulesSelected);
 

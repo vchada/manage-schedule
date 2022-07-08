@@ -18,15 +18,15 @@
     </div>
 
     <div class="col-1 min-width-225">
-    <!-- 
-      <mat-form-field appearance="fill">
-        <mat-label>Select Rule to include</mat-label> -->
-        <!-- <mat-select [disableOptionCentering]="true" multiple (ngModelChange)="changePrefrence($event)" [(ngModel)]="selectedPrefrence">
+    
+      <!-- <mat-form-field appearance="fill">
+        <mat-label>Select Rule to include</mat-label>
+        <mat-select [disableOptionCentering]="true" multiple (ngModelChange)="changePrefrence($event)" [(ngModel)]="selectedPrefrence">
           <mat-option *ngFor="let prefrence of prefrenceListToInclude" [value]="prefrence.name">
             {{prefrence.name}}
           </mat-option>
-        </mat-select> -->
-      <!-- </mat-form-field> -->
+        </mat-select>
+      </mat-form-field> -->
 
       <app-auto-complete *ngIf="prefrenceListToInclude && prefrenceListToInclude.length > 0"
         [label]="'Select Rule to include'"
@@ -43,6 +43,8 @@
       <!-- <mat-form-field appearance="fill">
         <mat-label>Select Rule to exclude</mat-label>
         <mat-select [disableOptionCentering]="true" multiple (ngModelChange)="changePrefrenceToExclude($event)" [(ngModel)]="selectedPrefrenceToExclude">
+          <input type="text" placeholder="Select rule" aria-label="Select Users" matInput>
+      
           <mat-option *ngFor="let prefrence of prefrenceListToExclude" [value]="prefrence.name">
             {{prefrence.name}}
           </mat-option>

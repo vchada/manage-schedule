@@ -63,7 +63,7 @@ export class ScheduleComponent implements OnInit {
       this.editSchedule = true;
       this.selectedYear = +stateData.year;
       this.isDisabled = stateData.isActive === 'ACTIVE' ? false: true;
-      this.httpService.getHolidayList(stateData.year).subscribe(res => {
+      this.httpService.getHolidayList(stateData.year, this.includeWeekends.value).subscribe(res => {
         if (res ) {
           this.prefrenceList = [];
           this.prefrenceListToInclude = [];
@@ -116,7 +116,41 @@ export class ScheduleComponent implements OnInit {
 
   ngOnInit(): void {
     this.includeWeekends.valueChanges.subscribe(val => {
-      console.log('includeWeekends' + val);
+
+      this.httpService.getHolidayList(this.selectedYear,val).subscribe(res => {
+        if (res ) {
+          this.prefrenceList = [];
+          this.prefrenceListToInclude = [];
+          this.prefrenceListToExclude = [];
+          Object.keys(res).forEach(item => {
+  
+            const obj = {
+              name: item,
+              dates: []
+            }
+  
+            res[item].split(',').forEach(val => {
+              obj.dates.push(val + '-' + this.selectedYear)
+            })
+  
+            this.prefrenceList.push(obj)
+          })
+  
+          this.prefrenceListToInclude = [...this.prefrenceList];
+
+        this.prefrenceListToInclude = [...this.prefrenceListToInclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
+          this.prefrenceListToExclude = [...this.prefrenceList];
+
+        this.prefrenceListToExclude = [...this.prefrenceListToExclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
+
+
+          this.changePrefrence(this.selectedPrefrence);
+          this.changePrefrenceToExclude(this.selectedPrefrenceToExclude);
+          
+        }
+      }, err => {
+        console.error(err);
+      })      
     })
   }
 
@@ -144,7 +178,7 @@ export class ScheduleComponent implements OnInit {
     this.prefrenceList = [];
     this.prefrenceListToInclude = [];
     this.prefrenceListToExclude = [];
-    this.httpService.getHolidayList(selectedYear).subscribe(res => {
+    this.httpService.getHolidayList(selectedYear, this.includeWeekends.value).subscribe(res => {
       if (res ) {
         Object.keys(res).forEach(item => {
 
@@ -190,7 +224,7 @@ export class ScheduleComponent implements OnInit {
     this.prefrenceList = [];
     this.prefrenceListToInclude = [];
     this.prefrenceListToExclude = [];
-    this.httpService.getHolidayList(this.selectedYear).subscribe(res => {
+    this.httpService.getHolidayList(this.selectedYear, this.includeWeekends.value).subscribe(res => {
       if (res ) {
         Object.keys(res).forEach(item => {
 
