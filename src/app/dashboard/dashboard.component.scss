@@ -5,7 +5,7 @@ table {
         padding: 0 15px;
     }
   }
-  
+
   .title {
       font-size: 20px;
       font-weight: 600;
@@ -23,7 +23,7 @@ table {
     position: relative;
     top: 10px;
 }
-  
+
 .min-h-50 {
     min-height: calc((100vh - 96px) / 2) !important;
     display: block !important;
@@ -50,4 +50,23 @@ table {
     button.btn-dark.generate {
         background-color: #075a33 !important;
     }
+}
+.name-col {
+    width: 20rem;
+}
+
+.rule-col {
+    width: 30rem;
+}
+
+
+
+th {
+    padding-right: 1rem !important;
+    padding-left: 1rem !important;
+}
+
+td {
+    padding-right: 1rem !important;
+    padding-left: 1rem !important;
 }
