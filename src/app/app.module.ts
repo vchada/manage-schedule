@@ -25,6 +25,7 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 import { AutoCompleteComponent } from './components/auto-complete/auto-complete.component';
+import { MatTableFilterModule } from 'mat-table-filter';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { AutoCompleteComponent } from './components/auto-complete/auto-complete.
         MatSortModule,
     HttpClientModule,
     MatAutocompleteModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatTableFilterModule
   ],
   providers: [],
   bootstrap: [AppComponent],

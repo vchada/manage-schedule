@@ -100,7 +100,7 @@
 
     <div class="col-1 min-width-225">
 
-      <mat-form-field appearance="fill">
+      <!-- <mat-form-field appearance="fill">
         <mat-label>Select Rule to include</mat-label>
         <mat-select [disableOptionCentering]="true" multiple (ngModelChange)="changePrefrence($event)" [(ngModel)]="selectedIncludedPrefrence">
             <mat-select-search></mat-select-search>
@@ -108,7 +108,15 @@
             {{prefrence.name}}
           </mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
+
+      <app-auto-complete *ngIf="prefrenceListToInclude && prefrenceListToInclude.length > 0"
+        [label]="'Select Rule to include'"
+        [rulesList]="prefrenceListToInclude"
+        (selectedRules)=changePrefrence($event)
+        [alredaySelectedRules]="selectedIncludedPrefrence"
+        >
+      </app-auto-complete>
 
     </div>
 

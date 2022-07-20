@@ -1,5 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
 
@@ -10,11 +12,33 @@ import { HttpService } from '../services/http.service';
 })
 export class DashboardComponent implements OnInit {
 
-  displayedColumns = ["select", "name", "isActive", "rulesIncluded", "rulesExcluded",  "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
-  dataSource: any = [];
+  displayedColumns = ["select", "name", "isActive", "rulesIncluded", "rulesExcluded", "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
+  dataSource = new MatTableDataSource<any>();
+  @ViewChild('matSortCalender') matSortCalender: MatSort;
+  calenderEntity = {
+    displayName: '',
+    isActive: '',
+    rulesIncluded: '',
+    rulesExcluded: '',
+    description: '',
+    createdDateAndTime: '',
+    createdUser: '',
+    lastModifiedDateAndTime: '',
+    lastModifiedUser: '',
+  }
 
   displayedRuleColumns = ["holidayType", "isActive", "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
-  ruleDataSource: any = [];
+  ruleDataSource = new MatTableDataSource<any>();
+  @ViewChild('matSortRules') matSortRules: MatSort;
+  rulesEntity = {
+    displayName: '',
+    isActive: '',
+    description: '',
+    createdDateAndTime: '',
+    createdUser: '',
+    lastModifiedDateAndTime: '',
+    lastModifiedUser: ''
+  }
   selectedYear: any;
   years = [
     2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032
@@ -25,108 +49,72 @@ export class DashboardComponent implements OnInit {
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.length;
+    const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
     this.isAllSelected() ?
-        this.selection.clear() :
-        this.dataSource.forEach(row => this.selection.select(row));
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
   }
 
   isRowSelected(row) {
-    if(this.selection && this.selection.selected && this.selection.selected.length > 0) {
-    return this.selection.selected.find(item => item.id === row.id) ? true : false;
+    if (this.selection && this.selection.selected && this.selection.selected.length > 0) {
+      return this.selection.selected.find(item => item.id === row.id) ? true : false;
     } else {
       return false;
     }
   }
 
 
-  constructor(private httpService:HttpService, private router: Router) {}
+  constructor(private httpService: HttpService, private router: Router) { }
 
-    ngOnInit() {
-        this.httpService.getAllCalender('2022').subscribe((res: any) => {
-          if (res) {
-            this.dataSource = res;
-          }
-        }, err => {
-          console.error(err);
+  ngOnInit() {
+    this.httpService.getAllCalender('2022').subscribe((res: any) => {
+      if (res) {
+        this.dataSource.data = res;
+        this.dataSource.sort = this.matSortCalender;
+      }
+    }, err => {
+      console.error(err);
+    })
+
+    this.httpService.getAllRules().subscribe((res: any) => {
+      if (res) {
+        Object.keys(res).forEach(item => {
+          this.ruleDataSource.data.push(res[item][0]);
         })
+        this.ruleDataSource.sort = this.matSortRules;
+      }
+    }, err => {
+      console.error(err);
+    })
 
-        this.httpService.getAllRules().subscribe((res: any) => {
-          if (res) {
-            Object.keys(res).forEach(item => {
-              this.ruleDataSource.push(res[item][0]);
-            })
-          }
-        }, err => {
-          console.error(err);
-        })
+  }
 
-    }
+  changeYear(year) {
 
-    changeYear(year) {
+  }
 
-    }
-    
-    goToDashboard(row) {
-      // this.httpService.getRuleDetails(row.holidayType).subscribe((res: any) => {
-      //   if (res) {
-          // let rulesToIncludeFromRule = [];
-          // if(row.rulesIncluded && row.rulesIncluded.split(',').length > 0) {
-          //   row.rulesIncluded.split(',').forEach(item => {
-          //     this.httpService.getRuleDetails(item).subscribe((res: any) => {
-          //       if (res) {
-          //         if(res[0].rulesIncluded) {
-          //           rulesToIncludeFromRule.push(res[0].rulesIncluded)
-          //         }
-          //       }
-          //     }, err => {
-          //       console.error(err);
-          //     })
-          //   })
-          // }
+  goToDashboard(row) {
 
-          // let rulesToExcludeFromRule = [];
-          // if(row.rulesExcluded && row.rulesExcluded.split(',').length > 0) {
-          //   row.rulesExcluded.split(',').forEach(item => {
-          //     this.httpService.getRuleDetails(item).subscribe((res: any) => {
-          //       if (res) {
-          //         if(res[0].rulesExcluded) {
-          //           rulesToExcludeFromRule.push(res[0].rulesIncluded)
-          //         }
-          //       }
-          //     }, err => {
-          //       console.error(err);
-          //     })
-          //   })
-          // }
+    this.router.navigate(['schedule'], { state: row });
+  }
 
-          // debugger;
-           
-          this.router.navigate(['schedule'], {state: row});
-      //   }
-      // }, err => {
-      //   console.error(err);
-      // })
-    }
+  generate() {
 
-    generate() {
+  }
 
-    }
+  goToCreateRule(row) {
+    this.httpService.getRuleDetails(row.holidayType).subscribe((res: any) => {
+      if (res) {
 
-    goToCreateRule(row) {
-      this.httpService.getRuleDetails(row.holidayType).subscribe((res: any) => {
-        if (res) {
-           
-          this.router.navigate(['create-rule'], {state: res});
-        }
-      }, err => {
-        console.error(err);
-      })
-    }
+        this.router.navigate(['create-rule'], { state: res });
+      }
+    }, err => {
+      console.error(err);
+    })
+  }
 
 }
