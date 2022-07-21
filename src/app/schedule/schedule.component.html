@@ -75,6 +75,20 @@
 
     <div class="col-1 min-width-225">
 
+      <mat-form-field appearance="fill">
+        <mat-label>Data Source</mat-label>
+        <mat-select [disableOptionCentering]="true" [(ngModel)]="dataSource">
+          <mat-option value="Data Source 1">Data Source 1</mat-option>
+          <mat-option value="Data Source 2">Data Source 2</mat-option>
+          <mat-option value="Data Source 3">Data Source 3</mat-option>
+          <mat-option value="Data Source 4">Data Source 4</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    <div class="col-1 min-width-225">
+
 
       <mat-slide-toggle class="includeWeekend" name="includeWeekend" ngDefaultControl [formControl]="includeWeekends">Include Weekends</mat-slide-toggle>
     </div>

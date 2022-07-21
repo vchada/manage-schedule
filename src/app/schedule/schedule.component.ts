@@ -28,6 +28,7 @@ export class ScheduleComponent implements OnInit {
   years = [
     2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032
   ]
+  dataSource = '';
 
   selectedYear = 2022;
 
@@ -59,6 +60,7 @@ export class ScheduleComponent implements OnInit {
 
       // this is edit rule data coming from dashboard
       const stateData = this.router.getCurrentNavigation().extras.state;
+      this.dataSource = stateData.dataSource;
       this.existingCalendarDetails = stateData;
       this.editSchedule = true;
       this.selectedYear = +stateData.year;
@@ -364,6 +366,7 @@ export class ScheduleComponent implements OnInit {
           lastModifiedDateAndTime: null,
           isActive: 'ACTIVE',
           ruleIds: "",
+          dataSource: this.dataSource,
           year: this.selectedYear,
           displayName: this.editSchedule ? this.form.controls.displayName.value : this.form.controls.name.value,
           rulesIncluded: this.createStr(this.selectedPrefrence),

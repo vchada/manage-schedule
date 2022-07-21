@@ -62,7 +62,7 @@ export class HttpService {
   }
 
   getRuleIds() {
-    return this.http.get('http://localhost:8080/holiday/get-all-holidays/2022')
+    return this.http.get('http://localhost:8080/holiday/get-all-holidays/2022/false')
       .pipe(
         retry(2),
         catchError(this.handleError)
