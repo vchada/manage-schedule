@@ -98,12 +98,61 @@ export class DashboardComponent implements OnInit {
   }
 
   goToDashboard(row) {
-
     this.router.navigate(['schedule'], { state: row });
   }
 
+  convertToXML(jsonData) {
+    jsonData = jsonData || [];
+    var header = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+      "<!DOCTYPE DEFCAL SYSTEM \"defcal.dtd\">\n" +
+      "<DEFCAL>\n";
+    var xml = jsonData.reduce(function (data, item) {
+      data += "<CALENDAR\nDATACENTER=\"DATACENTER\"\n" +
+        "NAME=\"" + item.rulesIncluded.toUpperCase().replace(/_/g, '') + "\"\n" +
+        "TYPE=\"Regular\">\n" +
+        "<YEAR\nNAME=\"" + item.year + "\"\n" +
+        "DAYS=\"" + DashboardComponent.getDays(item) + "\"\n" +
+        "DESCRIPTION=\"" + item.name + "\"/>\n" +
+        "</CALENDAR>\n";
+      return data;
+    }, header);
+
+    xml += "</DEFCAL>";
+
+    //Download XML
+    let link = document.createElement('a');
+    link.href = "data:text/xml," + encodeURIComponent(xml);
+    link.download = "defcal.xml";
+    link.click();
+  }
+
+  static getDays(item) {
+    var current = new Date(item.year + "-01-01").getTime();
+    var end = new Date(parseInt(item.year) + 1 + "-01-01").getTime();
+    var availableList = item.ruleIds.split(",").map(function (day) {
+      return new Date(item.year + "-" + day).getTime();
+    });
+    var dayList = [];
+    while (true) {
+      dayList.push(availableList.indexOf(current) > -1 ? 'Y' : 'N');
+      current += 24 * 3600 * 1000;
+      if (current === end) break;
+    }
+    return dayList.join('');
+  }
+
+  printXML() {
+    if (this.selection.selected.length === 0) {
+      alert('Please select atleast 1 calender to generate the XML');
+      return;
+    }
+    this.convertToXML(this.selection.selected);
+  }
+
+
   generate() {
 
+    this.printXML();
   }
 
   goToCreateRule(row) {
