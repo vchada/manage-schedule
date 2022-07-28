@@ -48,10 +48,14 @@ export class ScheduleComponent implements OnInit {
   includeWeekends = new FormControl(false);
 
   dataSouceList = [
-    {value: 'Data Source 1', name: 'Data Source 1'},
-          {value: 'Data Source 2', name: 'Data Source 2'},
-          {value: 'Data Source 3', name: 'Data Source 3'},
-          {value: 'Data Source 4', name: 'Data Source 4'},
+    {value: 'PPF', name: 'PPF'},
+          {value: 'MISF', name: 'MISF'},
+          {value: 'INT1', name: 'INT1'},
+          {value: 'CTM_INT4', name: 'CTM_INT4'},
+          {value: 'INT6', name: 'INT6'},
+          {value: 'PRD2', name: 'PRD2'},
+          {value: 'PRD4', name: 'PRD4'},
+          {value: 'PRD6', name: 'PRD6'},
   ]
 
   constructor(private httpService: HttpService, private fb: FormBuilder, private router: Router, private commonDataService: CommonDataService) {
@@ -78,19 +82,19 @@ export class ScheduleComponent implements OnInit {
           this.prefrenceListToInclude = [];
           this.prefrenceListToExclude = [];
           Object.keys(res).forEach(item => {
-  
+
             const obj = {
               name: item,
               dates: []
             }
-  
+
             res[item].split(',').forEach(val => {
               obj.dates.push(val + '-' + this.selectedYear)
             })
-  
+
             this.prefrenceList.push(obj)
           })
-  
+
           this.prefrenceListToInclude = [...this.prefrenceList];
 
         this.prefrenceListToInclude = [...this.prefrenceListToInclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
@@ -101,13 +105,13 @@ export class ScheduleComponent implements OnInit {
 
           this.changePrefrence(stateData.rulesIncluded.split(','));
           this.changePrefrenceToExclude(stateData.rulesExcluded.split(','));
-          
+
           this.form.controls.name.patchValue(stateData.name.toLowerCase());
           this.form.controls.displayName.patchValue(stateData.displayName);
 
           this.form.controls.displayName.setValidators(Validators.required);
           this.form.controls.description.patchValue(stateData.description);
-          
+
           this.form.controls.name.disable();
 
           this.form.updateValueAndValidity();
@@ -117,7 +121,7 @@ export class ScheduleComponent implements OnInit {
       })
 
 
-      
+
 
     } else {
     }
@@ -132,19 +136,19 @@ export class ScheduleComponent implements OnInit {
           this.prefrenceListToInclude = [];
           this.prefrenceListToExclude = [];
           Object.keys(res).forEach(item => {
-  
+
             const obj = {
               name: item,
               dates: []
             }
-  
+
             res[item].split(',').forEach(val => {
               obj.dates.push(val + '-' + this.selectedYear)
             })
-  
+
             this.prefrenceList.push(obj)
           })
-  
+
           this.prefrenceListToInclude = [...this.prefrenceList];
 
         this.prefrenceListToInclude = [...this.prefrenceListToInclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
@@ -155,17 +159,17 @@ export class ScheduleComponent implements OnInit {
 
           this.changePrefrence(this.selectedPrefrence);
           this.changePrefrenceToExclude(this.selectedPrefrenceToExclude);
-          
+
         }
       }, err => {
         console.error(err);
-      })      
+      })
     })
   }
 
 
   getAllExistingcalenderNames() {
-  
+
     this.httpService.getAllExistingcalenderNames().subscribe((res: any) => {
       if (res) {
         this.availableCalender = res;
@@ -229,7 +233,7 @@ export class ScheduleComponent implements OnInit {
 
     // this.isDisabled = false;
     // this.editSchedule = false;
-    
+
     this.prefrenceList = [];
     this.prefrenceListToInclude = [];
     this.prefrenceListToExclude = [];
@@ -444,7 +448,7 @@ export class ScheduleComponent implements OnInit {
         })
         reqData['description'] = this.form.value.description;
 
-        
+
         this.httpService.updateCalendar(reqData).subscribe((res: any) => {
           if (res && res.message === 'CALENDAR UPDATED SUCCESSFULLY') {
             this.closeEnableModal.nativeElement.click();
@@ -485,7 +489,7 @@ export class ScheduleComponent implements OnInit {
         })
         reqData['description'] = this.form.value.description;
 
-        
+
         this.httpService.updateCalendar(reqData).subscribe((res: any) => {
           if (res && res.message === 'CALENDAR UPDATED SUCCESSFULLY') {
             this.closeDisableModal.nativeElement.click();
@@ -519,7 +523,7 @@ export class ScheduleComponent implements OnInit {
 
 
     let startDate = new Date(year + "-01-01"); //YYYY-MM-DD
-    let endDate = new Date(year + "-12-31"); //YYYY-MM-DD 
+    let endDate = new Date(year + "-12-31"); //YYYY-MM-DD
     let arr = new Array();
     let dt = new Date(startDate);
     while (dt <= endDate) {
