@@ -22,7 +22,14 @@
 
       <div class="col-12">
 
-        <table mat-table matTableFilter [exampleEntity]="calenderEntity" #matSortCalender="matSort" matSort
+        <div class="example-header">
+          <mat-form-field>
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+          </mat-form-field>
+        </div>
+
+        
+        <table mat-table #matSortCalender="matSort" matSort
           [dataSource]="dataSource" class="mat-elevation-z8">
           <ng-container matColumnDef="select">
             <th mat-header-cell *matHeaderCellDef>
@@ -41,7 +48,7 @@
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>
               <div mat-sort-header>Name</div>
-              <input placeholder="" [(ngModel)]="calenderEntity.displayName">
+              <!-- <input placeholder="" [(ngModel)]="calenderEntity.displayName"> -->
             </th>
             <td mat-cell *matCellDef="let element"> {{element.displayName}} </td>
           </ng-container>
@@ -49,7 +56,7 @@
           <ng-container matColumnDef="isActive">
             <th mat-header-cell *matHeaderCellDef>
               <div mat-sort-header>Active</div>
-              <input placeholder="" [(ngModel)]="calenderEntity.isActive">
+              <!-- <input placeholder="" [(ngModel)]="calenderEntity.isActive"> -->
             </th>
             <td mat-cell *matCellDef="let element"> {{element.isActive}} </td>
           </ng-container>
@@ -57,7 +64,7 @@
           <ng-container matColumnDef="rulesIncluded">
             <th mat-header-cell *matHeaderCellDef>
               <div mat-sort-header>Rule Included </div>
-              <input placeholder="" [(ngModel)]="calenderEntity.rulesIncluded">
+              <!-- <input placeholder="" [(ngModel)]="calenderEntity.rulesIncluded"> -->
             </th>
             <td mat-cell *matCellDef="let element"> {{element.rulesIncluded}} </td>
           </ng-container>
@@ -65,7 +72,7 @@
           <ng-container matColumnDef="rulesExcluded">
             <th mat-header-cell *matHeaderCellDef>
               <div mat-sort-header>Rule Excluded </div>
-              <input placeholder="" [(ngModel)]="calenderEntity.rulesExcluded">
+              <!-- <input placeholder="" [(ngModel)]="calenderEntity.rulesExcluded"> -->
 
             </th>
             <td mat-cell *matCellDef="let element"> {{element.rulesExcluded}} </td>
@@ -74,7 +81,7 @@
           <ng-container matColumnDef="description">
             <th mat-header-cell *matHeaderCellDef>
               <div mat-sort-header>Description </div>
-              <input placeholder="" [(ngModel)]="calenderEntity.description">
+              <!-- <input placeholder="" [(ngModel)]="calenderEntity.description"> -->
 
             </th>
             <td mat-cell *matCellDef="let element"> {{element.description}} </td>
@@ -83,7 +90,7 @@
           <ng-container matColumnDef="createdDateAndTime">
             <th mat-header-cell *matHeaderCellDef>
               <div mat-sort-header>Created DT TM</div>
-              <input placeholder="" [(ngModel)]="calenderEntity.createdDateAndTime">
+              <!-- <input placeholder="" [(ngModel)]="calenderEntity.createdDateAndTime"> -->
 
             </th>
             <td mat-cell *matCellDef="let element"> {{element.createdDateAndTime}} </td>
@@ -92,7 +99,7 @@
           <ng-container matColumnDef="createdUser">
             <th mat-header-cell *matHeaderCellDef>
               <div mat-sort-header>Created User </div>
-              <input placeholder="" [(ngModel)]="calenderEntity.createdUser">
+              <!-- <input placeholder="" [(ngModel)]="calenderEntity.createdUser"> -->
 
             </th>
             <td mat-cell *matCellDef="let element"> {{element.createdUser}} </td>
@@ -101,7 +108,7 @@
           <ng-container matColumnDef="lastModifiedDateAndTime">
             <th mat-header-cell *matHeaderCellDef>
               <div mat-sort-header>Last modified DT TM</div>
-              <input placeholder="" [(ngModel)]="calenderEntity.lastModifiedDateAndTime">
+              <!-- <input placeholder="" [(ngModel)]="calenderEntity.lastModifiedDateAndTime"> -->
 
             </th>
             <td mat-cell *matCellDef="let element"> {{element.lastModifiedDateAndTime}} </td>
@@ -110,7 +117,7 @@
           <ng-container matColumnDef="lastModifiedUser">
             <th mat-header-cell *matHeaderCellDef>
               <div mat-sort-header>Last modified user </div>
-              <input placeholder="" [(ngModel)]="calenderEntity.lastModifiedUser">
+              <!-- <input placeholder="" [(ngModel)]="calenderEntity.lastModifiedUser"> -->
 
             </th>
             <td mat-cell *matCellDef="let element"> {{element.lastModifiedUser}} </td>
@@ -130,12 +137,18 @@
       </div>
       <div class="col-12">
 
-        <table mat-table matTableFilter [exampleEntity]="rulesEntity" #matSortRules="matSort" matSort [dataSource]="ruleDataSource" class="mat-elevation-z8">
+        <div class="example-header">
+          <mat-form-field>
+            <input matInput (keyup)="applyRuleFilter($event.target.value)" placeholder="Search">
+          </mat-form-field>
+        </div>
+
+        <table mat-table  #matSortCalender="matSort" matSort [dataSource]="ruleDataSource" class="mat-elevation-z8">
 
           <ng-container matColumnDef="holidayType">
             <th mat-header-cell  *matHeaderCellDef> 
               <div mat-sort-header>Rule Name </div>
-              <input type="text" placeholder="" [(ngModel)]="rulesEntity.displayName">
+              <!-- <input type="text" placeholder="" [(ngModel)]="rulesEntity.displayName"> -->
             </th>
             <td mat-cell *matCellDef="let element"> {{element.displayName}} </td>
           </ng-container>
@@ -143,7 +156,7 @@
           <ng-container matColumnDef="isActive">
             <th mat-header-cell  *matHeaderCellDef> 
               <div mat-sort-header>Active </div>
-              <input type="text" placeholder="" [(ngModel)]="rulesEntity.isActive">
+              <!-- <input type="text" placeholder="" [(ngModel)]="rulesEntity.isActive"> -->
             </th>
             <td mat-cell *matCellDef="let element"> {{element.isActive}} </td>
           </ng-container>
@@ -151,7 +164,7 @@
           <ng-container matColumnDef="description">
             <th mat-header-cell  *matHeaderCellDef> 
               <div mat-sort-header>Description </div>
-              <input type="text" placeholder="" [(ngModel)]="rulesEntity.description">
+              <!-- <input type="text" placeholder="" [(ngModel)]="rulesEntity.description"> -->
             </th>
             <td mat-cell *matCellDef="let element"> {{element.description}} </td>
           </ng-container>
@@ -159,7 +172,7 @@
           <ng-container matColumnDef="createdDateAndTime">
             <th mat-header-cell  *matHeaderCellDef> 
               <div mat-sort-header>Create date and time </div>
-              <input type="text" placeholder="" [(ngModel)]="rulesEntity.createdDateAndTime">
+              <!-- <input type="text" placeholder="" [(ngModel)]="rulesEntity.createdDateAndTime"> -->
             </th>
             <td mat-cell *matCellDef="let element"> {{element.createdDateAndTime}} </td>
           </ng-container>
@@ -167,7 +180,7 @@
           <ng-container matColumnDef="createdUser">
             <th mat-header-cell  *matHeaderCellDef> 
               <div mat-sort-header>Created User </div>
-              <input type="text" placeholder="" [(ngModel)]="rulesEntity.createdUser">
+              <!-- <input type="text" placeholder="" [(ngModel)]="rulesEntity.createdUser"> -->
             </th>
             <td mat-cell *matCellDef="let element"> {{element.createdUser}} </td>
           </ng-container>
@@ -175,7 +188,7 @@
           <ng-container matColumnDef="lastModifiedDateAndTime">
             <th mat-header-cell  *matHeaderCellDef> 
               <div mat-sort-header>Last modified date and time </div>
-              <input type="text" placeholder="" [(ngModel)]="rulesEntity.lastModifiedDateAndTime">
+              <!-- <input type="text" placeholder="" [(ngModel)]="rulesEntity.lastModifiedDateAndTime"> -->
             </th>
             <td mat-cell *matCellDef="let element"> {{element.lastModifiedDateAndTime}} </td>
           </ng-container>
@@ -183,7 +196,7 @@
           <ng-container matColumnDef="lastModifiedUser">
             <th mat-header-cell  *matHeaderCellDef> 
               <div mat-sort-header>Last modified user </div>
-              <input type="text" placeholder="" [(ngModel)]="rulesEntity.lastModifiedUser">
+              <!-- <input type="text" placeholder="" [(ngModel)]="rulesEntity.lastModifiedUser"> -->
             </th>
             <td mat-cell *matCellDef="let element"> {{element.lastModifiedUser}} </td>
           </ng-container>

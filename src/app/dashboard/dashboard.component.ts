@@ -53,6 +53,18 @@ export class DashboardComponent implements OnInit {
     return numSelected === numRows;
   }
 
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.dataSource.filter = filterValue;
+  }
+
+  applyRuleFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.ruleDataSource.filter = filterValue;
+  }
+
   masterToggle() {
     this.isAllSelected() ?
       this.selection.clear() :
@@ -71,6 +83,15 @@ export class DashboardComponent implements OnInit {
   constructor(private httpService: HttpService, private router: Router) { }
 
   ngOnInit() {
+
+    this.dataSource.filterPredicate = function (data, filter: string): boolean {
+      return data.name.toLowerCase().includes(filter);
+    };
+
+    this.ruleDataSource.filterPredicate = function (data, filter: string): boolean {
+      return data.displayName.toLowerCase().includes(filter);
+    };
+
     this.httpService.getAllCalender('2022').subscribe((res: any) => {
       if (res) {
         this.dataSource.data = res;

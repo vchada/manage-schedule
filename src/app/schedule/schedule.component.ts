@@ -28,7 +28,7 @@ export class ScheduleComponent implements OnInit {
   years = [
     2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032
   ]
-  dataSource = '';
+  dataSource = [];
 
   selectedYear = 2022;
 
@@ -47,6 +47,13 @@ export class ScheduleComponent implements OnInit {
 
   includeWeekends = new FormControl(false);
 
+  dataSouceList = [
+    {value: 'Data Source 1', name: 'Data Source 1'},
+          {value: 'Data Source 2', name: 'Data Source 2'},
+          {value: 'Data Source 3', name: 'Data Source 3'},
+          {value: 'Data Source 4', name: 'Data Source 4'},
+  ]
+
   constructor(private httpService: HttpService, private fb: FormBuilder, private router: Router, private commonDataService: CommonDataService) {
     this.form = fb.group({
       name: ['', [Validators.required]],
@@ -60,7 +67,7 @@ export class ScheduleComponent implements OnInit {
 
       // this is edit rule data coming from dashboard
       const stateData = this.router.getCurrentNavigation().extras.state;
-      this.dataSource = stateData.dataSource;
+      this.dataSource = stateData.dataSource ? stateData.dataSource.split(''): [];
       this.existingCalendarDetails = stateData;
       this.editSchedule = true;
       this.selectedYear = +stateData.year;
@@ -272,6 +279,10 @@ export class ScheduleComponent implements OnInit {
     this.prefrenceListToExclude = [...this.prefrenceListToExclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
   }
 
+  changeDataSource(res) {
+    this.dataSource = res;
+  }
+
   changePrefrenceToExclude(prefrence) {
     this.selectedPrefrenceToExclude = prefrence;
     this.selectedPrefrenceListToExclude = [];
@@ -366,7 +377,7 @@ export class ScheduleComponent implements OnInit {
           lastModifiedDateAndTime: null,
           isActive: 'ACTIVE',
           ruleIds: "",
-          dataSource: this.dataSource,
+          dataSource: this.dataSource.join(),
           year: this.selectedYear,
           displayName: this.editSchedule ? this.form.controls.displayName.value : this.form.controls.name.value,
           rulesIncluded: this.createStr(this.selectedPrefrence),
