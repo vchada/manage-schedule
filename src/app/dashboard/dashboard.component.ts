@@ -1,9 +1,8 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,33 +11,10 @@ import { HttpService } from '../services/http.service';
 })
 export class DashboardComponent implements OnInit {
 
-  displayedColumns = ["select", "name", "isActive", "rulesIncluded", "rulesExcluded", "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
-  dataSource = new MatTableDataSource<any>();
-  @ViewChild('matSortCalender') matSortCalender: MatSort;
-  calenderEntity = {
-    displayName: '',
-    isActive: '',
-    rulesIncluded: '',
-    rulesExcluded: '',
-    description: '',
-    createdDateAndTime: '',
-    createdUser: '',
-    lastModifiedDateAndTime: '',
-    lastModifiedUser: '',
-  }
+  calendarData = [];
+  ruleData = [];
 
-  displayedRuleColumns = ["holidayType", "isActive", "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
-  ruleDataSource = new MatTableDataSource<any>();
-  @ViewChild('matSortRules') matSortRules: MatSort;
-  rulesEntity = {
-    displayName: '',
-    isActive: '',
-    description: '',
-    createdDateAndTime: '',
-    createdUser: '',
-    lastModifiedDateAndTime: '',
-    lastModifiedUser: ''
-  }
+  
   selectedYear: any;
   years = [
     2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032
@@ -46,56 +22,14 @@ export class DashboardComponent implements OnInit {
 
   selection = new SelectionModel<any>(true, []);
 
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim(); // Remove whitespace
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    this.dataSource.filter = filterValue;
-  }
-
-  applyRuleFilter(filterValue: string) {
-    filterValue = filterValue.trim(); // Remove whitespace
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    this.ruleDataSource.filter = filterValue;
-  }
-
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
-  }
-
-  isRowSelected(row) {
-    if (this.selection && this.selection.selected && this.selection.selected.length > 0) {
-      return this.selection.selected.find(item => item.id === row.id) ? true : false;
-    } else {
-      return false;
-    }
-  }
 
 
   constructor(private httpService: HttpService, private router: Router) { }
 
   ngOnInit() {
-
-    this.dataSource.filterPredicate = function (data, filter: string): boolean {
-      return data.name.toLowerCase().includes(filter);
-    };
-
-    this.ruleDataSource.filterPredicate = function (data, filter: string): boolean {
-      return data.displayName.toLowerCase().includes(filter);
-    };
-
     this.httpService.getAllCalender('2022').subscribe((res: any) => {
       if (res) {
-        this.dataSource.data = res;
-        this.dataSource.sort = this.matSortCalender;
+        this.calendarData = res;
       }
     }, err => {
       console.error(err);
@@ -103,10 +37,11 @@ export class DashboardComponent implements OnInit {
 
     this.httpService.getAllRules().subscribe((res: any) => {
       if (res) {
+        const data = []
         Object.keys(res).forEach(item => {
-          this.ruleDataSource.data.push(res[item][0]);
+          data.push(res[item][0]);
         })
-        this.ruleDataSource.sort = this.matSortRules;
+        this.ruleData = data;
       }
     }, err => {
       console.error(err);
@@ -118,28 +53,97 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  goToDashboard(row) {
-    this.router.navigate(['schedule'], { state: row });
-  }
-
   convertToXML(jsonData) {
     jsonData = jsonData || [];
     var header = "<?xml version='1.0' encoding='UTF-8'?>\n" +
       "<!DOCTYPE DEFCAL SYSTEM \"defcal.dtd\">\n" +
       "<DEFCAL>\n";
-    var xml = jsonData.reduce(function (data, item) {
-      data += "<CALENDAR\nDATACENTER=\"DATACENTER\"\n" +
-        "NAME=\"" + item.rulesIncluded.toUpperCase().replace(/_/g, '') + "\"\n" +
+
+    var xml = '';
+    let count = 0;
+    jsonData.forEach((item, index) => {
+
+    var current = moment(new Date((this.selectedYear + 1) + "-01-01")).startOf('year').format('MM-DD-YYYY');
+    var end = moment(new Date(parseInt((this.selectedYear)) + 1 + "-01-01")).endOf('year').format('MM-DD-YYYY');
+
+
+    this.httpService.getHolidayList(this.selectedYear, false).subscribe(res => {
+
+      count += 1;
+      if (res ) {
+        debugger
+        let prefrenceList = [];
+        Object.keys(res).forEach(item => {
+
+          const obj = {
+            name: item,
+            dates: []
+          }
+
+          res[item].split(',').forEach(val => {
+            obj.dates.push(val + '-' + this.selectedYear)
+          })
+
+          prefrenceList.push(obj)
+        })
+
+        let rulesIncludedDates = [];
+        item.rulesIncluded.split(',').forEach(x => {
+          if(prefrenceList.find(y => y.name === x)) {
+            rulesIncludedDates = [...rulesIncludedDates, ...prefrenceList.find(y => y.name === x).dates];
+          }
+        })
+
+        let rulesExcludedDates = [];
+        item.rulesExcluded.split(',').forEach(x => {
+          if(prefrenceList.find(y => y.name === x)) {
+            rulesExcludedDates = [...rulesExcludedDates, ...prefrenceList.find(y => y.name === x).dates];
+          }
+        })
+
+        let ruleIds = rulesIncludedDates.filter(x => {
+          return !rulesExcludedDates.includes(x)
+        })
+
+        var dayList = [];
+        while (true) {
+          dayList.push(ruleIds.includes(current) ? 'Y' : 'N');
+          current = moment(current).add(1, 'days').format('MM-DD-YYYY');
+          if (current === end) break;
+        }
+        
+
+        xml += "<CALENDAR\nDATACENTER=\"" + item.dataSource + "\"\n" +
+        "NAME=\"" + item.displayName + "\"\n" +
         "TYPE=\"Regular\">\n" +
-        "<YEAR\nNAME=\"" + item.year + "\"\n" +
-        "DAYS=\"" + DashboardComponent.getDays(item) + "\"\n" +
-        "DESCRIPTION=\"" + item.name + "\"/>\n" +
+        "<YEAR\nNAME=\"" + this.selectedYear + "\"\n" +
+        "DAYS=\"" + dayList.join('') + "\"\n" +
+        "DESCRIPTION=\"" + item.description + "\"/>\n" +
         "</CALENDAR>\n";
-      return data;
-    }, header);
+    
+        if(count === (jsonData.length)) {
 
-    xml += "</DEFCAL>";
+          xml += "</DEFCAL>";
 
+          xml = header + xml;
+
+          debugger;
+          this.printXML(xml);
+        }
+
+      }
+
+    }, err => {
+      
+      console.error(err);
+    })
+  });
+
+
+    
+  }
+
+  printXML(xml) {
     //Download XML
     let link = document.createElement('a');
     link.href = "data:text/xml," + encodeURIComponent(xml);
@@ -147,22 +151,7 @@ export class DashboardComponent implements OnInit {
     link.click();
   }
 
-  static getDays(item) {
-    var current = new Date(item.year + "-01-01").getTime();
-    var end = new Date(parseInt(item.year) + 1 + "-01-01").getTime();
-    var availableList = item.ruleIds.split(",").map(function (day) {
-      return new Date(item.year + "-" + day).getTime();
-    });
-    var dayList = [];
-    while (true) {
-      dayList.push(availableList.indexOf(current) > -1 ? 'Y' : 'N');
-      current += 24 * 3600 * 1000;
-      if (current === end) break;
-    }
-    return dayList.join('');
-  }
-
-  printXML() {
+  generate() {
     if (this.selection.selected.length === 0) {
       alert('Please select atleast 1 calender to generate the XML');
       return;
@@ -170,21 +159,8 @@ export class DashboardComponent implements OnInit {
     this.convertToXML(this.selection.selected);
   }
 
-
-  generate() {
-
-    this.printXML();
-  }
-
-  goToCreateRule(row) {
-    this.httpService.getRuleDetails(row.holidayType).subscribe((res: any) => {
-      if (res) {
-
-        this.router.navigate(['create-rule'], { state: res });
-      }
-    }, err => {
-      console.error(err);
-    })
+  selectionChange(evt) {
+    this.selection = evt; 
   }
 
 }

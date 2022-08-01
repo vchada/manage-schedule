@@ -1,0 +1,40 @@
+<div class="example-header col-2">
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by name">
+  </mat-form-field>
+</div>
+
+<div class="example-container mat-elevation-z8">
+
+  <mat-table [dataSource]="dataSource" matSort>
+    <ng-container [matColumnDef]="col" *ngFor="let col of displayedColumns">
+      <ng-container *ngIf="col !== 'select'">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> {{columns[col]}} </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row[col]}} </mat-cell>
+      </ng-container>
+
+      <ng-container *ngIf="col === 'select'">
+
+        <mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="selectionChange($event)" (change)="$event ? selection.toggle(row) : null"
+            [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </mat-cell>
+
+      </ng-container>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row class="pointer"
+    [ngClass]="{'bg-lightgrey': isRowSelected(row)}" (click)="goToDashboard(row)" *matRowDef="let row; columns: displayedColumns;">
+    </mat-row>
+  </mat-table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+</div>

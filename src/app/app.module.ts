@@ -26,6 +26,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 import { AutoCompleteComponent } from './components/auto-complete/auto-complete.component';
 import { MatTableFilterModule } from 'mat-table-filter';
+import { CalendarTableComponent } from './dashboard/calendar-table/calendar-table.component';
+import { RuleTableComponent } from './dashboard/rule-table/rule-table.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { MatTableFilterModule } from 'mat-table-filter';
     CreateRoleComponent,
     ScheduleComponent,
     DashboardComponent,
-    AutoCompleteComponent
+    AutoCompleteComponent,
+    CalendarTableComponent,
+    RuleTableComponent
   ],
   imports: [
     BrowserModule,

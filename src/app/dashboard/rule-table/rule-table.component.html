@@ -1,0 +1,22 @@
+<div class="example-header col-2">
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Rule name">
+  </mat-form-field>
+</div>
+
+<div class="example-container mat-elevation-z8">
+
+  <mat-table [dataSource]="dataSource" matSort>
+    <ng-container [matColumnDef]="col" *ngFor="let col of displayedColumns">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> {{columns[col]}} </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row[col]}} </mat-cell>     
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row class="pointer"
+     (click)="goToCreateRule(row)" *matRowDef="let row; columns: displayedColumns;">
+    </mat-row>
+  </mat-table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+</div>

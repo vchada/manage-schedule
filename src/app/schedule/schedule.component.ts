@@ -65,13 +65,12 @@ export class ScheduleComponent implements OnInit {
       description: ['']
     })
 
-    this.fetchHolidayList(this.selectedYear);
     this.getAllExistingcalenderNames();
     if (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state) {
 
       // this is edit rule data coming from dashboard
       const stateData = this.router.getCurrentNavigation().extras.state;
-      this.dataSource = stateData.dataSource ? stateData.dataSource.split(''): [];
+      this.dataSource = stateData.dataSource ? stateData.dataSource.split(','): [];
       this.existingCalendarDetails = stateData;
       this.editSchedule = true;
       this.selectedYear = +stateData.year;
@@ -124,6 +123,7 @@ export class ScheduleComponent implements OnInit {
 
 
     } else {
+      this.fetchHolidayList(this.selectedYear);
     }
    }
 
