@@ -1,7 +1,12 @@
-<div class="example-header col-2">
-  <mat-form-field>
-    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by name">
-  </mat-form-field>
+<div class="row w-100">
+  <div class="example-header col-2">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by name">
+    </mat-form-field>
+  </div>
+  <div class="col-10 showing" *ngIf="dataSource.filter">
+    Showing <b>{{dataSource.filteredData.length}}</b> results for <b>{{dataSource.filter}}</b>
+  </div>
 </div>
 
 <div class="example-container mat-elevation-z8">
@@ -15,13 +20,13 @@
 
       <ng-container *ngIf="col === 'select'">
 
-        <mat-header-cell *matHeaderCellDef>
+        <mat-header-cell *matHeaderCellDef [ngClass]="col === 'select' ? 'w-75': ''">
           <mat-checkbox (change)="$event ? masterToggle() : null"
             [checked]="selection.hasValue() && isAllSelected()"
             [indeterminate]="selection.hasValue() && !isAllSelected()">
           </mat-checkbox>
         </mat-header-cell>
-        <mat-cell *matCellDef="let row">
+        <mat-cell *matCellDef="let row" [ngClass]="col === 'select' ? 'w-75': ''">
           <mat-checkbox (click)="selectionChange($event)" (change)="$event ? selection.toggle(row) : null"
             [checked]="selection.isSelected(row)">
           </mat-checkbox>

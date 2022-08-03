@@ -112,14 +112,25 @@ export class DashboardComponent implements OnInit {
           if (current === end) break;
         }
         
-
-        xml += "<CALENDAR\nDATACENTER=\"" + item.dataSource + "\"\n" +
-        "NAME=\"" + item.displayName + "\"\n" +
-        "TYPE=\"Regular\">\n" +
-        "<YEAR\nNAME=\"" + this.selectedYear + "\"\n" +
-        "DAYS=\"" + dayList.join('') + "\"\n" +
-        "DESCRIPTION=\"" + item.description + "\"/>\n" +
-        "</CALENDAR>\n";
+        if(item.dataSource) {
+          item.dataSource.split(',').forEach(source => {
+            xml += "<CALENDAR\nDATACENTER=\"" + source + "\"\n" +
+            "NAME=\"" + item.displayName + "\"\n" +
+            "TYPE=\"Regular\">\n" +
+            "<YEAR\nNAME=\"" + this.selectedYear + "\"\n" +
+            "DAYS=\"" + dayList.join('') + "\"\n" +
+            "DESCRIPTION=\"" + item.description + "\"/>\n" +
+            "</CALENDAR>\n";
+          })
+        } else {
+          xml += "<CALENDAR\nDATACENTER=\"" + item.dataSource + "\"\n" +
+          "NAME=\"" + item.displayName + "\"\n" +
+          "TYPE=\"Regular\">\n" +
+          "<YEAR\nNAME=\"" + this.selectedYear + "\"\n" +
+          "DAYS=\"" + dayList.join('') + "\"\n" +
+          "DESCRIPTION=\"" + item.description + "\"/>\n" +
+          "</CALENDAR>\n";
+        }
     
         if(count === (jsonData.length)) {
 

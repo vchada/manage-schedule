@@ -1,15 +1,20 @@
-<div class="example-header col-2">
-  <mat-form-field>
-    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Rule name">
-  </mat-form-field>
+<div class="row w-100">
+  <div class="example-header col-2">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Rule name">
+    </mat-form-field>
+  </div>
+  <div class="col-10 showing" *ngIf="dataSource.filter">
+    Showing <b>{{dataSource.filteredData.length}}</b> results for <b>{{dataSource.filter}}</b>
+  </div>
 </div>
 
 <div class="example-container mat-elevation-z8">
 
   <mat-table [dataSource]="dataSource" matSort>
     <ng-container [matColumnDef]="col" *ngFor="let col of displayedColumns">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> {{columns[col]}} </mat-header-cell>
-        <mat-cell *matCellDef="let row"> {{row[col]}} </mat-cell>     
+        <mat-header-cell *matHeaderCellDef mat-sort-header > {{columns[col]}} </mat-header-cell>
+        <mat-cell *matCellDef="let row" > {{row[col]}} </mat-cell>     
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
