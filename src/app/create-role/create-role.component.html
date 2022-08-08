@@ -89,7 +89,7 @@
     </div>
 
     <div class="col-2 p-t-10">
-        <button type="button" (click)="reset()" class="btn btn-secondary">Reset</button>
+        <button type="button" (click)="reset()" class="btn btn-dark">Reset</button>
         <button type="button" (click)="apply()" [disabled]="!(selectedMonth && selectedMonth.length > 0) || !(selectedWeek && selectedWeek.length > 0) || !(selectedDay && selectedDay.length > 0)" class="btn btn-dark ms-2">Preview</button>
     </div>
 
@@ -143,8 +143,8 @@
     <div class="col-12 btn-container">
         
         <button type="button" (click)="cancel()" class="btn btn-dark">Clear</button>
-        <button type="button" *ngIf="editRule && !isDisabled" data-bs-toggle="modal" data-bs-target="#disbaleConfirmationModal" class="btn btn-dark">Disable Rule</button>
-        <button type="button" *ngIf="editRule && isDisabled" data-bs-toggle="modal" data-bs-target="#enableConfirmationModal" class="btn btn-dark">Enable Rule</button>
+        <button type="button" *ngIf="editRule && !isDisabled" data-bs-toggle="modal" data-bs-target="#disbaleConfirmationModal" class="btn btn-dark">Deactivate Rule</button>
+        <button type="button" *ngIf="editRule && isDisabled" data-bs-toggle="modal" data-bs-target="#enableConfirmationModal" class="btn btn-dark">Activate Rule</button>
         <button type="button" *ngIf="flexibleDates" [disabled]="!(selectedDateList && selectedDateList.length > 0)" data-bs-toggle="modal" data-bs-target="#confirmationModal"
             class="btn btn-dark"><span *ngIf="editRule">Update Rule</span><span *ngIf="!editRule">Save Rule</span></button>
         <button type="button" *ngIf="!flexibleDates" [disabled]="!(selectedMonth && selectedWeek && selectedDay)" data-bs-toggle="modal" data-bs-target="#confirmationModal"
@@ -229,13 +229,13 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title m-0" id="enableConfirmationModalTitle">Enable Rule</h2>
+                <h2 class="modal-title m-0" id="enableConfirmationModalTitle">Activate Rule</h2>
                 <button type="button" #closeEnableModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
             <div class="modal-body">
   
-                <span>Are you sure, you want to enable {{form.controls.displayName.value}}?</span>
+                <span>Are you sure, you want to activate {{form.controls.displayName.value}}?</span>
   
             </div>
             <div class="modal-footer">

@@ -1,6 +1,6 @@
 <div class="row" *ngIf="editSchedule">
   <div class="col-12 update-rule-title">
-      <span class="label">Calendar - </span><span class="value">{{form.controls.displayName.value}}</span>
+      <span class="label">Calender - </span><span class="value">{{form.controls.displayName.value}}</span>
   </div>
 </div>
   <div class="row m-y-20">
@@ -19,14 +19,6 @@
 
     <div class="col-1 min-width-225">
     
-      <!-- <mat-form-field appearance="fill">
-        <mat-label>Select Rule to include</mat-label>
-        <mat-select [disableOptionCentering]="true" multiple (ngModelChange)="changePrefrence($event)" [(ngModel)]="selectedPrefrence">
-          <mat-option *ngFor="let prefrence of prefrenceListToInclude" [value]="prefrence.name">
-            {{prefrence.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field> -->
 
       <app-auto-complete *ngIf="prefrenceListToInclude && prefrenceListToInclude.length > 0"
         [label]="'Select Rule to include'"
@@ -39,17 +31,6 @@
     </div>
 
     <div class="col-1 min-width-225">
-
-      <!-- <mat-form-field appearance="fill">
-        <mat-label>Select Rule to exclude</mat-label>
-        <mat-select [disableOptionCentering]="true" multiple (ngModelChange)="changePrefrenceToExclude($event)" [(ngModel)]="selectedPrefrenceToExclude">
-          <input type="text" placeholder="Select rule" aria-label="Select Users" matInput>
-      
-          <mat-option *ngFor="let prefrence of prefrenceListToExclude" [value]="prefrence.name">
-            {{prefrence.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field> -->
 
       <app-auto-complete *ngIf="prefrenceListToExclude && prefrenceListToExclude.length > 0"
         [label]="'Select Rule to exclude'"
@@ -82,17 +63,6 @@
         [alredaySelectedRules]="dataSource"
         >
       </app-auto-complete>
-
-      <!-- <mat-form-field appearance="fill">
-        <mat-label>Data Source</mat-label>
-        <mat-select [disableOptionCentering]="true" [(ngModel)]="dataSource">
-          <mat-option value="Data Source 1">Data Source 1</mat-option>
-          <mat-option value="Data Source 2">Data Source 2</mat-option>
-          <mat-option value="Data Source 3">Data Source 3</mat-option>
-          <mat-option value="Data Source 4">Data Source 4</mat-option>
-        </mat-select>
-      </mat-form-field> -->
-
     </div>
 
     <div class="col-1 min-width-225">
@@ -103,8 +73,8 @@
 
     <div class="col-6" >
       <div class="box">
-        <span class="tube" *ngFor="let prefrence of selectedPrefrence"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="remove(prefrence)">&#10006;</a></span>
-        <span *ngFor="let prefrence of selectedPrefrenceToExclude"><span class="tube-exclude" *ngIf="prefrence"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="removeExcluded(prefrence)">&#10006;</a></span></span>
+        <span class="tube" [ngClass]="!getActiveStatus(prefrence) ? 'bg-inactive': ''" *ngFor="let prefrence of selectedPrefrence"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="remove(prefrence)">&#10006;</a></span>
+        <span *ngFor="let prefrence of selectedPrefrenceToExclude"><span class="tube-exclude" [ngClass]="!getActiveStatus(prefrence) ? 'bg-inactive': ''" *ngIf="prefrence"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="removeExcluded(prefrence)">&#10006;</a></span></span>
       </div>
     </div>
   </div>
@@ -122,15 +92,16 @@
   <div class="row">
     <div class="col-12 btn-container" *ngIf="!editSchedule">
       <button type="button" (click)="cancel()" class="btn btn-dark">Clear</button>
-      <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup" class="btn btn-dark">Save</button>
-      <button type="button" (click)="generate()" class="btn btn-dark generate">Generate</button>
+      <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup" [disabled]="!selectedPrefrence || (selectedPrefrence && selectedPrefrence.length === 0)" class="btn btn-dark">Save</button>
+      <button type="button" (click)="generate()" [disabled]="!selectedDateList || (selectedDateList && selectedDateList.length === 0)" class="btn btn-dark generate">Generate</button>
     </div>
 
     <div class="col-12 btn-container" *ngIf="editSchedule">
       <button type="button" (click)="cancel()" class="btn btn-dark">Clear</button>
-      <button type="button" *ngIf="!isDisabled && editSchedule" data-bs-toggle="modal" data-bs-target="#disbaleConfirmationModal"  class="btn btn-dark">Disable</button>
-      <button type="button" *ngIf="isDisabled && editSchedule" data-bs-toggle="modal" data-bs-target="#enableConfirmationModal"  class="btn btn-dark">Enable</button>
-      <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup" class="btn btn-dark">Update</button>
+      <button type="button" *ngIf="!isDisabled && editSchedule" data-bs-toggle="modal" data-bs-target="#disbaleConfirmationModal"  class="btn btn-dark">Deactivate</button>
+      <button type="button" *ngIf="isDisabled && editSchedule" data-bs-toggle="modal" data-bs-target="#enableConfirmationModal"  class="btn btn-dark">Activate</button>
+      <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup" [disabled]="!selectedPrefrence || (selectedPrefrence && selectedPrefrence.length === 0)" class="btn btn-dark">Update</button>
+      <button type="button" (click)="generate()" [disabled]="!selectedDateList || (selectedDateList && selectedDateList.length === 0)" class="btn btn-dark generate">Generate</button>
     </div>
   </div>
 
@@ -192,7 +163,7 @@
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h2 class="modal-title m-0" id="disbaleConfirmationModalTitle">Disable Calendar</h2>
+              <h2 class="modal-title m-0" id="disbaleConfirmationModalTitle">Disable Calender</h2>
               <button type="button" #closeDisableModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           
@@ -214,13 +185,13 @@
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h2 class="modal-title m-0" id="enableConfirmationModalTitle">Enable Calendar</h2>
+              <h2 class="modal-title m-0" id="enableConfirmationModalTitle">Activate Calender</h2>
               <button type="button" #closeEnableModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           
           <div class="modal-body">
 
-              <span>Are you sure, you want to enable {{form.controls.displayName.value}}?</span>
+              <span>Are you sure, you want to activate {{form.controls.displayName.value}}?</span>
 
           </div>
           <div class="modal-footer">
