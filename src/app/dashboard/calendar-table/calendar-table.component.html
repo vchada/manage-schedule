@@ -1,7 +1,7 @@
 <div class="row w-100">
   <div class="example-header col-2">
     <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by name">
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Calendar name">
     </mat-form-field>
   </div>
   <div class="col-10 showing" *ngIf="dataSource.filter">

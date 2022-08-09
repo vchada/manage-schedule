@@ -14,7 +14,7 @@ export class DashboardComponent implements OnInit {
   calendarData = [];
   ruleData = [];
 
-  
+
   selectedYear: any;
   years = [
     2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032
@@ -111,7 +111,7 @@ export class DashboardComponent implements OnInit {
           current = moment(current).add(1, 'days').format('MM-DD-YYYY');
           if (current === end) break;
         }
-        
+
         if(item.dataSource) {
           item.dataSource.split(',').forEach(source => {
             xml += "<CALENDAR\nDATACENTER=\"" + source + "\"\n" +
@@ -131,7 +131,7 @@ export class DashboardComponent implements OnInit {
           "DESCRIPTION=\"" + item.description + "\"/>\n" +
           "</CALENDAR>\n";
         }
-    
+
         if(count === (jsonData.length)) {
 
           xml += "</DEFCAL>";
@@ -145,13 +145,13 @@ export class DashboardComponent implements OnInit {
       }
 
     }, err => {
-      
+
       console.error(err);
     })
   });
 
 
-    
+
   }
 
   printXML(xml) {
@@ -164,14 +164,14 @@ export class DashboardComponent implements OnInit {
 
   generate() {
     if (this.selection.selected.length === 0) {
-      alert('Please select atleast 1 calender to generate the XML');
+      alert('Please select atleast 1 calendar to generate the XML');
       return;
     }
     this.convertToXML(this.selection.selected);
   }
 
   selectionChange(evt) {
-    this.selection = evt; 
+    this.selection = evt;
   }
 
 }

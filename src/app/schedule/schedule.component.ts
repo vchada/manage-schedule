@@ -51,7 +51,7 @@ export class ScheduleComponent implements OnInit {
     {value: 'PPF', name: 'PPF'},
           {value: 'MISF', name: 'MISF'},
           {value: 'INT1', name: 'INT1'},
-          {value: 'CTM_INT4', name: 'CTM_INT4'},
+          {value: 'INT4', name: 'INT4'},
           {value: 'CTM_SERVER', name: 'CTM_SERVER'},
           {value: 'INT6', name: 'INT6'},
           {value: 'PRD2', name: 'PRD2'},
@@ -580,7 +580,7 @@ export class ScheduleComponent implements OnInit {
           current = moment(current).add(1, 'days').format('MM-DD-YYYY');
           if (current === end) break;
         }
-        
+
         if(this.dataSource.length > 0) {
           this.dataSource.forEach(source => {
             xml += "<CALENDAR\nDATACENTER=\"" + source + "\"\n" +
@@ -600,7 +600,7 @@ export class ScheduleComponent implements OnInit {
           "DESCRIPTION=\"" + 'null' + "\"/>\n" +
           "</CALENDAR>\n";
         }
-    
+
         // if(count === (jsonData.length)) {
 
           xml += "</DEFCAL>";
@@ -613,13 +613,13 @@ export class ScheduleComponent implements OnInit {
       // }
 
     // }, err => {
-      
+
     //   console.error(err);
     // })
   // });
 
 
-    
+
   }
 
   printXML(xml) {
@@ -632,7 +632,7 @@ export class ScheduleComponent implements OnInit {
 
   generate() {
     if (this.selectedDateList.length === 0) {
-      alert('Please select atleast 1 calender to generate the XML');
+      alert('Please select atleast 1 calendar to generate the XML');
       return;
     }
     this.convertToXML(this.selectedDateList);

@@ -18,7 +18,7 @@
     </div>
 
     <div class="col-1 min-width-225">
-    
+
 
       <app-auto-complete *ngIf="prefrenceListToInclude && prefrenceListToInclude.length > 0"
         [label]="'Select Rule to include'"
@@ -45,7 +45,7 @@
     <div class="col-1 min-width-225">
 
       <mat-form-field appearance="fill">
-        <mat-label>Calender Type</mat-label>
+        <mat-label>Calendar Type</mat-label>
         <mat-select [disableOptionCentering]="true" [(ngModel)]="calenderType">
           <mat-option value="periodic">Periodic</mat-option>
           <mat-option value="regular">Regular</mat-option>
@@ -57,7 +57,7 @@
     <div class="col-1 min-width-225">
 
       <app-auto-complete *ngIf="dataSouceList && dataSouceList.length > 0"
-        [label]="'Data Source'"
+        [label]="'Data Center'"
         [rulesList]="dataSouceList"
         (selectedRules)=changeDataSource($event)
         [alredaySelectedRules]="dataSource"
@@ -115,12 +115,12 @@
               <h2 class="modal-title m-0" id="confirmationPopupTitle">Submit Calender</h2>
               <button type="button" #closeConfirmationModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          
+
           <form [formGroup]="form">
           <div class="modal-body">
 
               <mat-form-field class="full-width" appearance="fill" *ngIf="!editSchedule">
-                  <mat-label>Calender Name</mat-label>
+                  <mat-label>Calendar Name</mat-label>
                   <input matInput placeholder="" formControlName="name">
                   <mat-error *ngIf="form.get('name').hasError('required')">
                       Calender Name is required.
@@ -146,12 +146,12 @@
                 <input matInput placeholder="" formControlName="description">
             </mat-form-field>
 
-              
+
 
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" [disabled]="!form.valid" (click)="save()" class="btn btn-dark">Save Calender</button>
+              <button type="button" [disabled]="!form.valid" (click)="save()" class="btn btn-dark">Save Calendar</button>
           </div>
           </form>
       </div>
@@ -163,10 +163,10 @@
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h2 class="modal-title m-0" id="disbaleConfirmationModalTitle">Disable Calender</h2>
+              <h2 class="modal-title m-0" id="disbaleConfirmationModalTitle">Disable Calendar</h2>
               <button type="button" #closeDisableModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          
+
           <div class="modal-body">
 
               <span>Are you sure, you want to disable {{form.controls.displayName.value}}?</span>
@@ -185,10 +185,10 @@
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h2 class="modal-title m-0" id="enableConfirmationModalTitle">Activate Calender</h2>
+              <h2 class="modal-title m-0" id="enableConfirmationModalTitle">Activate Calendar</h2>
               <button type="button" #closeEnableModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          
+
           <div class="modal-body">
 
               <span>Are you sure, you want to activate {{form.controls.displayName.value}}?</span>
