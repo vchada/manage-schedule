@@ -600,13 +600,7 @@ export class CreateRoleComponent implements OnInit {
     this.commonDataService.setYearChange(this.selectedYear);
     this.selectedIncludedPrefrence = [];
     this.afterBeforeDaySelection = null;
-    // this.editRule = false;
-    // this.isDisabled = false;
-    // this.existingRuleDetails = null;
-    // this.getAllExistingRuleNames();
     this.selectedPrefrence = [];
-    this.selectedIncludedPrefrence = [];
-    // this.getAvailableRules(this.selectedYear);
   }
 
   apply() {

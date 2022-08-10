@@ -89,7 +89,7 @@
     </div>
 
     <div class="col-2 p-t-10">
-        <button type="button" (click)="reset()" class="btn btn-dark">Reset</button>
+        <button type="button" (click)="reset()" [disabled]="!(flexibleDates || ((selectedMonth && selectedMonth.length > 0) || (selectedWeek && selectedWeek.length > 0) || (selectedDay && selectedDay.length > 0)))"   class="btn btn-dark">Reset</button>
         <button type="button" (click)="apply()" [disabled]="!(selectedMonth && selectedMonth.length > 0) || !(selectedWeek && selectedWeek.length > 0) || !(selectedDay && selectedDay.length > 0)" class="btn btn-dark ms-2">Preview</button>
     </div>
 

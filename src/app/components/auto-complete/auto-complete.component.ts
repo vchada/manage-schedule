@@ -36,7 +36,7 @@ export class AutoCompleteComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes.alredaySelectedRules && changes.alredaySelectedRules.currentValue && changes.alredaySelectedRules.currentValue.length > 0) {
+    if(changes.alredaySelectedRules && changes.alredaySelectedRules.currentValue) {
       //  changes.alredaySelectedRules.currentValue.forEach(item => {
       //    if(this.rulesList.find(val => val.name = item)) {
       //     this.initSelection(this.rulesList.find(val => val.name = item));
