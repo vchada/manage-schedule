@@ -14,12 +14,12 @@ import { Router } from '@angular/router';
   templateUrl: 'calendar-table.component.html',
 })
 export class CalendarTableComponent implements OnInit {
-  displayedColumns = ["select", "name", "isActive", "rulesIncluded", "rulesExcluded", "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
+  displayedColumns = ["select", "displayName", "isActive", "rulesIncluded", "rulesExcluded", "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   dataSource: MatTableDataSource<any>;
 
   columns = {
     select: '',
-    name: 'Name',
+    displayName: 'Name',
     isActive: 'Active',
     rulesIncluded: 'Rule Included',
     rulesExcluded: 'Rule Excluded',
@@ -53,7 +53,7 @@ export class CalendarTableComponent implements OnInit {
     };
 
     this.dataSource.filterPredicate = function (data, filter: string): boolean {
-      return data.name.toLowerCase().includes(filter);
+      return data.displayName.toLowerCase().includes(filter);
     };
   }
 

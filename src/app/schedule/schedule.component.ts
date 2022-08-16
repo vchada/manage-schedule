@@ -47,6 +47,8 @@ export class ScheduleComponent implements OnInit {
 
   includeWeekends = new FormControl(false);
 
+  invalidDates = ['02-29-2022', '02-29-2023', '02-29-2025', '02-29-2026', '02-29-2027', '02-29-2029', '02-29-2030', '02-29-2031', '02-29-2033'];
+
   dataSouceList = [
     {value: 'PPF', name: 'PPF'},
           {value: 'MISF', name: 'MISF'},
@@ -76,6 +78,7 @@ export class ScheduleComponent implements OnInit {
       this.editSchedule = true;
       this.selectedYear = +stateData.year;
       this.isDisabled = stateData.isActive === 'ACTIVE' ? false: true;
+      this.includeWeekends.patchValue(stateData.includeWeekends === 'true'? true: false);
       this.httpService.getHolidayList(stateData.year, this.includeWeekends.value).subscribe(res => {
         if (res ) {
           this.prefrenceList = [];
@@ -279,7 +282,13 @@ export class ScheduleComponent implements OnInit {
     this.selectedPrefrenceList = [];
     this.selectedPrefrence.forEach(item => {
       if(item && this.prefrenceList.find(val => val.name === item) && this.prefrenceList.find(val => val.name === item).dates) {
-        this.selectedPrefrenceList = [...this.selectedPrefrenceList ,...(this.prefrenceList.find(val => val.name === item).dates)]
+        this.selectedPrefrenceList = [...this.selectedPrefrenceList ,...(this.prefrenceList.find(val => val.name === item).dates)];
+
+
+        
+        this.selectedPrefrenceList = this.selectedPrefrenceList.filter(item => {
+          return !this.invalidDates.includes(item) ? true: false;
+        })
       }
     })
 
@@ -287,6 +296,34 @@ export class ScheduleComponent implements OnInit {
 
     this.prefrenceListToExclude = [...this.prefrenceListToExclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
   }
+
+  getFormattedDate(date) {
+    var year = date.getFullYear();
+  
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : '0' + month;
+  
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : '0' + day;
+    
+    return month + '/' + day + '/' + year;
+  }
+
+//   isValidDate(d, m, y) {
+//     m = parseInt(m, 10) - 1;
+//     return m >= 0 && m < 12 && d > 0 && d <= this.daysInMonth(m, y);
+// }
+
+// daysInMonth(m, y) {
+//   switch (m) {
+//       case 1 :
+//           return (y % 4 == 0 && y % 100) || y % 400 == 0 ? 29 : 28;
+//       case 8 : case 3 : case 5 : case 10 :
+//           return 30;
+//       default :
+//           return 31
+//   }
+// }
 
   changeDataSource(res) {
     this.dataSource = res;
@@ -388,6 +425,7 @@ export class ScheduleComponent implements OnInit {
           ruleIds: "",
           dataSource: this.dataSource.join(),
           year: this.selectedYear,
+          includeWeekends: this.includeWeekends.value ? 'true': 'false',
           displayName: this.editSchedule ? this.form.controls.displayName.value : this.form.controls.name.value,
           rulesIncluded: this.createStr(this.selectedPrefrence),
           rulesExcluded: this.createStr(this.selectedPrefrenceToExclude)
@@ -440,6 +478,7 @@ export class ScheduleComponent implements OnInit {
           isActive: 'ACTIVE',
           ruleIds: "",
           year: this.selectedYear,
+          includeWeekends: this.includeWeekends.value ? 'true': 'false',
           displayName: this.editSchedule ? this.form.controls.displayName.value : this.form.controls.name.value,
           rulesIncluded: this.createStr(this.selectedPrefrence),
           rulesExcluded: this.createStr(this.selectedPrefrenceToExclude)

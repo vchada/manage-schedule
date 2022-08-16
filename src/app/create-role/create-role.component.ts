@@ -234,6 +234,9 @@ export class CreateRoleComponent implements OnInit {
           this.selectedPrefrence = [...this.selectedPrefrence ,...(this.prefrenceListToInclude.find(val => val.name === item).dates)]
         }
       })
+      this.allMonthSelected = false;
+      this.allWeekSelected = false;
+      this.allDaySelected = false;
 
     } else {
       // this.selectedPrefrence = [];
