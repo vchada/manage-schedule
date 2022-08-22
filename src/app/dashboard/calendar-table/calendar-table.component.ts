@@ -17,6 +17,8 @@ export class CalendarTableComponent implements OnInit {
   displayedColumns = ["select", "displayName", "isActive", "rulesIncluded", "rulesExcluded", "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   dataSource: MatTableDataSource<any>;
 
+  value;
+
   columns = {
     select: '',
     displayName: 'Name',
@@ -70,6 +72,11 @@ export class CalendarTableComponent implements OnInit {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
     this.dataSource.filter = filterValue;
+  }
+
+  clear() {
+    this.value = '';
+    this.dataSource.filter = '';
   }
 
 

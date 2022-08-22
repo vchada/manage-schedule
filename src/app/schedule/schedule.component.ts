@@ -615,9 +615,11 @@ export class ScheduleComponent implements OnInit {
         var dayList = [];
         while (true) {
           dayList.push(this.selectedDateList.find(item => moment(item).format('MM-DD-YYYY') === current) ? 'Y' : 'N');
-
+          if (current === end) {
+            break;
+          }
           current = moment(current).add(1, 'days').format('MM-DD-YYYY');
-          if (current === end) break;
+          
         }
 
         if(this.dataSource.length > 0) {

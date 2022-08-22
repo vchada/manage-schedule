@@ -1,7 +1,10 @@
 <div class="row w-100">
   <div class="example-header col-2">
     <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Rule name">
+      <input matInput [(ngModel)]="value" (ngModelChange)="applyFilter(value)" placeholder="Search by Rule name">
+      <a href="javascript:void(0)" *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="clear()">
+        <mat-icon class="close-icon">close</mat-icon>
+      </a>
     </mat-form-field>
   </div>
   <div class="col-10 showing" *ngIf="dataSource.filter">

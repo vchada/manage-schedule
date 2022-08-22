@@ -57,7 +57,7 @@ export class CreateRoleComponent implements OnInit {
   @ViewChild('weekSelect') weekSelect: MatSelect;
   allWeekSelected=false;
 
-  weekList = [1, 2, 3, 4, 5];
+  weekList = [1, 2, 3, 4, 5, 6];
   selectedWeek = null;
   @ViewChild('daySelect') daySelect: MatSelect;
   allDaySelected=false;
@@ -662,9 +662,30 @@ export class CreateRoleComponent implements OnInit {
         } else {
 
           // this.selectedPrefrence = [];
-          res.forEach(item => {
-            newdates.push(moment(item).format('L'));
-          })
+          // res.forEach(item => {
+          //   newdates.push(moment(item).format('L'));
+          // })
+
+          if(this.afterBeforeDaySelection === 'DAY_BEFORE') {
+            // this.selectedPrefrence = [];
+            res.forEach(item => {
+              newdates.push(moment(item).subtract(1, "days").format('L'));
+            })
+          } 
+  
+          if(this.afterBeforeDaySelection === 'DAY_AFTER') {
+            // this.selectedPrefrence = [];
+            res.forEach(item => {
+              newdates.push(moment(item).add(1, "days").format('L'));
+            })
+          }
+  
+          if(!this.afterBeforeDaySelection) {
+            // this.selectedPrefrence = [];
+            res.forEach(item => {
+              newdates.push(moment(item).format('L'));
+            })
+          }
         }
         this.selectedPrefrence = [...this.selectedPrefrence, ...newdates];
       }

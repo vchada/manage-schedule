@@ -17,6 +17,8 @@ export class RuleTableComponent implements OnInit {
   displayedColumns = ["displayName", "isActive", "description", "createdDateAndTime", "createdUser", "lastModifiedDateAndTime", "lastModifiedUser"];
   dataSource: MatTableDataSource<any>;
 
+  value = '';
+
   columns = {
 
     displayName: 'Rule Name', 
@@ -65,6 +67,12 @@ export class RuleTableComponent implements OnInit {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
     this.dataSource.filter = filterValue;
+  }
+
+
+  clear() {
+    this.value = '';
+    this.dataSource.filter = '';
   }
 
   goToCreateRule(row) {

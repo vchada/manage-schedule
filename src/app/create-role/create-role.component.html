@@ -79,10 +79,12 @@
         </mat-form-field>
 
     </div>
+<!-- 
+    [disabled]="((selectedMonth?.length > 1) || (selectedWeek?.length > 1) || (selectedDay?.length > 1)) || (flexibleDates && (!selectedDateList ||  (selectedDateList?.length === 0))) || (!flexibleDates  && ((!selectedMonth  ||selectedMonth?.length > 1) || (!selectedWeek || selectedWeek?.length > 1) || (!selectedDay || selectedDay?.length > 1))) || flexibleDates" -->
 
     <div class="col-2">
         <mat-radio-group class="day-radio-group" name="afterBeforeDay" [(ngModel)]="afterBeforeDaySelection" ngDefaultControl>
-            <mat-radio-button #button class="day-radio-button" [disabled]="((selectedMonth?.length > 1) || (selectedWeek?.length > 1) || (selectedDay?.length > 1)) || (flexibleDates && (!selectedDateList ||  (selectedDateList?.length === 0))) || (!flexibleDates  && ((!selectedMonth  ||selectedMonth?.length > 1) || (!selectedWeek || selectedWeek?.length > 1) || (!selectedDay || selectedDay?.length > 1))) || flexibleDates" *ngFor="let day of afterBeforeDay" [value]="day.value" (click)="checkState(button)">
+            <mat-radio-button #button class="day-radio-button"  *ngFor="let day of afterBeforeDay" [value]="day.value" (click)="checkState(button)">
               {{day.display}}
             </mat-radio-button>
           </mat-radio-group>
