@@ -57,10 +57,12 @@ export class CreateRoleComponent implements OnInit {
   @ViewChild('weekSelect') weekSelect: MatSelect;
   allWeekSelected=false;
 
-  weekList = [1, 2, 3, 4, 5, 6];
+  weekList = [1, 2, 3, 4, 5, -1];
   selectedWeek = null;
   @ViewChild('daySelect') daySelect: MatSelect;
   allDaySelected=false;
+
+  unSavedChanges = false;
 
   dayList = [
     { display: 'Monday', value: 1 },
@@ -280,6 +282,10 @@ export class CreateRoleComponent implements OnInit {
     })
   }
 
+
+  setUnsavedFlag() {
+    this.unSavedChanges = true;
+  }
 
   changePrefrence(prefrence) {
     if(prefrence.length > this.selectedIncludedPrefrence.length) {

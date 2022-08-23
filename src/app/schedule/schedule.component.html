@@ -8,7 +8,7 @@
 
       <mat-form-field appearance="fill">
         <mat-label>Select Year</mat-label>
-        <mat-select [disableOptionCentering]="true" (ngModelChange)="changeYear($event)" [(ngModel)]="selectedYear">
+        <mat-select [disableOptionCentering]="true" (ngModelChange)="changeYear($event); setUnsavedFlag()" [(ngModel)]="selectedYear">
           <mat-option *ngFor="let year of years" [value]="year">
             {{year}}
           </mat-option>
@@ -23,7 +23,7 @@
       <app-auto-complete *ngIf="prefrenceListToInclude && prefrenceListToInclude.length > 0"
         [label]="'Select Rule to include'"
         [rulesList]="prefrenceListToInclude"
-        (selectedRules)=changePrefrence($event)
+        (selectedRules)="changePrefrence($event); setUnsavedFlag();"
         [alredaySelectedRules]="selectedPrefrence"
         >
       </app-auto-complete>
@@ -35,7 +35,7 @@
       <app-auto-complete *ngIf="prefrenceListToExclude && prefrenceListToExclude.length > 0"
         [label]="'Select Rule to exclude'"
         [rulesList]="prefrenceListToExclude"
-        (selectedRules)=changePrefrenceToExclude($event)
+        (selectedRules)="changePrefrenceToExclude($event); setUnsavedFlag();"
         [alredaySelectedRules]="selectedPrefrenceToExclude"
         >
       </app-auto-complete>
@@ -59,7 +59,7 @@
       <app-auto-complete *ngIf="dataSouceList && dataSouceList.length > 0"
         [label]="'Data Center'"
         [rulesList]="dataSouceList"
-        (selectedRules)=changeDataSource($event)
+        (selectedRules)="changeDataSource($event); setUnsavedFlag()"
         [alredaySelectedRules]="dataSource"
         >
       </app-auto-complete>
@@ -68,7 +68,7 @@
     <div class="col-1 min-width-225">
 
 
-      <mat-slide-toggle class="includeWeekend" name="includeWeekend" ngDefaultControl [formControl]="includeWeekends">Include Weekends</mat-slide-toggle>
+      <mat-slide-toggle class="includeWeekend" (click)="setUnsavedFlag()" name="includeWeekend" ngDefaultControl [formControl]="includeWeekends">Include Weekends</mat-slide-toggle>
     </div>
 
     <div class="col-6" >
@@ -83,7 +83,7 @@
   <div class="row">
     <div class="col-12">
       <div class="card-container">
-        <ycd-example-section (sendYearChanged)="sendYearChanged($event)" [year]="selectedYear" [prefrenceExclude]="selectedPrefrenceListToExclude" [prefrence]="selectedPrefrenceList" (dateSelected)="dateSelected($event)" >
+        <ycd-example-section (sendYearChanged)="sendYearChanged($event); setUnsavedFlag();" [year]="selectedYear" [prefrenceExclude]="selectedPrefrenceListToExclude" [prefrence]="selectedPrefrenceList" (dateSelected)="dateSelected($event)" >
         </ycd-example-section>
       </div>
     </div>
@@ -216,6 +216,29 @@
           <div class="modal-body">
 
               <span>Are you sure, you want to activate {{form.controls.displayName.value}}?</span>
+
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" (click)="enableRuleConfirm()" class="btn btn-dark">Ok</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<!--Save Confirmation Modal -->
+<div class="modal fade" id="saveConfirmationModal" #saveConfirmationModal tabindex="-1" aria-labelledby="saveConfirmationModal" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h2 class="modal-title m-0" id="saveConfirmationModalTitle">Confirmation</h2>
+              <button type="button" #closeSaveModal class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+
+              <span>Do you want to save your changes?</span>
 
           </div>
           <div class="modal-footer">

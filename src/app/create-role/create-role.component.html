@@ -8,7 +8,7 @@
 
         <mat-form-field appearance="fill">
             <mat-label>Select Year</mat-label>
-            <mat-select [disableOptionCentering]="true" (ngModelChange)="changeYear($event)" [(ngModel)]="selectedYear">
+            <mat-select [disableOptionCentering]="true" (ngModelChange)="changeYear($event); setUnsavedFlag();" [(ngModel)]="selectedYear">
                 <mat-option *ngFor="let year of years" [value]="year">
                     {{year}}
                 </mat-option>
@@ -21,7 +21,7 @@
     <div class="col-1 min-width-225 " >
 
             
-        <mat-checkbox class="example-margin" (ngModelChange)="changeFlexibledate($event)" [(ngModel)]="flexibleDates">Fixed Date(s)</mat-checkbox>
+        <mat-checkbox class="example-margin" (ngModelChange)="changeFlexibledate($event); setUnsavedFlag();" [(ngModel)]="flexibleDates">Fixed Date(s)</mat-checkbox>
 
     </div> 
 
@@ -29,7 +29,7 @@
 
         <mat-form-field appearance="fill">
             <mat-label>Select Month</mat-label>
-            <mat-select [disableOptionCentering]="true" #monthSelect multiple [disabled]="flexibleDates" (ngModelChange)="changeMonth($event)" [(ngModel)]="selectedMonth">
+            <mat-select [disableOptionCentering]="true" #monthSelect multiple [disabled]="flexibleDates" (ngModelChange)="setUnsavedFlag(); changeMonth($event)" [(ngModel)]="selectedMonth">
                 <div class="select-all">
                     <mat-checkbox [(ngModel)]="allMonthSelected"
                                     [ngModelOptions]="{standalone: true}"
@@ -47,14 +47,15 @@
 
         <mat-form-field appearance="fill">
             <mat-label>Select Week of Month</mat-label>
-            <mat-select [disableOptionCentering]="true" #weekSelect multiple [disabled]="!(selectedMonth && selectedMonth.length > 0)  || flexibleDates" (ngModelChange)="changeWeek($event)" [(ngModel)]="selectedWeek">
+            <mat-select [disableOptionCentering]="true" #weekSelect multiple [disabled]="!(selectedMonth && selectedMonth.length > 0)  || flexibleDates" (ngModelChange)="changeWeek($event); setUnsavedFlag();" [(ngModel)]="selectedWeek">
                 <div class="select-all">
                     <mat-checkbox [(ngModel)]="allWeekSelected"
                                     [ngModelOptions]="{standalone: true}"
                                     (change)="toggleAllWeekSelection()">Select All</mat-checkbox>
                 </div>
                 <mat-option *ngFor="let week of weekList" [value]="week">
-                    {{week}}
+                    <span *ngIf="week === -1">Last</span>
+                    <span *ngIf="week !== -1">{{week}}</span>
                 </mat-option>
             </mat-select>
         </mat-form-field>
@@ -66,7 +67,7 @@
 
         <mat-form-field appearance="fill">
             <mat-label>Select Day of Week</mat-label>
-            <mat-select [disableOptionCentering]="true" #daySelect multiple [disabled]="!(selectedMonth && selectedMonth.length > 0) || flexibleDates" (ngModelChange)="changeDay($event)" [(ngModel)]="selectedDay">
+            <mat-select [disableOptionCentering]="true" #daySelect multiple [disabled]="!(selectedMonth && selectedMonth.length > 0) || flexibleDates" (ngModelChange)="changeDay($event); setUnsavedFlag();" [(ngModel)]="selectedDay">
                 <div class="select-all">
                     <mat-checkbox [(ngModel)]="allDaySelected"
                                     [ngModelOptions]="{standalone: true}"
@@ -84,15 +85,15 @@
 
     <div class="col-2">
         <mat-radio-group class="day-radio-group" name="afterBeforeDay" [(ngModel)]="afterBeforeDaySelection" ngDefaultControl>
-            <mat-radio-button #button class="day-radio-button"  *ngFor="let day of afterBeforeDay" [value]="day.value" (click)="checkState(button)">
+            <mat-radio-button #button class="day-radio-button"  *ngFor="let day of afterBeforeDay" [value]="day.value" (click)="setUnsavedFlag(); checkState(button)">
               {{day.display}}
             </mat-radio-button>
           </mat-radio-group>
     </div>
 
     <div class="col-2 p-t-10">
-        <button type="button" (click)="reset()" [disabled]="!(flexibleDates || ((selectedMonth && selectedMonth.length > 0) || (selectedWeek && selectedWeek.length > 0) || (selectedDay && selectedDay.length > 0)))"   class="btn btn-dark">Reset</button>
-        <button type="button" (click)="apply()" [disabled]="!(selectedMonth && selectedMonth.length > 0) || !(selectedWeek && selectedWeek.length > 0) || !(selectedDay && selectedDay.length > 0)" class="btn btn-dark ms-2">Preview</button>
+        <button type="button" (click)="reset(); setUnsavedFlag();" [disabled]="!(flexibleDates || ((selectedMonth && selectedMonth.length > 0) || (selectedWeek && selectedWeek.length > 0) || (selectedDay && selectedDay.length > 0)))"   class="btn btn-dark">Reset</button>
+        <button type="button" (click)="apply(); setUnsavedFlag();" [disabled]="!(selectedMonth && selectedMonth.length > 0) || !(selectedWeek && selectedWeek.length > 0) || !(selectedDay && selectedDay.length > 0)" class="btn btn-dark ms-2">Preview</button>
     </div>
 
 
@@ -115,7 +116,7 @@
       <app-auto-complete *ngIf="prefrenceListToInclude && prefrenceListToInclude.length > 0"
         [label]="'Select Rule to include'"
         [rulesList]="prefrenceListToInclude"
-        (selectedRules)=changePrefrence($event)
+        (selectedRules)="changePrefrence($event); setUnsavedFlag();"
         [alredaySelectedRules]="selectedIncludedPrefrence"
         >
       </app-auto-complete>
@@ -134,7 +135,7 @@
 <div class="row">
     <div class="col-12">
         <div class="card-container">
-            <ycd-example-section (sendYearChanged)="sendYearChanged($event)" [year]="selectedYear"
+            <ycd-example-section (sendYearChanged)="sendYearChanged($event); setUnsavedFlag();" [year]="selectedYear"
                 [prefrence]="selectedPrefrence" [customDateSelection]="flexibleDates" (dateSelected)="dateSelected($event)">
             </ycd-example-section>
         </div>

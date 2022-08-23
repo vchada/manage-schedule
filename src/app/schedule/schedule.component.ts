@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -11,7 +11,7 @@ import { HttpService } from '../services/http.service';
   templateUrl: './schedule.component.html',
   styleUrls: ['./schedule.component.scss']
 })
-export class ScheduleComponent implements OnInit {
+export class ScheduleComponent implements OnInit, OnDestroy {
 
   availableCalender = [];
   selectedDateList = [];
@@ -23,6 +23,11 @@ export class ScheduleComponent implements OnInit {
   @ViewChild('closeDisableModal') closeDisableModal: ElementRef;
   @ViewChild('enableConfirmationModal') enableConfirmationModal: ElementRef;
   @ViewChild('closeEnableModal') closeEnableModal: ElementRef;
+
+
+  @ViewChild('saveConfirmationModal') saveConfirmationModal: ElementRef;
+  @ViewChild('closeSaveModal') closeSaveModal: ElementRef;
+  unSavedChanges = false;
   isDisabled = false;
 
   years = [
@@ -130,6 +135,10 @@ export class ScheduleComponent implements OnInit {
       this.fetchHolidayList(this.selectedYear);
     }
    }
+
+  setUnsavedFlag() {
+    this.unSavedChanges = true;
+  }
 
   ngOnInit(): void {
     this.includeWeekends.valueChanges.subscribe(val => {
@@ -692,6 +701,10 @@ export class ScheduleComponent implements OnInit {
       dt.setDate(dt.getDate() + 1);
     }
     return arr;
+  }
+
+  ngOnDestroy(): void {
+    this.unSavedChanges = false;
   }
 
 }

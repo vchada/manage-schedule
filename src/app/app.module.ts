@@ -28,6 +28,7 @@ import { AutoCompleteComponent } from './components/auto-complete/auto-complete.
 import { MatTableFilterModule } from 'mat-table-filter';
 import { CalendarTableComponent } from './dashboard/calendar-table/calendar-table.component';
 import { RuleTableComponent } from './dashboard/rule-table/rule-table.component';
+import { PendingChangesGuard, PendingRuleChangesGuard } from './pending-changes.gaurd';
 
 @NgModule({
   declarations: [
@@ -61,8 +62,9 @@ import { RuleTableComponent } from './dashboard/rule-table/rule-table.component'
     MatSlideToggleModule,
     MatTableFilterModule
   ],
-  providers: [],
+  providers: [PendingChangesGuard, PendingRuleChangesGuard],
   bootstrap: [AppComponent],
   schemas: [NO_ERRORS_SCHEMA]
 })
 export class AppModule { }
+
