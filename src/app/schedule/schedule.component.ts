@@ -66,6 +66,9 @@ export class ScheduleComponent implements OnInit, OnDestroy {
           {value: 'PRD6', name: 'PRD6'},
   ]
 
+  calendarData = [];
+  selectedCalender = '';
+
   constructor(private httpService: HttpService, private fb: FormBuilder, private router: Router, private commonDataService: CommonDataService) {
     this.form = fb.group({
       name: ['', [Validators.required]],
@@ -78,6 +81,25 @@ export class ScheduleComponent implements OnInit, OnDestroy {
 
       // this is edit rule data coming from dashboard
       const stateData = this.router.getCurrentNavigation().extras.state;
+      this.setCalender(stateData);
+    } else {
+      this.fetchHolidayList(this.selectedYear);
+    }
+   }
+
+  changeCalender(name) {
+    if(name) {
+      const stateData = this.calendarData.find(val => val.displayName === name);
+      this.setCalender(stateData)
+    } else {
+      this.cancel();
+      this.editSchedule = false;
+      this.form.controls.displayName.patchValue('');
+    }
+  }
+
+  setCalender(stateData) {
+    this.selectedCalender = stateData.displayName;
       this.dataSource = stateData.dataSource ? stateData.dataSource.split(','): [];
       this.existingCalendarDetails = stateData;
       this.editSchedule = true;
@@ -127,20 +149,21 @@ export class ScheduleComponent implements OnInit, OnDestroy {
       }, err => {
         console.error(err);
       })
-
-
-
-
-    } else {
-      this.fetchHolidayList(this.selectedYear);
-    }
-   }
+  }
 
   setUnsavedFlag() {
     this.unSavedChanges = true;
   }
 
   ngOnInit(): void {
+    this.httpService.getAllCalender('2022').subscribe((res: any) => {
+      if (res) {
+        this.calendarData = res;
+      }
+    }, err => {
+      console.error(err);
+    })
+
     this.includeWeekends.valueChanges.subscribe(val => {
 
       this.httpService.getHolidayList(this.selectedYear,val).subscribe(res => {

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { HttpService } from 'src/app/services/http.service';
@@ -61,6 +61,7 @@ export class RuleTableComponent implements OnInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.sort.sort(({ id: 'displayName', start: 'asc'}) as MatSortable)
   }
 
   applyFilter(filterValue: string) {

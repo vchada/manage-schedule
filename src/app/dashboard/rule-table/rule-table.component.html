@@ -3,7 +3,7 @@
     <mat-form-field>
       <input matInput [(ngModel)]="value" (ngModelChange)="applyFilter(value)" placeholder="Search by Rule name">
       <a href="javascript:void(0)" *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="clear()">
-        <mat-icon class="close-icon">close</mat-icon>
+        <mat-icon class="close-icon">&times;</mat-icon>
       </a>
     </mat-form-field>
   </div>

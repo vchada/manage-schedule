@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, Input, OnInit, Output, ViewChild, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 
@@ -57,6 +57,7 @@ export class CalendarTableComponent implements OnInit {
     this.dataSource.filterPredicate = function (data, filter: string): boolean {
       return data.displayName.toLowerCase().includes(filter);
     };
+
   }
 
   /**
@@ -66,6 +67,7 @@ export class CalendarTableComponent implements OnInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.sort.sort(({ id: 'displayName', start: 'asc'}) as MatSortable)
   }
 
   applyFilter(filterValue: string) {

@@ -4,6 +4,23 @@
   </div>
 </div>
   <div class="row m-y-20">
+
+    <div class="col-1 min-width-225">
+
+      <mat-form-field appearance="fill">
+        <mat-label>Select Calender</mat-label>
+        <mat-select [disableOptionCentering]="true" (ngModelChange)="changeCalender($event); setUnsavedFlag()" [(ngModel)]="selectedCalender">
+          <mat-option [value]="''">
+            New calender
+          </mat-option>
+          <mat-option *ngFor="let item of calendarData" [value]="item.displayName">
+            {{item.displayName}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
     <div class="col-1 min-width-225">
 
       <mat-form-field appearance="fill">
@@ -83,7 +100,7 @@
   <div class="row">
     <div class="col-12">
       <div class="card-container">
-        <ycd-example-section (sendYearChanged)="sendYearChanged($event); setUnsavedFlag();" [year]="selectedYear" [prefrenceExclude]="selectedPrefrenceListToExclude" [prefrence]="selectedPrefrenceList" (dateSelected)="dateSelected($event)" >
+        <ycd-example-section (sendYearChanged)="sendYearChanged($event); setUnsavedFlag();" [year]="selectedYear" [prefrenceExclude]="selectedPrefrenceListToExclude" [customDateSelection]="false" [prefrence]="selectedPrefrenceList" (dateSelected)="dateSelected($event)" >
         </ycd-example-section>
       </div>
     </div>
