@@ -52,6 +52,8 @@ export class CreateRoleComponent implements OnInit {
   @ViewChild('monthSelect') monthSelect: MatSelect;
   allMonthSelected=false;
 
+  isUsedByCalenders = false;
+
   dateList = [];
   selectedDate = null;
   @ViewChild('weekSelect') weekSelect: MatSelect;
@@ -720,6 +722,8 @@ export class CreateRoleComponent implements OnInit {
       this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
         if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
           this.closeEnableModal.nativeElement.click();
+
+    this.unSavedChanges = false;
           this.router.navigate(['dashboard']);
         }
       }, err => {
@@ -740,6 +744,7 @@ export class CreateRoleComponent implements OnInit {
       this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
         if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
           this.disbaleConfirmationModal.nativeElement.click();
+          this.unSavedChanges = false;
           this.router.navigate(['dashboard']);
         }
       }, err => {
@@ -768,6 +773,7 @@ export class CreateRoleComponent implements OnInit {
           this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
             if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
               this.closeConfirmationModal.nativeElement.click();
+              this.unSavedChanges = false;
               this.router.navigate(['dashboard']);
             }
           }, err => {
@@ -794,7 +800,7 @@ export class CreateRoleComponent implements OnInit {
           this.httpService.saveSelectedDate(reqData).subscribe((res: any) => {
             if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
               this.closeConfirmationModal.nativeElement.click();
-
+              this.unSavedChanges = false;
               this.router.navigate(['dashboard']);
             }
           }, err => {
@@ -996,6 +1002,15 @@ export class CreateRoleComponent implements OnInit {
       dt.setDate(dt.getDate() + 1);
     }
     return arr;
+  }
+
+  getRuleStatus() {
+    this.isUsedByCalenders = false;
+    this.httpService.getRuleStatus({ruleId: this.form.controls.displayName.value}).subscribe(res => {
+      this.isUsedByCalenders = res === true ? true: false;
+    }, err => {
+      console.log(err);
+    })
   }
 
 }

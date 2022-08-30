@@ -28,6 +28,15 @@ export class HttpService {
       );
   }
 
+  
+  getRuleStatus(params) {
+    return this.http.get('http://localhost:8080/holiday/get-rule-usage', {params: params})
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
 
   saveSelectedDate(reqData) {
     return this.http.post('http://localhost:8080/holiday/save', reqData)

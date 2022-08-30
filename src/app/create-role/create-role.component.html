@@ -146,7 +146,7 @@
     <div class="col-12 btn-container">
         
         <button type="button" (click)="cancel()" class="btn btn-dark">Clear</button>
-        <button type="button" *ngIf="editRule && !isDisabled" data-bs-toggle="modal" data-bs-target="#disbaleConfirmationModal" class="btn btn-dark">Deactivate Rule</button>
+        <button type="button" *ngIf="editRule && !isDisabled" (click)="getRuleStatus()" data-bs-toggle="modal" data-bs-target="#disbaleConfirmationModal" class="btn btn-dark">Deactivate Rule</button>
         <button type="button" *ngIf="editRule && isDisabled" data-bs-toggle="modal" data-bs-target="#enableConfirmationModal" class="btn btn-dark">Activate Rule</button>
         <button type="button" *ngIf="flexibleDates" [disabled]="!(selectedDateList && selectedDateList.length > 0)" data-bs-toggle="modal" data-bs-target="#confirmationModal"
             class="btn btn-dark"><span *ngIf="editRule">Update Rule</span><span *ngIf="!editRule">Save Rule</span></button>
@@ -216,7 +216,7 @@
             
             <div class="modal-body">
 
-                <span>Are you sure, you want to disable {{form.controls.displayName.value}}?</span>
+                <span>Are you sure, you want to disable {{form.controls.displayName.value}}?<span *ngIf="isUsedByCalenders">, this rule is being used by one or more calendars</span></span>
 
             </div>
             <div class="modal-footer">
