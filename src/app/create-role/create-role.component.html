@@ -91,6 +91,12 @@
           </mat-radio-group>
     </div>
 
+    <!-- <div class="col-1 min-width-225">
+
+
+      <mat-slide-toggle class="includeWeekend" (click)="setUnsavedFlag()" name="includeWeekend" ngDefaultControl [formControl]="includeWeekends">Include Weekends</mat-slide-toggle>
+    </div> -->
+
     <div class="col-2 p-t-10">
         <button type="button" (click)="reset(); setUnsavedFlag();" [disabled]="!(flexibleDates || ((selectedMonth && selectedMonth.length > 0) || (selectedWeek && selectedWeek.length > 0) || (selectedDay && selectedDay.length > 0)))"   class="btn btn-dark">Reset</button>
         <button type="button" (click)="apply(); setUnsavedFlag();" [disabled]="!(selectedMonth && selectedMonth.length > 0) || !(selectedWeek && selectedWeek.length > 0) || !(selectedDay && selectedDay.length > 0)" class="btn btn-dark ms-2">Preview</button>

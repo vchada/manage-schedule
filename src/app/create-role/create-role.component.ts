@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
 import { Router } from '@angular/router';
@@ -13,6 +13,9 @@ import { HttpService } from '../services/http.service';
   styleUrls: ['./create-role.component.scss']
 })
 export class CreateRoleComponent implements OnInit {
+
+
+  includeWeekends = new FormControl(false);
 
   @ViewChild('confirmationModal') confirmationModal: ElementRef;
   @ViewChild('closeConfirmationModal') closeConfirmationModal: ElementRef;
@@ -626,7 +629,8 @@ export class CreateRoleComponent implements OnInit {
             dayOfTheMonth: 0,      
             dayOfTheWeek: day,
             month: month,
-            weekOfTheMonth: week
+            weekOfTheMonth: week,
+            includeWeekends: this.includeWeekends.value ? 'true': 'false',
           })
         })
       })
