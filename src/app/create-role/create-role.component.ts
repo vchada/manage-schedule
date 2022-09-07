@@ -23,7 +23,7 @@ export class CreateRoleComponent implements OnInit {
   @ViewChild('closeDisableModal') closeDisableModal: ElementRef;
   @ViewChild('enableConfirmationModal') enableConfirmationModal: ElementRef;
   @ViewChild('closeEnableModal') closeEnableModal: ElementRef;
-  
+
   isDisabled = false;
 
   availableRules = [];
@@ -53,19 +53,19 @@ export class CreateRoleComponent implements OnInit {
   ]
   selectedMonth = null;
   @ViewChild('monthSelect') monthSelect: MatSelect;
-  allMonthSelected=false;
+  allMonthSelected = false;
 
   isUsedByCalenders = false;
 
   dateList = [];
   selectedDate = null;
   @ViewChild('weekSelect') weekSelect: MatSelect;
-  allWeekSelected=false;
+  allWeekSelected = false;
 
   weekList = [1, 2, 3, 4, 5, -1];
   selectedWeek = null;
   @ViewChild('daySelect') daySelect: MatSelect;
-  allDaySelected=false;
+  allDaySelected = false;
 
   unSavedChanges = false;
 
@@ -84,17 +84,21 @@ export class CreateRoleComponent implements OnInit {
   existingRuleDetails: any;
 
   afterBeforeDaySelection: string;
-  afterBeforeDay: any[] = [{display: 'Day before', value: 'DAY_BEFORE'}, {display: 'Day after', value: 'DAY_AFTER'}];
+  afterBeforeDay: any[] = [{ display: 'Day before', value: 'DAY_BEFORE' }, { display: 'Day after', value: 'DAY_AFTER' }];
 
   currentCheckedValue = null;
 
 
   prefrenceListToInclude = [];
   selectedIncludedPrefrence = [];
+  invalidDates = ['02/29/2022', '02/29/2023', '02/29/2025', '02/29/2026', '02/29/2027', '02/29/2029', '02/29/2030', '02/29/2031', '02/29/2033'];
+  is29FebSelected = false;
+
+  selectedFixedDates = [];
 
   constructor(private fb: FormBuilder, private httpService: HttpService, private router: Router, private ren: Renderer2, private commonDataService: CommonDataService) {
     this.form = fb.group({
-      name: ['', [Validators.required, ]],
+      name: ['', [Validators.required,]],
       displayName: [''],
       description: ['']
     })
@@ -104,107 +108,107 @@ export class CreateRoleComponent implements OnInit {
       this.existingRuleDetails = stateData;
       this.flexibleDates = stateData[0].customDays ? true : false;
       this.selectedYear = +stateData[0].year;
-      this.isDisabled = stateData[0].isActive === 'ACTIVE' ? false: true;
+      this.isDisabled = stateData[0].isActive === 'ACTIVE' ? false : true;
       this.getAllExistingRuleNames();
 
       this.prefrenceListToInclude = [];
       this.httpService.getHolidayList(this.selectedYear).subscribe(res => {
-        if (res ) {
+        if (res) {
           Object.keys(res).forEach(item => {
-            if(item !== stateData[0].holidayType) {
+            if (item !== stateData[0].holidayType) {
 
-            const obj = {
-              name: item,
-              dates: []
+              const obj = {
+                name: item,
+                dates: []
+              }
+
+              res[item].split(',').forEach(val => {
+                obj.dates.push(val + '-' + this.selectedYear)
+              })
+
+              this.prefrenceListToInclude.push(obj)
             }
 
-            res[item].split(',').forEach(val => {
-              obj.dates.push(val + '-' + this.selectedYear)
+            this.prefrenceListToInclude = [...this.prefrenceListToInclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
+          })
+
+          // this.getAvailableRules(this.selectedYear);
+          if (this.flexibleDates) {
+            this.selectedMonth = null;
+            this.selectedDate = null;
+            this.selectedWeek = null;
+            this.selectedDay = null;
+
+            if (stateData[0].customDays) {
+              let dates = []
+              stateData[0].customDays.split(',').forEach(item => {
+                dates.push(moment(item + '-' + this.selectedYear).format('L'));
+              })
+              this.selectedPrefrence = [...this.selectedPrefrence, ...dates];
+            }
+
+          } else {
+            let month = [];
+            let week = [];
+            let day = [];
+            stateData.forEach(val => {
+              if (!month.includes(this.monthList.find(item => item.display.toUpperCase() == val.month).value)) {
+                month.push(this.monthList.find(item => item.display.toUpperCase() == val.month).value);
+              }
+
+              if (!week.includes(val.weekOfTheMonth)) {
+                week.push(val.weekOfTheMonth);
+              }
+
+              if (!day.includes(this.dayList.find(item => item.display.toUpperCase() == val.dayOfTheWeek).value)) {
+                day.push(this.dayList.find(item => item.display.toUpperCase() == val.dayOfTheWeek).value);
+              }
             })
 
-            this.prefrenceListToInclude.push(obj)
+            if (month) {
+              // this.changeMonth(this.monthList.find(item => item.display.toUpperCase() == stateData.month).value);
+              this.changeMonth(month);
+            }
+
+            this.changeWeek(week);
+
+            if (day) {
+              this.changeDay(day);
+            }
+
+            this.selectedPrefrence = [];
+            this.afterBeforeDaySelection = stateData[0].lastModifiedUser;
+            this.apply();
           }
 
-        this.prefrenceListToInclude = [...this.prefrenceListToInclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
+          this.form.patchValue({
+            name: stateData[0].holidayType,
+            displayName: stateData[0].displayName,
+            description: stateData[0].description
           })
-
-      // this.getAvailableRules(this.selectedYear);
-      if (this.flexibleDates) {
-        this.selectedMonth = null;
-        this.selectedDate = null;
-        this.selectedWeek = null;
-        this.selectedDay = null;
-
-        if (stateData[0].customDays) {
-          let dates = []
-          stateData[0].customDays.split(',').forEach(item => {
-            dates.push(moment(item + '-' + this.selectedYear).format('L'));
-          })
-          this.selectedPrefrence = [...this.selectedPrefrence, ...dates];
-        }
-
-      } else {
-        let month = [];
-        let week = [];
-        let day = [];
-        stateData.forEach(val => {
-          if(!month.includes( this.monthList.find(item => item.display.toUpperCase() == val.month).value )) {
-            month.push(this.monthList.find(item => item.display.toUpperCase() == val.month).value);
+          if (stateData[0].rulesIncluded !== '') {
+            this.selectedIncludedPrefrence = stateData[0].rulesIncluded.split(',');
+            stateData[0].rulesIncluded.split(',').forEach(item => {
+              if (item) {
+                this.selectedPrefrence = [...this.selectedPrefrence, ...(this.prefrenceListToInclude.find(val => val.name === item).dates)]
+              }
+            })
           }
 
-          if(!week.includes( val.weekOfTheMonth )) {
-            week.push(val.weekOfTheMonth);
-          }
+          this.editRule = true;
+          this.form.controls.displayName.setValidators(Validators.required);
+          this.form.controls.name.disable();
+          this.form.updateValueAndValidity();
 
-          if(!day.includes( this.dayList.find(item => item.display.toUpperCase() == val.dayOfTheWeek).value )) {
-            day.push(this.dayList.find(item => item.display.toUpperCase() == val.dayOfTheWeek).value);
-          }
-        })
-
-        if(month) {
-          // this.changeMonth(this.monthList.find(item => item.display.toUpperCase() == stateData.month).value);
-          this.changeMonth(month);
         }
-
-        this.changeWeek(week);
-  
-        if(day) {
-          this.changeDay(day);
-        }
-
-        this.selectedPrefrence = [];
-        this.afterBeforeDaySelection = stateData[0].lastModifiedUser;
-        this.apply();
-      }
-
-      this.form.patchValue({
-        name: stateData[0].holidayType,
-        displayName: stateData[0].displayName,
-        description: stateData[0].description
+      }, err => {
+        console.error(err);
       })
-      if(stateData[0].rulesIncluded !== '') {
-        this.selectedIncludedPrefrence = stateData[0].rulesIncluded.split(',');
-        stateData[0].rulesIncluded.split(',').forEach(item => {
-          if(item) {
-            this.selectedPrefrence = [...this.selectedPrefrence ,...(this.prefrenceListToInclude.find(val => val.name === item).dates)]
-          }
-        })
-      }
-
-      this.editRule = true;
-      this.form.controls.displayName.setValidators(Validators.required);
-      this.form.controls.name.disable();
-      this.form.updateValueAndValidity();
-
-    }
-  }, err => {
-    console.error(err);
-  })
 
     } else {
       this.editRule = false;
       // this.getAvailableRules(this.selectedYear);
-    this.fetchHolidayList(this.selectedYear);
+      this.fetchHolidayList(this.selectedYear);
     }
     this.getAllExistingRuleNames();
   }
@@ -214,8 +218,8 @@ export class CreateRoleComponent implements OnInit {
       if (res) {
         this.availableRules = res;
         this.availableRules = this.availableRules.filter(item => {
-          if(this.existingRuleDetails && this.existingRuleDetails[0]) {
-            return ((item === this.existingRuleDetails[0].holidayType) || (item === this.existingRuleDetails[0].displayName)) ? false: true;
+          if (this.existingRuleDetails && this.existingRuleDetails[0]) {
+            return ((item === this.existingRuleDetails[0].holidayType) || (item === this.existingRuleDetails[0].displayName)) ? false : true;
           } else {
             return true;
           }
@@ -228,6 +232,7 @@ export class CreateRoleComponent implements OnInit {
 
   changeFlexibledate(evt) {
     this.flexibleDates = evt;
+    this.selectedFixedDates = [];
     if (this.flexibleDates) {
       this.selectedMonth = null;
       this.selectedDate = null;
@@ -237,8 +242,8 @@ export class CreateRoleComponent implements OnInit {
       this.afterBeforeDaySelection = null;
       this.selectedPrefrence = [];
       this.selectedIncludedPrefrence.forEach(item => {
-        if(item) {
-          this.selectedPrefrence = [...this.selectedPrefrence ,...(this.prefrenceListToInclude.find(val => val.name === item).dates)]
+        if (item) {
+          this.selectedPrefrence = [...this.selectedPrefrence, ...(this.prefrenceListToInclude.find(val => val.name === item).dates)]
         }
       })
       this.allMonthSelected = false;
@@ -249,8 +254,8 @@ export class CreateRoleComponent implements OnInit {
       // this.selectedPrefrence = [];
       this.selectedPrefrence = [];
       this.selectedIncludedPrefrence.forEach(item => {
-        if(item) {
-          this.selectedPrefrence = [...this.selectedPrefrence ,...(this.prefrenceListToInclude.find(val => val.name === item).dates)]
+        if (item) {
+          this.selectedPrefrence = [...this.selectedPrefrence, ...(this.prefrenceListToInclude.find(val => val.name === item).dates)]
         }
       })
     }
@@ -265,7 +270,7 @@ export class CreateRoleComponent implements OnInit {
   fetchHolidayList(selectedYear) {
     this.prefrenceListToInclude = [];
     this.httpService.getHolidayList(selectedYear).subscribe(res => {
-      if (res ) {
+      if (res) {
         Object.keys(res).forEach(item => {
 
           const obj = {
@@ -293,10 +298,10 @@ export class CreateRoleComponent implements OnInit {
   }
 
   changePrefrence(prefrence) {
-    if(prefrence.length > this.selectedIncludedPrefrence.length) {
+    if (prefrence.length > this.selectedIncludedPrefrence.length) {
       let addedPreference = '';
       prefrence.forEach(val => {
-        if(!this.selectedIncludedPrefrence.includes(val)) {
+        if (!this.selectedIncludedPrefrence.includes(val)) {
           addedPreference = val;
         }
       })
@@ -305,18 +310,20 @@ export class CreateRoleComponent implements OnInit {
     } else {
       let removedPreference = '';
       this.selectedIncludedPrefrence.forEach(val => {
-        if(!prefrence.includes(val)) {
+        if (!prefrence.includes(val)) {
           removedPreference = val;
         }
       })
 
-      const removeDates = this.prefrenceListToInclude.find(val => val.name === removedPreference)? this.prefrenceListToInclude.find(val => val.name === removedPreference).dates: [];
+      const removeDates = this.prefrenceListToInclude.find(val => val.name === removedPreference) ? this.prefrenceListToInclude.find(val => val.name === removedPreference).dates : [];
       this.selectedPrefrence = this.selectedPrefrence.filter(item => {
         return !removeDates.includes(item);
       })
     }
 
-
+    this.selectedPrefrence = this.selectedPrefrence.filter(item => {
+      return !this.invalidDates.includes(item) ? true : false;
+    })
 
     this.selectedIncludedPrefrence = prefrence;
     // this.selectedPrefrence = [];
@@ -358,6 +365,9 @@ export class CreateRoleComponent implements OnInit {
     let prevYear = this.selectedYear;
     let prevPrefrence = this.selectedPrefrence;
     this.selectedYear = year;
+    if(this.flexibleDates && this.selectedFixedDates.length === 0) {
+      this.selectedFixedDates = [...this.selectedPrefrence];
+    }
     // this.flexibleDates = false;
     // this.selectedMonth = null;
     // this.selectedDate = null;
@@ -366,13 +376,13 @@ export class CreateRoleComponent implements OnInit {
     // this.dateList = [];
     // this.selectedIncludedPrefrence = [];
     // this.selectedPrefrence = [];
-    
+
     this.commonDataService.setYearChange(this.selectedYear);
     const prevPrefrenceListToInclude = [...this.prefrenceListToInclude];
 
     this.prefrenceListToInclude = [];
     this.httpService.getHolidayList(this.selectedYear).subscribe(res => {
-      if (res ) {
+      if (res) {
         Object.keys(res).forEach(item => {
 
           const obj = {
@@ -393,20 +403,20 @@ export class CreateRoleComponent implements OnInit {
           this.selectedPrefrence = [];
           let dates = [];
           this.selectedIncludedPrefrence.forEach(item => {
-            if(this.prefrenceListToInclude.find(val => val.name === item)?.dates) {
+            if (this.prefrenceListToInclude.find(val => val.name === item)?.dates) {
               dates = [...dates, ...(this.prefrenceListToInclude.find(val => val.name === item)?.dates)];
-            }            
+            }
           })
           this.selectedPrefrence = [...this.selectedPrefrence, ...dates];
         } else if (this.flexibleDates) {
-          let allCustomDates = [...this.selectedDateList];
+          let allCustomDates = [...this.selectedFixedDates];
           this.selectedIncludedPrefrence.forEach(item => {
-            if(prevPrefrenceListToInclude.find(val => val.name === item)) {
+            if (prevPrefrenceListToInclude.find(val => val.name === item)) {
               prevPrefrenceListToInclude.find(val => val.name === item).dates.forEach(a => {
                 allCustomDates = allCustomDates.filter(b => {
                   let date1 = moment(b).format('L');
                   let date2 = moment(a).format('L');
-                  
+
                   return date1 != date2;
                 })
               })
@@ -417,7 +427,7 @@ export class CreateRoleComponent implements OnInit {
           const newCustomDates = [];
           allCustomDates.forEach(item => {
             const date = moment(item).format('L');
-            const newDate = date.slice(0, date.length -4) + this.selectedYear;
+            const newDate = date.slice(0, date.length - 4) + this.selectedYear;
             newCustomDates.push(newDate);
           })
           this.selectedDateList = [...newCustomDates];
@@ -426,9 +436,9 @@ export class CreateRoleComponent implements OnInit {
 
           let dates = [];
           this.selectedIncludedPrefrence.forEach(item => {
-            if(this.prefrenceListToInclude.find(val => val.name === item)?.dates) {
+            if (this.prefrenceListToInclude.find(val => val.name === item)?.dates) {
               dates = [...dates, ...(this.prefrenceListToInclude.find(val => val.name === item)?.dates)];
-            }            
+            }
           })
           this.selectedPrefrence = [...this.selectedPrefrence, ...dates];
         } else if (!this.flexibleDates && this.selectedMonth && this.selectedWeek && this.selectedDay) {
@@ -437,69 +447,78 @@ export class CreateRoleComponent implements OnInit {
 
           const req = [];
 
-    this.selectedMonth.forEach(month => {
-      this.selectedWeek.forEach(week => {
-        this.selectedDay.forEach(day => {
-          req.push({
-            year: this.selectedYear,
-            dayOfTheMonth: 0,      
-            dayOfTheWeek: day,
-            month: month,
-            weekOfTheMonth: week
+          this.selectedMonth.forEach(month => {
+            this.selectedWeek.forEach(week => {
+              this.selectedDay.forEach(day => {
+                req.push({
+                  year: this.selectedYear,
+                  dayOfTheMonth: 0,
+                  dayOfTheWeek: day,
+                  month: month,
+                  weekOfTheMonth: week
+                })
+              })
+            })
           })
-        })
-      })
-    })
-    let newdates = [];
-    this.httpService.getSelectedDate(req).subscribe((res: any) => {
-      if (res && res.length > 0) {
+          let newdates = [];
+          this.httpService.getSelectedDate(req).subscribe((res: any) => {
+            if (res && res.length > 0) {
 
-        if(res.length === 1) {
-          if(this.afterBeforeDaySelection === 'DAY_BEFORE') {
-            // this.selectedPrefrence = [];
-            res.forEach(item => {
-              newdates.push(moment(item).subtract(1, "days").format('L'));
-            })
-          } 
-  
-          if(this.afterBeforeDaySelection === 'DAY_AFTER') {
-            // this.selectedPrefrence = [];
-            res.forEach(item => {
-              newdates.push(moment(item).add(1, "days").format('L'));
-            })
-          }
-  
-          if(!this.afterBeforeDaySelection) {
-            // this.selectedPrefrence = [];
-            res.forEach(item => {
-              newdates.push(moment(item).format('L'));
-            })
-          }
-        } else {
+              if (res.length === 1) {
+                if (this.afterBeforeDaySelection === 'DAY_BEFORE') {
+                  // this.selectedPrefrence = [];
+                  res.forEach(item => {
+                    newdates.push(moment(item).subtract(1, "days").format('L'));
+                  })
+                }
 
-          // this.selectedPrefrence = [];
-          res.forEach(item => {
-            newdates.push(moment(item).format('L'));
+                if (this.afterBeforeDaySelection === 'DAY_AFTER') {
+                  // this.selectedPrefrence = [];
+                  res.forEach(item => {
+                    newdates.push(moment(item).add(1, "days").format('L'));
+                  })
+                }
+
+                if (!this.afterBeforeDaySelection) {
+                  // this.selectedPrefrence = [];
+                  res.forEach(item => {
+                    newdates.push(moment(item).format('L'));
+                  })
+                }
+              } else {
+
+                // this.selectedPrefrence = [];
+                res.forEach(item => {
+                  newdates.push(moment(item).format('L'));
+                })
+              }
+              this.selectedPrefrence = [...this.selectedPrefrence, ...newdates];
+
+
+              let dates = [];
+              this.selectedIncludedPrefrence.forEach(item => {
+                if (this.prefrenceListToInclude.find(val => val.name === item)?.dates) {
+                  dates = [...dates, ...(this.prefrenceListToInclude.find(val => val.name === item)?.dates)];
+                }
+              })
+              this.selectedPrefrence = [...this.selectedPrefrence, ...dates];
+            }
+          }, err => {
+            console.error(err);
           })
+
+
         }
-        this.selectedPrefrence = [...this.selectedPrefrence, ...newdates];
-
-
-        let dates = [];
-        this.selectedIncludedPrefrence.forEach(item => {
-          if(this.prefrenceListToInclude.find(val => val.name === item)?.dates) {
-            dates = [...dates, ...(this.prefrenceListToInclude.find(val => val.name === item)?.dates)];
-          }            
+      }
+      // if(this.flexibleDates && this.selectedFixedDates.length > 0) {
+      //   this.selectedPrefrence = this.selectedFixedDates.filter(item => {
+      //     return !this.invalidDates.includes(item) ? true : false;
+      //   })
+      // } else {
+        this.selectedPrefrence = this.selectedPrefrence.filter(item => {
+          return !this.invalidDates.includes(item) ? true : false;
         })
-        this.selectedPrefrence = [...this.selectedPrefrence, ...dates];
-      }
-    }, err => {
-      console.error(err);
-    })
-
-        
-        }
-      }
+      // }
     }, err => {
       console.error(err);
     })
@@ -523,7 +542,7 @@ export class CreateRoleComponent implements OnInit {
 
 
     let status = true;
-    if(this.monthSelect) {
+    if (this.monthSelect) {
       this.monthSelect.options.forEach((item: MatOption) => {
         if (!item.selected) {
           status = false;
@@ -550,10 +569,10 @@ export class CreateRoleComponent implements OnInit {
   }
 
   changeWeek(week) {
-    this.selectedWeek = (week && week.length > 0) ? week: null;
+    this.selectedWeek = (week && week.length > 0) ? week : null;
     this.selectedDate = null;
     let status = true;
-    if(this.weekSelect) {
+    if (this.weekSelect) {
       this.weekSelect.options.forEach((item: MatOption) => {
         if (!item.selected) {
           status = false;
@@ -575,10 +594,10 @@ export class CreateRoleComponent implements OnInit {
   }
 
   changeDay(day) {
-    this.selectedDay = (day && day.length > 0)? day: null;
+    this.selectedDay = (day && day.length > 0) ? day : null;
     this.selectedDate = null;
     let status = true;
-    if(this.daySelect) {
+    if (this.daySelect) {
       this.daySelect.options.forEach((item: MatOption) => {
         if (!item.selected) {
           status = false;
@@ -626,11 +645,11 @@ export class CreateRoleComponent implements OnInit {
         this.selectedDay.forEach(day => {
           req.push({
             year: this.selectedYear,
-            dayOfTheMonth: 0,      
+            dayOfTheMonth: 0,
             dayOfTheWeek: day,
             month: month,
             weekOfTheMonth: week,
-            includeWeekends: this.includeWeekends.value ? 'true': 'false',
+            includeWeekends: this.includeWeekends.value ? 'true' : 'false',
           })
         })
       })
@@ -642,7 +661,7 @@ export class CreateRoleComponent implements OnInit {
         this.selectedPrefrence = [];
         let addDates = [];
         this.selectedIncludedPrefrence.forEach(res => {
-          if(this.prefrenceListToInclude.find(val => val.name === res)) {
+          if (this.prefrenceListToInclude.find(val => val.name === res)) {
             this.prefrenceListToInclude.find(val => val.name === res).dates.forEach(date => {
               addDates.push(date);
             })
@@ -650,22 +669,22 @@ export class CreateRoleComponent implements OnInit {
         })
         this.selectedPrefrence = [...this.selectedPrefrence, ...addDates];
 
-        if(res.length === 1) {
-          if(this.afterBeforeDaySelection === 'DAY_BEFORE') {
+        if (res.length === 1) {
+          if (this.afterBeforeDaySelection === 'DAY_BEFORE') {
             // this.selectedPrefrence = [];
             res.forEach(item => {
               newdates.push(moment(item).subtract(1, "days").format('L'));
             })
-          } 
-  
-          if(this.afterBeforeDaySelection === 'DAY_AFTER') {
+          }
+
+          if (this.afterBeforeDaySelection === 'DAY_AFTER') {
             // this.selectedPrefrence = [];
             res.forEach(item => {
               newdates.push(moment(item).add(1, "days").format('L'));
             })
           }
-  
-          if(!this.afterBeforeDaySelection) {
+
+          if (!this.afterBeforeDaySelection) {
             // this.selectedPrefrence = [];
             res.forEach(item => {
               newdates.push(moment(item).format('L'));
@@ -678,21 +697,21 @@ export class CreateRoleComponent implements OnInit {
           //   newdates.push(moment(item).format('L'));
           // })
 
-          if(this.afterBeforeDaySelection === 'DAY_BEFORE') {
+          if (this.afterBeforeDaySelection === 'DAY_BEFORE') {
             // this.selectedPrefrence = [];
             res.forEach(item => {
               newdates.push(moment(item).subtract(1, "days").format('L'));
             })
-          } 
-  
-          if(this.afterBeforeDaySelection === 'DAY_AFTER') {
+          }
+
+          if (this.afterBeforeDaySelection === 'DAY_AFTER') {
             // this.selectedPrefrence = [];
             res.forEach(item => {
               newdates.push(moment(item).add(1, "days").format('L'));
             })
           }
-  
-          if(!this.afterBeforeDaySelection) {
+
+          if (!this.afterBeforeDaySelection) {
             // this.selectedPrefrence = [];
             res.forEach(item => {
               newdates.push(moment(item).format('L'));
@@ -712,12 +731,12 @@ export class CreateRoleComponent implements OnInit {
     // this.getAvailableRules(this.selectedYear);
   }
 
-  
+
 
   enableRuleConfirm() {
     if (this.createRequestData()) {
       let reqData = this.createUpdateRequestData();
-       
+
       // check for reqData
       reqData.forEach(item => {
         item.isActive = 'ACTIVE';
@@ -727,7 +746,7 @@ export class CreateRoleComponent implements OnInit {
         if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
           this.closeEnableModal.nativeElement.click();
 
-    this.unSavedChanges = false;
+          this.unSavedChanges = false;
           this.router.navigate(['dashboard']);
         }
       }, err => {
@@ -739,7 +758,7 @@ export class CreateRoleComponent implements OnInit {
   disableRuleConfirm() {
     if (this.createRequestData()) {
       let reqData = this.createUpdateRequestData();
-       
+
       // check for reqData
       reqData.forEach(item => {
         item.isActive = 'IN_ACTIVE';
@@ -762,18 +781,18 @@ export class CreateRoleComponent implements OnInit {
       if (this.editRule) {
         let isNameAlreadyExist = false;
         this.availableRules.forEach(item => {
-          if(item.toUpperCase() === this.form.value.displayName.toUpperCase()) {
+          if (item.toUpperCase() === this.form.value.displayName.toUpperCase()) {
             isNameAlreadyExist = true;
           }
-        }) 
+        })
 
-        if(isNameAlreadyExist) {
-          this.form.controls.displayName.setErrors({alreadyExist: true});
+        if (isNameAlreadyExist) {
+          this.form.controls.displayName.setErrors({ alreadyExist: true });
         } else {
 
           this.form.controls.displayName.setErrors(null);
           let reqData = this.createUpdateRequestData();
-          
+
           this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
             if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
               this.closeConfirmationModal.nativeElement.click();
@@ -785,18 +804,18 @@ export class CreateRoleComponent implements OnInit {
           })
         }
       } else {
-        
+
         // Save new rule
 
         let isNameAlreadyExist = false;
         this.availableRules.forEach(item => {
-          if(item.toUpperCase() === this.form.value.name.toUpperCase()) {
+          if (item.toUpperCase() === this.form.value.name.toUpperCase()) {
             isNameAlreadyExist = true;
           }
-        }) 
+        })
 
-        if(isNameAlreadyExist) {
-          this.form.controls.name.setErrors({alreadyExist: true});
+        if (isNameAlreadyExist) {
+          this.form.controls.name.setErrors({ alreadyExist: true });
         } else {
 
           this.form.controls.name.setErrors(null);
@@ -838,7 +857,7 @@ export class CreateRoleComponent implements OnInit {
           rulesIncluded: ''
         }]
         this.selectedIncludedPrefrence.forEach(item => {
-          if(reqData[0].rulesIncluded === '') {
+          if (reqData[0].rulesIncluded === '') {
             reqData[0].rulesIncluded = item;
           } else {
             reqData[0].rulesIncluded = reqData[0].rulesIncluded + ',' + item;
@@ -854,7 +873,7 @@ export class CreateRoleComponent implements OnInit {
 
         return reqData;
 
-      } else {        
+      } else {
         const req = [];
 
         this.selectedMonth.forEach(month => {
@@ -878,7 +897,7 @@ export class CreateRoleComponent implements OnInit {
 
 
               this.selectedIncludedPrefrence.forEach(item => {
-                if(reqObj.rulesIncluded === '') {
+                if (reqObj.rulesIncluded === '') {
                   reqObj.rulesIncluded = item;
                 } else {
                   reqObj.rulesIncluded = reqObj.rulesIncluded + ',' + item;
@@ -916,7 +935,7 @@ export class CreateRoleComponent implements OnInit {
           rulesIncluded: ''
         }]
         this.selectedIncludedPrefrence.forEach(item => {
-          if(reqData[0].rulesIncluded === '') {
+          if (reqData[0].rulesIncluded === '') {
             reqData[0].rulesIncluded = item;
           } else {
             reqData[0].rulesIncluded = reqData[0].rulesIncluded + ',' + item;
@@ -932,7 +951,7 @@ export class CreateRoleComponent implements OnInit {
 
         return reqData;
 
-      } else {        
+      } else {
         const req = [];
         this.selectedMonth.forEach(month => {
           this.selectedWeek.forEach(week => {
@@ -955,7 +974,7 @@ export class CreateRoleComponent implements OnInit {
 
 
               this.selectedIncludedPrefrence.forEach(item => {
-                if(reqObj.rulesIncluded === '') {
+                if (reqObj.rulesIncluded === '') {
                   reqObj.rulesIncluded = item;
                 } else {
                   reqObj.rulesIncluded = reqObj.rulesIncluded + ',' + item;
@@ -990,7 +1009,7 @@ export class CreateRoleComponent implements OnInit {
         this.currentCheckedValue = el.value
       }
 
-      
+
     })
   }
 
@@ -1010,8 +1029,8 @@ export class CreateRoleComponent implements OnInit {
 
   getRuleStatus() {
     this.isUsedByCalenders = false;
-    this.httpService.getRuleStatus({ruleId: this.form.controls.displayName.value}).subscribe(res => {
-      this.isUsedByCalenders = res === true ? true: false;
+    this.httpService.getRuleStatus({ ruleId: this.form.controls.displayName.value }).subscribe(res => {
+      this.isUsedByCalenders = res === true ? true : false;
     }, err => {
       console.log(err);
     })
