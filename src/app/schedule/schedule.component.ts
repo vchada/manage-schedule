@@ -470,8 +470,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
             }
           })
           reqData['description'] = this.form.value.description;
-
-          if (!this.editSchedule || (this.form.controls.name.value !== this.selectedCalender)) {
+          if (!this.editSchedule || (this.form.controls.displayName.value !== this.selectedCalender)) {
             this.httpService.saveCalendar(reqData).subscribe((res: any) => {
               if (res && res.message === 'CALENDER_PERSISTED_SUCCESSFULLY') {
                 this.closeConfirmationModal.nativeElement.click();

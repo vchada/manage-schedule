@@ -35,27 +35,24 @@
     </div>
 
     <div class="col-1 min-width-225">
-
-
-      <app-auto-complete *ngIf="prefrenceListToInclude && prefrenceListToInclude.length > 0"
-        [label]="'Select Rule to include'"
-        [rulesList]="prefrenceListToInclude"
-        (selectedRules)="changePrefrence($event); setUnsavedFlag();"
-        [alredaySelectedRules]="selectedPrefrence"
-        >
-      </app-auto-complete>
-
-    </div>
+      <app-multiple-selection
+      *ngIf="prefrenceListToInclude && prefrenceListToInclude.length > 0"
+      [label]="'Select Rule to include'"
+      [rulesList]="prefrenceListToInclude"
+      (selectedRules)="changePrefrence($event); setUnsavedFlag();"
+      [alredaySelectedRules]="selectedPrefrence"
+      ></app-multiple-selection>
+</div>
 
     <div class="col-1 min-width-225">
 
-      <app-auto-complete *ngIf="prefrenceListToExclude && prefrenceListToExclude.length > 0"
+      <app-multiple-selection *ngIf="prefrenceListToExclude && prefrenceListToExclude.length > 0"
         [label]="'Select Rule to exclude'"
         [rulesList]="prefrenceListToExclude"
         (selectedRules)="changePrefrenceToExclude($event); setUnsavedFlag();"
         [alredaySelectedRules]="selectedPrefrenceToExclude"
         >
-      </app-auto-complete>
+      </app-multiple-selection>
 
     </div>
 <!-- 
@@ -73,13 +70,13 @@
 
     <div class="col-1 min-width-225">
 
-      <app-auto-complete *ngIf="dataSouceList && dataSouceList.length > 0"
+      <app-multiple-selection *ngIf="dataSouceList && dataSouceList.length > 0"
         [label]="'Data Center'"
         [rulesList]="dataSouceList"
         (selectedRules)="changeDataSource($event); setUnsavedFlag()"
         [alredaySelectedRules]="dataSource"
         >
-      </app-auto-complete>
+      </app-multiple-selection>
     </div>
 
     <!-- <div class="col-1 min-width-225">
@@ -162,7 +159,7 @@
 
               <mat-form-field class="full-width" appearance="fill" *ngIf="!editSchedule">
                   <mat-label>Calendar Name</mat-label>
-                  <input matInput placeholder="" formControlName="name">
+                  <input matInput maxlength="20"  placeholder="" formControlName="name">
                   <mat-error *ngIf="form.get('name').hasError('required')">
                       Calender Name is required.
                   </mat-error>
@@ -173,7 +170,7 @@
 
               <mat-form-field class="full-width" appearance="fill" *ngIf="editSchedule">
                 <mat-label>Calender Name</mat-label>
-                <input matInput placeholder="" formControlName="displayName">
+                <input matInput maxlength="20"  placeholder="" formControlName="displayName">
                 <mat-error *ngIf="form.get('displayName').hasError('required')">
                     Calender Name is required.
                 </mat-error>
@@ -184,7 +181,7 @@
 
               <mat-form-field class="full-width" appearance="fill">
                 <mat-label>Description</mat-label>
-                <input matInput placeholder="" formControlName="description">
+                <input matInput maxlength="50" placeholder="" formControlName="description">
             </mat-form-field>
 
 

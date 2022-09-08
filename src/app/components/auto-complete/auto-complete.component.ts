@@ -62,6 +62,7 @@ export class AutoCompleteComponent implements OnInit, OnChanges {
     }
 
     this.userControl.setValue(this.selectedUsers);
+    
 
     let rulesSelected = []
     this.selectedUsers.forEach(item => {

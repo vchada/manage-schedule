@@ -29,6 +29,8 @@ import { MatTableFilterModule } from 'mat-table-filter';
 import { CalendarTableComponent } from './dashboard/calendar-table/calendar-table.component';
 import { RuleTableComponent } from './dashboard/rule-table/rule-table.component';
 import { PendingChangesGuard, PendingRuleChangesGuard } from './pending-changes.gaurd';
+import { MultipleSelectionComponent } from './components/multiple-selection/multiple-selection.component';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,8 @@ import { PendingChangesGuard, PendingRuleChangesGuard } from './pending-changes.
     DashboardComponent,
     AutoCompleteComponent,
     CalendarTableComponent,
-    RuleTableComponent
+    RuleTableComponent,
+    MultipleSelectionComponent
   ],
   imports: [
     BrowserModule,
@@ -60,7 +63,8 @@ import { PendingChangesGuard, PendingRuleChangesGuard } from './pending-changes.
     HttpClientModule,
     MatAutocompleteModule,
     MatSlideToggleModule,
-    MatTableFilterModule
+    MatTableFilterModule,
+    NgxMatSelectSearchModule
   ],
   providers: [PendingChangesGuard, PendingRuleChangesGuard],
   bootstrap: [AppComponent],

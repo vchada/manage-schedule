@@ -119,13 +119,13 @@
         </mat-select>
       </mat-form-field> -->
 
-      <app-auto-complete *ngIf="prefrenceListToInclude && prefrenceListToInclude.length > 0"
+      <app-multiple-selection *ngIf="prefrenceListToInclude && prefrenceListToInclude.length > 0"
         [label]="'Select Rule to include'"
         [rulesList]="prefrenceListToInclude"
         (selectedRules)="changePrefrence($event); setUnsavedFlag();"
         [alredaySelectedRules]="selectedIncludedPrefrence"
         >
-      </app-auto-complete>
+      </app-multiple-selection>
 
     </div>
 
@@ -175,7 +175,7 @@
 
                 <mat-form-field class="full-width" appearance="fill" *ngIf="!editRule">
                     <mat-label>Rule Name</mat-label>
-                    <input matInput placeholder="" formControlName="name">
+                    <input matInput maxlength="20" placeholder="" formControlName="name">
                     <mat-error *ngIf="form.get('name').hasError('required')">
                         Rule Name is required.
                     </mat-error>
@@ -186,7 +186,7 @@
 
                 <mat-form-field class="full-width" appearance="fill" *ngIf="editRule">
                     <mat-label>Rule Name</mat-label>
-                    <input matInput placeholder="" formControlName="displayName">
+                    <input matInput maxlength="20" placeholder="" formControlName="displayName">
                     <mat-error *ngIf="form.get('displayName').hasError('required')">
                         Rule Name is required.
                     </mat-error>
@@ -197,7 +197,7 @@
 
                 <mat-form-field class="full-width" appearance="fill">
                     <mat-label>Description</mat-label>
-                    <input matInput placeholder="" formControlName="description">
+                    <input matInput maxlength="50" placeholder="" formControlName="description">
                 </mat-form-field>
 
             </div>
