@@ -158,6 +158,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.httpService.getAllCalender('2022').subscribe((res: any) => {
       if (res) {
+        res.sort((a, b) => (a.displayName.toLowerCase() > b.displayName.toLowerCase()) ? 1 : -1)
         this.calendarData = res;
       }
     }, err => {
@@ -327,6 +328,10 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     this.prefrenceListToExclude = this.prefrenceList.filter(item => !prefrence.includes(item.name));
 
     this.prefrenceListToExclude = [...this.prefrenceListToExclude.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)];
+
+    if(this.selectedPrefrenceToExclude.length > 0) {
+      this.changePrefrenceToExclude(this.selectedPrefrenceToExclude);
+    }
   }
 
   getFormattedDate(date) {
@@ -362,6 +367,20 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   }
 
   changePrefrenceToExclude(prefrence) {
+
+    this.selectedPrefrenceList = [];
+    this.selectedPrefrence.forEach(item => {
+      if (item && this.prefrenceList.find(val => val.name === item) && this.prefrenceList.find(val => val.name === item).dates) {
+        this.selectedPrefrenceList = [...this.selectedPrefrenceList, ...(this.prefrenceList.find(val => val.name === item).dates)];
+
+
+
+        this.selectedPrefrenceList = this.selectedPrefrenceList.filter(item => {
+          return !this.invalidDates.includes(item) ? true : false;
+        })
+      }
+    })
+
     this.selectedPrefrenceToExclude = prefrence;
     this.selectedPrefrenceListToExclude = [];
     this.selectedPrefrenceToExclude.forEach(item => {
@@ -470,6 +489,11 @@ export class ScheduleComponent implements OnInit, OnDestroy {
             }
           })
           reqData['description'] = this.form.value.description;
+
+          if(this.editSchedule && (this.form.controls.displayName.value !== this.selectedCalender)) {
+            reqData.name = this.form.controls.displayName.value;
+          }
+
           if (!this.editSchedule || (this.form.controls.displayName.value !== this.selectedCalender)) {
             this.httpService.saveCalendar(reqData).subscribe((res: any) => {
               if (res && res.message === 'CALENDER_PERSISTED_SUCCESSFULLY') {

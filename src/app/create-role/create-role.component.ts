@@ -92,7 +92,9 @@ export class CreateRoleComponent implements OnInit {
   prefrenceListToInclude = [];
   selectedIncludedPrefrence = [];
   invalidDates = ['02/29/2022', '02/29/2023', '02/29/2025', '02/29/2026', '02/29/2027', '02/29/2029', '02/29/2030', '02/29/2031', '02/29/2033'];
+  invalidDates2 = ['02-29-2022', '02-29-2023', '02-29-2025', '02-29-2026', '02-29-2027', '02-29-2029', '02-29-2030', '02-29-2031', '02-29-2033'];
   is29FebSelected = false;
+
 
   selectedFixedDates = [];
 
@@ -322,7 +324,7 @@ export class CreateRoleComponent implements OnInit {
     }
 
     this.selectedPrefrence = this.selectedPrefrence.filter(item => {
-      return !this.invalidDates.includes(item) ? true : false;
+      return (this.invalidDates.includes(item) || this.invalidDates2.includes(item)) ? false : true;
     })
 
     this.selectedIncludedPrefrence = prefrence;
@@ -515,9 +517,10 @@ export class CreateRoleComponent implements OnInit {
       //     return !this.invalidDates.includes(item) ? true : false;
       //   })
       // } else {
-        this.selectedPrefrence = this.selectedPrefrence.filter(item => {
-          return !this.invalidDates.includes(item) ? true : false;
-        })
+        
+    this.selectedPrefrence = this.selectedPrefrence.filter(item => {
+      return (this.invalidDates.includes(item) || this.invalidDates2.includes(item)) ? false : true;
+    })
       // }
     }, err => {
       console.error(err);
