@@ -1,53 +1,51 @@
+// p {
+//   font-family: Lato;
+// }
 table {
-    width: 100%;
-
-    th, td {
-        padding: 0 15px;
-    }
-  }
-  
-  .title {
-      font-size: 20px;
-      font-weight: 600;
-  }
-
-  .bg-lightgrey {
-      background: lightgrey;
-  }
-
-  .float-right {
-      float: right;
-  }
-
-.top-10 {
-    position: relative;
-    top: 10px;
+  width: 100%;
+  margin: auto;
+  margin-top: 25px;
 }
-  
-.min-h-50 {
-    min-height: calc((100vh - 96px) / 2) !important;
-    display: block !important;
+.btn-edit {
+  text-align: right;
+}
+// h2 {
+//   text-align: center;
+//   padding-top: 20px;
+// }
+
+.table-header {
+  width: 100%;
+  margin: auto;
+  text-align: right;
+  margin-bottom: 10px;
 }
 
-.pointer {
-    cursor: pointer;
+.button-add-row {
+  background: #1b9e1b;
+  color: #ffffff;
 }
 
-.btn-container {
-    text-align: right;
-    padding: 14px 32px;
-    border-bottom: 2px solid #E8ECEF;
-    border-top: 2px solid #E8ECEF;
+// .button-remove-rows {
+//   background: red;
+//   color: #ffffff;
+//   margin-right: 5px;
+// }
 
-    button {
-        margin: 5px 10px;
-    }
+.button-remove {
+  color: red;
+}
 
-    button.btn-dark {
-        background-color: #012834 !important;
-    }
+// ::ng-deep .mat-form-field-infix {
+//   width: 100% !important;
+// }
 
-    button.btn-dark.generate {
-        background-color: #075a33 !important;
-    }
+// .form-input {
+//   padding-right: 5px;
+// }
+
+
+.title {
+    font-size: 20px;
+    font-weight: 600;
 }

@@ -31,7 +31,6 @@ import { RuleTableComponent } from './dashboard/rule-table/rule-table.component'
 import { PendingChangesGuard, PendingRuleChangesGuard } from './pending-changes.gaurd';
 import { MultipleSelectionComponent } from './components/multiple-selection/multiple-selection.component';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { ManageProfileComponent } from './manage-profile/manage-profile.component';
 
 @NgModule({
   declarations: [
@@ -43,8 +42,7 @@ import { ManageProfileComponent } from './manage-profile/manage-profile.componen
     AutoCompleteComponent,
     CalendarTableComponent,
     RuleTableComponent,
-    MultipleSelectionComponent,
-    ManageProfileComponent
+    MultipleSelectionComponent
   ],
   imports: [
     BrowserModule,
