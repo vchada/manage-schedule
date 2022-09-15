@@ -46,7 +46,7 @@ export class ManageProfileComponent {
     } else {
       this.userService.updateUser(row).subscribe((res: any) => {
         if(res.message = 'USER_UPDATED_SUCCESSFULLY') {
-          row.isAdd = false;
+          row.isEdit = false;
           this.isAddOrEditInProgress = false;
         }
       });

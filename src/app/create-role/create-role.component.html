@@ -85,7 +85,7 @@
 
     <div class="col-2">
         <mat-radio-group class="day-radio-group" name="afterBeforeDay" [(ngModel)]="afterBeforeDaySelection" ngDefaultControl>
-            <mat-radio-button #button class="day-radio-button"  *ngFor="let day of afterBeforeDay" [value]="day.value" (click)="setUnsavedFlag(); checkState(button)">
+            <mat-radio-button #button class="day-radio-button" [disabled]="flexibleDates"  *ngFor="let day of afterBeforeDay" [value]="day.value" (click)="setUnsavedFlag(); checkState(button)">
               {{day.display}}
             </mat-radio-button>
           </mat-radio-group>

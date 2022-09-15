@@ -681,10 +681,12 @@ export class ScheduleComponent implements OnInit, OnDestroy {
 
     }
 
+    const name = this.form.controls.displayName.value ? this.form.controls.displayName.value: 'null';
+
     if (this.dataSource.length > 0) {
       this.dataSource.forEach(source => {
         xml += "<CALENDAR\nDATACENTER=\"" + source + "\"\n" +
-          "NAME=\"" + 'null' + "\"\n" +
+          "NAME=\"" + name + "\"\n" +
           "TYPE=\"Regular\">\n" +
           "<YEAR\nNAME=\"" + this.selectedYear + "\"\n" +
           "DAYS=\"" + dayList.join('') + "\"\n" +
@@ -693,7 +695,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
       })
     } else {
       xml += "<CALENDAR\nDATACENTER=\"" + 'null' + "\"\n" +
-        "NAME=\"" + 'null' + "\"\n" +
+        "NAME=\"" + name + "\"\n" +
         "TYPE=\"Regular\">\n" +
         "<YEAR\nNAME=\"" + this.selectedYear + "\"\n" +
         "DAYS=\"" + dayList.join('') + "\"\n" +
