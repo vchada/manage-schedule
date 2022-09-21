@@ -1,4 +1,4 @@
-<header>
+<header *ngIf="isUserLoggedIn">
   <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
     <div class="container-fluid display-block">
       <div class="row">
@@ -12,15 +12,22 @@
           <a [routerLinkActive]="['active']" class="path" [routerLink]="['create-rule']">Create Rule</a>
           <a [routerLinkActive]="['active']" class="path" [routerLink]="['manage-profile']">Manage Profile</a>
 
+
+          <a class="navbar-brand profile" href="javascript:void(0)" (click)="logout()">
+            <img src="../assets/logout.svg" height="20" alt="" loading="lazy" />
+          </a>
+
+
           <a class="navbar-brand profile" href="#">
             <span>Depew, David</span>
             <img src="../assets/userIcon.png" height="20" alt="" loading="lazy" />
           </a>
+
         </div>
       </div>
     </div>
   </nav>
 </header>
-<div class="container-fluid m-t-90">
+<div class="container-fluid " [ngClass]="isUserLoggedIn ? 'm-t-90': ''">
   <router-outlet></router-outlet>
 </div>
