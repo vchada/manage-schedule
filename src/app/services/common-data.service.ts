@@ -8,6 +8,7 @@ export class CommonDataService {
 
     yearChangeEvt = new Subject();
     isUserLoggedIn: boolean;
+    userId: string;
     isUserLoggedChange: Subject<any> = new Subject<any>();
      constructor(private router: Router) {}
 
@@ -22,6 +23,7 @@ export class CommonDataService {
 
     logout() {
       sessionStorage.removeItem('isUserLoggedIn');
+      sessionStorage.removeItem('userID');
       setTimeout(() => {
         this.setLoginStatus(false);
         this.router.navigate(['']);

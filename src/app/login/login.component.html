@@ -22,6 +22,8 @@
 					<div class="error-message" *ngIf="loginForm.get('userName').hasError(error.type) && (loginForm.get('userName').dirty || loginForm.get('userName').touched)">
 						{{ error.message }}
 					</div>
+
+                    <span class="error-message" *ngIf="userNamePasswordInvalid">User name or password is incorrect.</span>
 				</ng-container>
 			</div>
             </div>
@@ -42,35 +44,54 @@
 					<div class="error-message" *ngIf="loginForm.get('password').hasError(error.type) && (loginForm.get('password').dirty || loginForm.get('password').touched)">
 						{{ error.message }}
 					</div>
+
 				</ng-container>
+                <span class="error-message" *ngIf="userNamePasswordInvalid">User name or password is incorrect.</span>
 			</div>
             </div>
 
-            <!-- <div class="form-group">
-				<label>Password*</label>
-				<input class="form-control" formControlName="password" type="password" />
-			</div>
-			<div class="error-messages">
-				<ng-container *ngFor="let error of error_messages.password">
-					<div class="error-message" *ngIf="loginForm.get('password').hasError(error.type) && (loginForm.get('password').dirty || loginForm.get('password').touched)">
-						{{ error.message }}
-					</div>
-				</ng-container>
-			</div> -->
-<!-- 
-			<div class="form-group">
-				<label>Confirm Password*</label>
-				<input class="form-control" formControlName="confirmpassword" type="password" />
-			</div>
-			<div class="error-messages">
-				<ng-container *ngFor="let error of error_messages.confirmpassword">
-					<div class="error-message" *ngIf="loginForm.get('confirmpassword').hasError(error.type) && (loginForm.get('confirmpassword').dirty || loginForm.get('confirmpassword').touched)">
-						{{ error.message }}
-					</div>
-				</ng-container>
-			</div> -->
+            <div class="form-outline mb-3" *ngIf="changePassword">
+                <label class="form-label" for="form3Example4">New Password</label>
+                <input
+                  type="password"
+                  formControlName="confirmPassword1"
+                  id="form3Example4"
+                  class="form-control form-control-lg"
+                  name="confirmPassword1"
+                  placeholder=""
+                />
+                <div class="error-messages">
+                  <ng-container *ngFor="let error of error_messages.confirmPassword1">
+                      <div class="error-message" *ngIf="loginForm.get('confirmPassword1').hasError(error.type) && (loginForm.get('confirmPassword1').dirty || loginForm.get('confirmPassword1').touched)">
+                          {{ error.message }}
+                      </div>
+                  </ng-container>
+
+                  <span class="error-message" *ngIf="loginForm.get('confirmPassword1')?.value && loginForm.get('confirmPassword2')?.value  && loginForm.errors && loginForm.errors['passwordNotMatch']">Password not match</span>
+              </div>
+              </div>
+
+              <div class="form-outline mb-3" *ngIf="changePassword">
+                <label class="form-label" for="form3Example4">Confirm Password</label>
+                <input
+                  type="password"
+                  formControlName="confirmPassword2"
+                  id="form3Example4"
+                  class="form-control form-control-lg"
+                  name="confirmPassword2"
+                  placeholder=""
+                />
+                <div class="error-messages">
+                  <ng-container *ngFor="let error of error_messages.confirmPassword2">
+                      <div class="error-message" *ngIf="loginForm.get('confirmPassword2').hasError(error.type) && (loginForm.get('confirmPassword2').dirty || loginForm.get('confirmPassword2').touched)">
+                          {{ error.message }}
+                      </div>
+                  </ng-container>
+                  <span class="error-message" *ngIf="loginForm.get('confirmPassword1')?.value && loginForm.get('confirmPassword2')?.value  && loginForm.errors && loginForm.errors['passwordNotMatch']">Password not match</span>
+              </div>
+              </div>
   
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-between align-items-center" *ngIf="!changePassword">
               <!-- Checkbox -->
               <div class="form-check mb-0">
                 <input
@@ -85,9 +106,15 @@
               </div>
               <a href="#!" class="text-body">Forgot password?</a>
             </div>
+
+
+      <!-- <pre>
+        Form Error - {{ loginForm.errors | json }}
+      </pre> -->
   
             <div class="text-center text-lg-start mt-4 pt-2">
               <button
+              *ngIf="!changePassword"
                 type="button"
                 class="btn btn-dark btn-lg"
                 style="padding-left: 2.5rem; padding-right: 2.5rem;"
@@ -95,6 +122,17 @@
                 (click)="login()"
               >
                 Login
+              </button>
+
+              <button
+              *ngIf="changePassword"
+                type="button"
+                class="btn btn-dark btn-lg"
+                style="padding-left: 2.5rem; padding-right: 2.5rem;"
+                [disabled]="loginForm.invalid"
+                (click)="onChangePassword()"
+              >
+                Change Password
               </button>
               <!-- <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="#!"
                   class="link-danger">Register</a></p> -->

@@ -493,7 +493,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
           if(this.editSchedule && (this.form.controls.displayName.value !== this.selectedCalender)) {
             reqData.name = this.form.controls.displayName.value;
           }
-
+          reqData['userID'] = this.commonDataService.userId;
           if (!this.editSchedule || (this.form.controls.displayName.value !== this.selectedCalender)) {
             this.httpService.saveCalendar(reqData).subscribe((res: any) => {
               if (res && res.message === 'CALENDER_PERSISTED_SUCCESSFULLY') {
@@ -549,7 +549,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
         })
         reqData['description'] = this.form.value.description;
 
-
+        reqData['userID'] = this.commonDataService.userId;
         this.httpService.updateCalendar(reqData).subscribe((res: any) => {
           if (res && res.message === 'CALENDAR UPDATED SUCCESSFULLY') {
             this.closeEnableModal.nativeElement.click();

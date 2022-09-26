@@ -16,6 +16,7 @@ export class BasicGuard implements CanActivate {
 
   checkLogin() {
     if(sessionStorage.getItem('isUserLoggedIn') === 'true') {
+      this.commonDataService.userId = sessionStorage.getItem('userID');
       this.commonDataService.setLoginStatus(true);
       return true;
     }

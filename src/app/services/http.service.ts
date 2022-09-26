@@ -29,6 +29,15 @@ export class HttpService {
   }
 
   
+  getUserByID(id) {
+    return this.http.get('http://localhost:8080/user/getUserByID/' + id)
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
+  
   getRuleStatus(params) {
     return this.http.get('http://localhost:8080/holiday/get-rule-usage', {params: params})
       .pipe(
@@ -119,6 +128,23 @@ export class HttpService {
         catchError(this.handleError)
       );
   }
+
+  validateUser(reqData) {
+    return this.http.post('http://localhost:8080/user/validateUser', reqData)
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
+  updatePassword(reqData) {
+    return this.http.put('http://localhost:8080/user/updatePassword', reqData)
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
 
   handleError(error: HttpErrorResponse) {
     return throwError(error);
