@@ -795,7 +795,7 @@ export class CreateRoleComponent implements OnInit {
 
           this.form.controls.displayName.setErrors(null);
           let reqData = this.createUpdateRequestData();
-          reqData['userID'] = this.commonDataService.userId;
+          reqData['createdUser'] = this.commonDataService.userId;
           this.httpService.updateSelectedRule(reqData).subscribe((res: any) => {
             if (res && res.message === 'HOLIDAY_UPDATED_SUCCESSFULLY') {
               this.closeConfirmationModal.nativeElement.click();
@@ -823,7 +823,7 @@ export class CreateRoleComponent implements OnInit {
 
           this.form.controls.name.setErrors(null);
           let reqData = this.createRequestData();
-          reqData['userID'] = this.commonDataService.userId;
+          reqData['createdUser'] = this.commonDataService.userId;
           this.httpService.saveSelectedDate(reqData).subscribe((res: any) => {
             if (res && res.message === 'HOLIDAY_PERSISTED_SUCCESSFULLY') {
               this.closeConfirmationModal.nativeElement.click();
@@ -930,7 +930,7 @@ export class CreateRoleComponent implements OnInit {
           dayOfTheWeek: null,
           weekOfTheMonth: '',
           customDays: "",
-          createdUser: 'User',
+          createdUser: this.commonDataService.userId,
           lastModifiedUser: '',
           isActive: 'ACTIVE',
           description: this.form.value.description,
@@ -967,7 +967,7 @@ export class CreateRoleComponent implements OnInit {
                 dayOfTheWeek: day - 1,
                 weekOfTheMonth: week,
                 customDays: "",
-                createdUser: 'User',
+                createdUser: this.commonDataService.userId,
                 lastModifiedUser: this.afterBeforeDaySelection,
                 isActive: 'ACTIVE',
                 description: this.form.value.description,
